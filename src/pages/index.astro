@@ -1,17 +1,1591 @@
 ---
+const socials = [
+  {
+    name: "YouTube",
+    handle: "@timondlab",
+    href: "https://youtube.com/@timondlab",
+    color: "#FF3B30",
+    icon: "youtube",
+  },
+  {
+    name: "TikTok",
+    handle: "@timondlab",
+    href: "https://tiktok.com/@timondlab",
+    color: "var(--text)",
+    icon: "tiktok",
+  },
+  {
+    name: "Facebook",
+    handle: "@timondlab",
+    href: "https://facebook.com/timondlab",
+    color: "#1877F2",
+    icon: "facebook",
+  },
+  {
+    name: "Shopee",
+    handle: "@timondlab",
+    href: "https://shopee.vn/timondlab",
+    color: "#FF6B35",
+    icon: "shopee",
+  },
+  {
+    name: "Zalo",
+    handle: "@timondlab",
+    href: "https://zalo.me/timondlab",
+    color: "#0068FF",
+    icon: "zalo",
+  },
+  {
+    name: "Email",
+    handle: "hello@timondlab.com",
+    href: "mailto:hello@timondlab.com",
+    color: "var(--accent)",
+    icon: "email",
+  },
+];
 
+const products = [
+  {
+    slotId: "prod-thap",
+    name: "Tháp Nghinh Phong",
+    descVi:
+      "Diorama kiến trúc chi tiết, tái hiện công trình biểu tượng Đà Lạt.",
+    descEn:
+      "Detailed architectural diorama recreating a landmark Đà Lạt tower.",
+  },
+  {
+    slotId: "prod-diorama",
+    name: "Miniature Diorama",
+    descVi:
+      "Bối cảnh thu nhỏ kể chuyện, kết hợp ánh sáng và chi tiết thủ công.",
+    descEn: "Storytelling miniature scenes with hand-detailing and lighting.",
+  },
+  {
+    slotId: "prod-figure",
+    name: "Resin Figure",
+    descVi: "Figure resin sơn tay, giới hạn số lượng theo từng đợt.",
+    descEn: "Hand-painted resin figures, released in limited batches.",
+  },
+  {
+    slotId: "prod-soon",
+    name: "Coming Soon",
+    descVi: "Dự án tiếp theo đang được phát triển — theo dõi để cập nhật.",
+    descEn: "Next project in development — stay tuned for updates.",
+  },
+];
+
+const journeySteps = [
+  { vi: "Ý tưởng", en: "Idea" },
+  { vi: "Dựng 3D", en: "3D Modeling" },
+  { vi: "In 3D", en: "Printing" },
+  { vi: "Sơn vẽ", en: "Painting" },
+  { vi: "Đóng gói", en: "Packaging" },
+  { vi: "Vận chuyển", en: "Shipping" },
+];
+
+const buildPublic = [
+  { slotId: "bip-0", vi: "Video mới nhất", en: "Latest Video" },
+  { slotId: "bip-1", vi: "Dự án đang làm", en: "Current Build" },
+  { slotId: "bip-2", vi: "Hậu trường", en: "Behind the Scenes" },
+];
+
+const services = [
+  { vi: "Phát triển phần mềm", en: "Software Development", icon: "code" },
+  { vi: "Mô hình theo yêu cầu", en: "Custom Miniatures", icon: "gem" },
+  { vi: "Sơn figure", en: "Figure Painting", icon: "brush" },
+  { vi: "Thiết kế diorama", en: "Diorama Design", icon: "frame" },
+];
+
+const values = [
+  { vi: "Chất lượng hàng đầu", en: "Quality First" },
+  { vi: "Thủ công tỉ mỉ", en: "Handcrafted" },
+  { vi: "Chú trọng chi tiết", en: "Attention to Detail" },
+  { vi: "Học hỏi không ngừng", en: "Continuous Learning" },
+  { vi: "Khách hàng là trọng tâm", en: "Customer First" },
+  { vi: "Sáng tạo", en: "Creativity" },
+];
+
+const faq = [
+  {
+    qVi: "Bạn sử dụng chất liệu gì?",
+    qEn: "What materials do you use?",
+    aVi: "Chủ yếu là nhựa resin cao cấp, nhựa in 3D và sơn chuyên dụng cho mô hình, được lựa chọn kỹ để đảm bảo độ bền và chi tiết.",
+    aEn: "Mainly premium resin, 3D-printed filament/resin, and dedicated miniature paints, chosen for durability and fine detail.",
+  },
+  {
+    qVi: "Sản phẩm được làm như thế nào?",
+    qEn: "How are products made?",
+    aVi: "Mỗi sản phẩm trải qua quy trình: lên ý tưởng, dựng mô hình 3D, in 3D, đổ resin, sơn tay và đóng gói thủ công.",
+    aEn: "Each piece goes through: idea, 3D modeling, 3D printing, resin casting, hand painting and packaging.",
+  },
+  {
+    qVi: "Tôi có thể đặt làm theo yêu cầu không?",
+    qEn: "Can I order custom work?",
+    aVi: "Có. Timond Lab nhận thực hiện các dự án custom theo ý tưởng riêng của bạn, từ figure đến diorama.",
+    aEn: "Yes — Timond Lab takes on custom projects, from figures to full dioramas, built around your idea.",
+  },
+  {
+    qVi: "Có giao hàng quốc tế không?",
+    qEn: "Do you ship internationally?",
+    aVi: "Có, Timond Lab hỗ trợ giao hàng quốc tế cho một số sản phẩm và đơn custom.",
+    aEn: "Yes, international shipping is available for select products and custom orders.",
+  },
+];
 ---
 
-<html lang="en">
+<html lang="vi" data-lang="vi">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <meta
+      name="description"
+      content="Timond Lab — studio sáng tạo kết hợp phát triển phần mềm với nghệ thuật mô hình thủ công."
+    />
+    <title>Timond Lab · LinkHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <h1>Astro</h1>
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-logo">T</div>
+        <div class="brand-name">Timond Lab</div>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input
+          id="search-input"
+          class="search-input"
+          type="text"
+          data-i18n-placeholder-vi="Tìm liên kết, sản phẩm..."
+          data-i18n-placeholder-en="Search links, products..."
+          placeholder="Tìm liên kết, sản phẩm..."
+        />
+      </div>
+      <div class="topbar-actions">
+        <button
+          id="lang-toggle"
+          class="pill-btn"
+          type="button"
+          aria-label="Toggle language">VI</button
+        >
+        <button
+          id="theme-toggle"
+          class="pill-btn icon-btn"
+          type="button"
+          aria-label="Toggle theme">☾</button
+        >
+      </div>
+    </div>
+
+    <div class="container">
+      <section class="hero" data-screen-label="Hero">
+        <div class="hero-avatar-wrap">
+          <div class="hero-avatar">
+            <img
+              src="/avatar.webp"
+              alt="Timond Lab avatar"
+              width="128"
+              height="128"
+            />
+          </div>
+        </div>
+        <div class="hero-brand">Timond Lab</div>
+        <h1 class="hero-title">Build Ideas Into Reality</h1>
+        <div class="hero-subtitle">
+          <span data-i18n="vi"
+            >Lập trình viên phần mềm • Nghệ sĩ Resin • Nhà sáng tạo Diorama •
+            Họa sĩ tô mô hình</span
+          >
+          <span data-i18n="en"
+            >Software Developer • Resin Artist • Diorama Creator • Figure
+            Painter</span
+          >
+        </div>
+        <div class="hero-ctas">
+          <a href="#products" class="btn btn-primary">
+            <span data-i18n="vi">Khám phá sản phẩm</span>
+            <span data-i18n="en">Explore Products</span>
+          </a>
+          <a href="#journey" class="btn btn-secondary">
+            <span data-i18n="vi">Xem hành trình</span>
+            <span data-i18n="en">Watch My Journey</span>
+          </a>
+          <a href="#social" class="btn btn-secondary">
+            <span data-i18n="vi">Liên hệ</span>
+            <span data-i18n="en">Contact Me</span>
+          </a>
+        </div>
+      </section>
+
+      <section
+        class="section reveal"
+        data-reveal="about"
+        data-screen-label="About"
+      >
+        <div class="about-card">
+          <div class="eyebrow">
+            <span data-i18n="vi">Về Timond Lab</span>
+            <span data-i18n="en">About Timond Lab</span>
+          </div>
+          <div class="about-body">
+            <p data-i18n="vi">
+              Timond Lab là studio sáng tạo kết hợp phát triển phần mềm với nghệ
+              thuật mô hình thủ công — nơi công nghệ và thủ công gặp nhau để tạo
+              ra những sản phẩm độc bản, cùng câu chuyện phía sau từng ý tưởng:
+              từ concept, in 3D, đổ resin, sơn vẽ, đóng gói đến phát triển phần
+              mềm.
+            </p>
+            <p data-i18n="en">
+              Timond Lab is a creative studio blending software development with
+              handcrafted miniature art — where technology and craftsmanship
+              meet to build unique products, sharing every step of the journey:
+              concept, 3D printing, resin casting, painting, packaging and
+              software development.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="social"
+        class="section reveal"
+        data-reveal="social"
+        data-screen-label="Social Links"
+      >
+        <h2 class="section-title">
+          <span data-i18n="vi">Kết nối với Timond Lab</span>
+          <span data-i18n="en">Connect with Timond Lab</span>
+        </h2>
+        <div class="social-list">
+          {
+            socials.map((s, i) => (
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener"
+                class="social-item"
+                data-filter={`${s.name} ${s.handle}`.toLowerCase()}
+                style={`--i:${i}`}
+              >
+                <div
+                  class="social-icon"
+                  style={`background:color-mix(in srgb, ${s.color} 12%, transparent)`}
+                >
+                  {s.icon === "youtube" && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      fill={s.color}
+                    >
+                      <polygon points="7,5 19,12 7,19" />
+                    </svg>
+                  )}
+                  {s.icon === "tiktok" && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      stroke={s.color}
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    >
+                      <circle
+                        cx="9"
+                        cy="17"
+                        r="3.2"
+                        fill={s.color}
+                        stroke="none"
+                      />
+                      <path d="M12 3v14" />
+                      <path d="M12 3c0 4 3 6 6 6" />
+                    </svg>
+                  )}
+                  {s.icon === "facebook" && (
+                    <span class="fb-glyph" style={`color:${s.color}`}>
+                      f
+                    </span>
+                  )}
+                  {s.icon === "shopee" && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      stroke={s.color}
+                      stroke-width="2"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M9 8a3 3 0 0 1 6 0" />
+                      <path d="M6 8h12l-1 12H7L6 8z" />
+                    </svg>
+                  )}
+                  {s.icon === "zalo" && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      fill={s.color}
+                    >
+                      <path d="M4 5h16v10H9l-4 4V15H4z" />
+                    </svg>
+                  )}
+                  {s.icon === "email" && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      stroke={s.color}
+                      stroke-width="2"
+                      stroke-linejoin="round"
+                      stroke-linecap="round"
+                    >
+                      <rect x="3" y="5" width="18" height="14" rx="2" />
+                      <path d="M4 7l8 6 8-6" />
+                    </svg>
+                  )}
+                </div>
+                <div class="social-text">
+                  <div class="social-name">{s.name}</div>
+                  <div class="social-handle">{s.handle}</div>
+                </div>
+                <div class="social-chevron">›</div>
+              </a>
+            ))
+          }
+        </div>
+        <p class="no-results" data-role="social-empty" hidden>
+          <span data-i18n="vi">Không tìm thấy kết quả phù hợp.</span>
+          <span data-i18n="en">No matching results.</span>
+        </p>
+      </section>
+
+      <section
+        id="products"
+        class="section reveal"
+        data-reveal="products"
+        data-screen-label="Products"
+      >
+        <h2 class="section-title">
+          <span data-i18n="vi">Bộ sưu tập nổi bật</span>
+          <span data-i18n="en">Featured Collections</span>
+        </h2>
+        <div class="products-grid">
+          {
+            products.map((p, i) => (
+              <div
+                class="product-card"
+                data-filter={p.name.toLowerCase()}
+                style={`--i:${i}`}
+              >
+                <div class="product-image placeholder" data-slot={p.slotId}>
+                  <span class="placeholder-icon" aria-hidden="true">
+                    🖼
+                  </span>
+                  <span class="placeholder-label">{p.name}</span>
+                </div>
+                <div class="product-body">
+                  <div class="product-name">{p.name}</div>
+                  <div class="product-desc">
+                    <span data-i18n="vi">{p.descVi}</span>
+                    <span data-i18n="en">{p.descEn}</span>
+                  </div>
+                  <a href="#" class="product-link">
+                    <span data-i18n="vi">Xem chi tiết</span>
+                    <span data-i18n="en">View Details</span>
+                  </a>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <p class="no-results" data-role="products-empty" hidden>
+          <span data-i18n="vi">Không tìm thấy kết quả phù hợp.</span>
+          <span data-i18n="en">No matching results.</span>
+        </p>
+      </section>
+
+      <section
+        id="journey"
+        class="section reveal"
+        data-reveal="journey"
+        data-screen-label="Journey"
+      >
+        <h2 class="section-title">
+          <span data-i18n="vi">Hành trình tạo tác phẩm</span>
+          <span data-i18n="en">The Making Journey</span>
+        </h2>
+        <div class="journey-wrap">
+          <div id="journey-track" class="journey-track">
+            <div id="journey-runner" class="journey-runner"></div>
+            {
+              journeySteps.map((step, i) => (
+                <div class="journey-step" style={`--i:${i}`} data-step={i}>
+                  {i < journeySteps.length - 1 && <div class="journey-line" />}
+                  <div class="journey-badge">{i + 1}</div>
+                  <div class="journey-label">
+                    <span data-i18n="vi">{step.vi}</span>
+                    <span data-i18n="en">{step.en}</span>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          <div class="fade-edge fade-edge-left"></div>
+          <div class="fade-edge fade-edge-right"></div>
+        </div>
+      </section>
+
+      <section
+        class="section reveal"
+        data-reveal="buildpublic"
+        data-screen-label="Build in Public"
+      >
+        <h2 class="section-title" style="margin-bottom:4px">
+          <span data-i18n="vi">Build in Public</span>
+          <span data-i18n="en">Build in Public</span>
+        </h2>
+        <div class="section-sub">
+          <span data-i18n="vi"
+            >Dự án mới nhất, hậu trường & hành trình học hỏi</span
+          >
+          <span data-i18n="en"
+            >Latest projects, behind the scenes & the learning journey</span
+          >
+        </div>
+        <div class="buildpublic-grid">
+          {
+            buildPublic.map((v, i) => (
+              <div class="bip-card" style={`--i:${i}`}>
+                <div class="bip-image placeholder" data-slot={v.slotId}>
+                  <span class="placeholder-icon" aria-hidden="true">
+                    🖼
+                  </span>
+                </div>
+                <div class="bip-label">
+                  <span data-i18n="vi">{v.vi}</span>
+                  <span data-i18n="en">{v.en}</span>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <section
+        class="section reveal"
+        data-reveal="services"
+        data-screen-label="Services"
+      >
+        <h2 class="section-title">
+          <span data-i18n="vi">Dịch vụ</span>
+          <span data-i18n="en">Services</span>
+        </h2>
+        <div class="services-grid">
+          {
+            services.map((sv, i) => (
+              <div class="service-card" style={`--i:${i}`}>
+                <div class="service-icon">
+                  {sv.icon === "code" && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      stroke="var(--accent)"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="8,6 3,12 8,18" />
+                      <polyline points="16,6 21,12 16,18" />
+                    </svg>
+                  )}
+                  {sv.icon === "gem" && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      stroke="var(--accent)"
+                      stroke-width="2"
+                      stroke-linejoin="round"
+                    >
+                      <polygon points="12,3 21,9 17,21 7,21 3,9" />
+                    </svg>
+                  )}
+                  {sv.icon === "brush" && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      stroke="var(--accent)"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M4 20l4-4" />
+                      <path d="M8 16l9-9 3 3-9 9-3-3z" />
+                    </svg>
+                  )}
+                  {sv.icon === "frame" && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="20"
+                      height="20"
+                      fill="none"
+                      stroke="var(--accent)"
+                      stroke-width="2"
+                      stroke-linejoin="round"
+                    >
+                      <rect x="3" y="4" width="18" height="14" rx="1" />
+                      <path d="M3 15l5-5 4 4 4-4 5 5" />
+                    </svg>
+                  )}
+                </div>
+                <div class="service-label">
+                  <span data-i18n="vi">{sv.vi}</span>
+                  <span data-i18n="en">{sv.en}</span>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <section
+        class="section reveal"
+        data-reveal="values"
+        data-screen-label="Values"
+      >
+        <h2 class="section-title">
+          <span data-i18n="vi">Giá trị cốt lõi</span>
+          <span data-i18n="en">Values</span>
+        </h2>
+        <div class="values-grid">
+          {
+            values.map((val, i) => (
+              <div class="value-item" style={`--i:${i}`}>
+                <div class="value-check">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="15"
+                    height="15"
+                    fill="none"
+                    stroke="#fff"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="5,13 10,18 19,7" />
+                  </svg>
+                </div>
+                <div class="value-label">
+                  <span data-i18n="vi">{val.vi}</span>
+                  <span data-i18n="en">{val.en}</span>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <section class="section reveal" data-reveal="faq" data-screen-label="FAQ">
+        <h2 class="section-title">
+          <span data-i18n="vi">Câu hỏi thường gặp</span>
+          <span data-i18n="en">FAQ</span>
+        </h2>
+        <div class="faq-list">
+          {
+            faq.map((item, i) => (
+              <details class="faq-item" style={`--i:${i}`}>
+                <summary class="faq-question">
+                  <span class="faq-question-text">
+                    <span data-i18n="vi">{item.qVi}</span>
+                    <span data-i18n="en">{item.qEn}</span>
+                  </span>
+                  <span class="faq-icon" aria-hidden="true">
+                    +
+                  </span>
+                </summary>
+                <div class="faq-answer">
+                  <span data-i18n="vi">{item.aVi}</span>
+                  <span data-i18n="en">{item.aEn}</span>
+                </div>
+              </details>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+
+    <div class="closing-wrap">
+      <div class="closing-card">
+        <div class="closing-title">
+          <span data-i18n="vi">Sẵn sàng bắt đầu?</span>
+          <span data-i18n="en">Ready to start?</span>
+        </div>
+        <div class="closing-sub">
+          <span data-i18n="vi"
+            >Liên hệ Timond Lab để đặt sản phẩm hoặc trao đổi ý tưởng của bạn.</span
+          >
+          <span data-i18n="en"
+            >Reach out to Timond Lab to order a piece or talk through your idea.</span
+          >
+        </div>
+        <a href="#social" class="btn btn-primary">
+          <span data-i18n="vi">Liên hệ</span>
+          <span data-i18n="en">Contact Me</span>
+        </a>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-name">Timond Lab</div>
+      <div class="footer-tagline">Build Ideas Into Reality</div>
+      <div class="footer-copy">
+        © 2026 Timond Lab · Designed by Nguyễn Hoàng Tín
+      </div>
+    </footer>
+
+    <button
+      id="back-to-top"
+      class="back-to-top"
+      type="button"
+      aria-label="Back to top"
+      hidden>↑</button
+    >
   </body>
 </html>
+
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --surface: #ffffff;
+    --bar-bg: rgba(245, 247, 250, 0.8);
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e3e7ed;
+    --accent: #1677ff;
+    --chip: #eaf2ff;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f172a;
+    --surface: #182238;
+    --bar-bg: rgba(15, 23, 42, 0.75);
+    --text: #f5f7fa;
+    --muted: #94a3b8;
+    --border: rgba(217, 217, 217, 0.14);
+    --accent: #4c9aff;
+    --chip: rgba(76, 154, 255, 0.14);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    font-family:
+      "Be Vietnam Pro",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition:
+      background 0.25s ease,
+      color 0.25s ease;
+  }
+  ::selection {
+    background: var(--accent);
+    color: #fff;
+  }
+  a {
+    color: inherit;
+  }
+
+  [data-i18n="en"] {
+    display: none;
+  }
+  html[data-lang="en"] [data-i18n="en"] {
+    display: unset;
+  }
+  html[data-lang="en"] [data-i18n="vi"] {
+    display: none;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 3vw, 16px);
+    padding: 10px clamp(12px, 4vw, 24px);
+    background: var(--bar-bg);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+  }
+  .brand-logo:hover {
+    transform: scale(1.1) rotate(-4deg);
+  }
+  .brand-name {
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 0;
+    max-width: 360px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 11px 14px;
+    transition: border-color 0.2s ease;
+  }
+  .search-box:focus-within {
+    border-color: var(--accent);
+  }
+  .search-icon {
+    opacity: 0.5;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 13px;
+    width: 100%;
+    min-width: 0;
+    font-family: inherit;
+  }
+  .search-input::placeholder {
+    color: inherit;
+    opacity: 0.5;
+  }
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .pill-btn {
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 0 12px;
+    height: 40px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .pill-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent);
+  }
+  .icon-btn {
+    font-size: 15px;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .icon-btn:hover {
+    transform: rotate(25deg) scale(1.08);
+  }
+
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 5vw, 24px) 80px;
+  }
+
+  .hero {
+    text-align: center;
+    padding: clamp(40px, 10vw, 64px) 0 40px;
+  }
+  .hero-avatar-wrap {
+    width: clamp(96px, 28vw, 128px);
+    height: clamp(96px, 28vw, 128px);
+    margin: 0 auto 24px;
+    position: relative;
+  }
+  .hero-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    border: 3px solid var(--surface);
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.12);
+    overflow: hidden;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .hero-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .hero-brand {
+    font-size: clamp(20px, 5vw, 26px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+  }
+  .hero-title {
+    font-size: clamp(28px, 8vw, 40px);
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin: 22px 0 10px;
+    color: var(--accent);
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+  }
+  .hero-subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
+  }
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 28px;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both;
+  }
+  .btn {
+    text-decoration: none;
+    padding: 14px 24px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+    flex: 1 1 160px;
+    text-align: center;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease,
+      border-color 0.2s ease;
+    border: 1px solid transparent;
+    display: inline-block;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover {
+    opacity: 0.88;
+    transform: translateY(-2px);
+  }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .section {
+    padding: 32px 0;
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .section-title {
+    font-size: clamp(26px, 6vw, 34px);
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    margin: 0 0 20px;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .about-card {
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px 26px;
+  }
+  .about-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+    text-wrap: pretty;
+  }
+  .about-body p {
+    margin: 0;
+  }
+
+  .social-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .social-item {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+    animation: fadeUp 0.5s ease both;
+    animation-delay: calc(var(--i) * 55ms);
+  }
+  .social-item:hover {
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+    transform: translateY(-2px);
+  }
+  .social-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .fb-glyph {
+    font-size: 19px;
+    font-weight: 800;
+    font-style: italic;
+  }
+  .social-text {
+    min-width: 0;
+    flex: 1;
+  }
+  .social-name {
+    font-weight: 700;
+    font-size: 14.5px;
+  }
+  .social-handle {
+    font-size: 12.5px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .social-chevron {
+    opacity: 0.35;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .no-results {
+    text-align: center;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .product-card {
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.25s ease;
+    animation: fadeUp 0.5s ease both;
+    animation-delay: calc(var(--i) * 55ms);
+  }
+  .product-card:hover {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+  }
+  .product-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+  .placeholder {
+    background: var(--chip);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--muted);
+    border-bottom: 1px dashed var(--border);
+  }
+  .placeholder-icon {
+    font-size: 26px;
+    opacity: 0.6;
+  }
+  .placeholder-label {
+    font-size: 11px;
+    text-align: center;
+    padding: 0 8px;
+  }
+  .product-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .product-name {
+    font-weight: 700;
+    font-size: 14.5px;
+  }
+  .product-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .product-link {
+    margin-top: 8px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 13px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .product-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .journey-wrap {
+    position: relative;
+  }
+  .journey-track {
+    display: flex;
+    gap: 0;
+    position: relative;
+    overflow-x: auto;
+    padding: 14px 0 8px;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+  .journey-track::-webkit-scrollbar {
+    display: none;
+  }
+  .journey-runner {
+    position: absolute;
+    top: 23px;
+    left: calc(8.33% - 7px);
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    pointer-events: none;
+    z-index: 0;
+    transition: left 0.8s ease-in-out;
+  }
+  .journey-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    min-width: clamp(64px, 20vw, 88px);
+    gap: 8px;
+    position: relative;
+    scroll-snap-align: center;
+    opacity: 0;
+    transform: scale(0.5);
+    transition:
+      opacity 0.45s ease,
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+    transition-delay: calc(var(--i) * 55ms);
+  }
+  .reveal.is-visible .journey-step {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .journey-step.is-active .journey-badge {
+    box-shadow:
+      0 0 0 6px color-mix(in srgb, var(--accent) 20%, transparent),
+      0 6px 16px color-mix(in srgb, var(--accent) 65%, transparent);
+    transform: scale(1.18);
+  }
+  .journey-line {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+    transition: background 0.5s ease;
+  }
+  .reveal.is-visible .journey-line {
+    background: var(--accent);
+  }
+  .journey-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    position: relative;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .journey-label {
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .fade-edge {
+    position: absolute;
+    top: 0;
+    bottom: 8px;
+    width: 20px;
+    pointer-events: none;
+  }
+  .fade-edge-left {
+    left: 0;
+    background: linear-gradient(90deg, var(--bg), transparent);
+  }
+  .fade-edge-right {
+    right: 0;
+    background: linear-gradient(270deg, var(--bg), transparent);
+  }
+
+  .buildpublic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .bip-card {
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: box-shadow 0.25s ease;
+    animation: fadeUp 0.5s ease both;
+    animation-delay: calc(var(--i) * 55ms);
+  }
+  .bip-card:hover {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+  }
+  .bip-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-bottom: 1px dashed var(--border);
+  }
+  .bip-label {
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .service-card {
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition:
+      box-shadow 0.25s ease,
+      border-color 0.2s ease;
+    animation: fadeUp 0.5s ease both;
+    animation-delay: calc(var(--i) * 55ms);
+  }
+  .service-card:hover {
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    border-color: var(--accent);
+  }
+  .service-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: var(--chip);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .service-label {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px 20px;
+  }
+  .value-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.5s ease both;
+    animation-delay: calc(var(--i) * 55ms);
+  }
+  .value-check {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .value-label {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .faq-item {
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+    animation-delay: calc(var(--i) * 55ms);
+  }
+  .faq-question {
+    cursor: pointer;
+    padding: 15px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    list-style: none;
+  }
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-icon {
+    opacity: 0.5;
+    font-size: 16px;
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+  .faq-item[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+  .faq-answer {
+    padding: 0 18px 16px;
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .closing-wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 5vw, 24px) 40px;
+    text-align: center;
+  }
+  .closing-card {
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px 24px;
+  }
+  .closing-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .closing-sub {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+  }
+  .footer-name {
+    font-weight: 800;
+    font-size: 15px;
+  }
+  .footer-tagline {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .footer-copy {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+
+  .back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+    z-index: 60;
+    transition: transform 0.2s ease;
+  }
+  .back-to-top:hover {
+    transform: translateY(-3px);
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+
+  const themeToggle = document.getElementById("theme-toggle")!;
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    root.setAttribute("data-theme", "dark");
+    themeToggle.textContent = "☀";
+  }
+  themeToggle.addEventListener("click", () => {
+    const isDark = root.getAttribute("data-theme") === "dark";
+    if (isDark) {
+      root.removeAttribute("data-theme");
+      themeToggle.textContent = "☾";
+      localStorage.setItem("theme", "light");
+    } else {
+      root.setAttribute("data-theme", "dark");
+      themeToggle.textContent = "☀";
+      localStorage.setItem("theme", "dark");
+    }
+  });
+
+  const langToggle = document.getElementById("lang-toggle")!;
+  const searchInput = document.getElementById(
+    "search-input",
+  ) as HTMLInputElement;
+  function applyLang(lang: string) {
+    root.setAttribute("data-lang", lang);
+    langToggle.textContent = lang === "vi" ? "VI" : "EN";
+    const key =
+      lang === "vi" ? "data-i18n-placeholder-vi" : "data-i18n-placeholder-en";
+    const placeholder = searchInput.getAttribute(key);
+    if (placeholder) searchInput.setAttribute("placeholder", placeholder);
+  }
+  const savedLang = localStorage.getItem("lang");
+  if (savedLang === "en") applyLang("en");
+  langToggle.addEventListener("click", () => {
+    const next = root.getAttribute("data-lang") === "vi" ? "en" : "vi";
+    applyLang(next);
+    localStorage.setItem("lang", next);
+  });
+
+  function filterList(
+    input: string,
+    items: NodeListOf<HTMLElement>,
+    emptyEl: HTMLElement | null,
+  ) {
+    const q = input.trim().toLowerCase();
+    let visible = 0;
+    items.forEach((el) => {
+      const match = !q || (el.dataset.filter || "").includes(q);
+      el.style.display = match ? "" : "none";
+      if (match) visible++;
+    });
+    if (emptyEl) emptyEl.hidden = visible !== 0;
+  }
+  const socialItems = document.querySelectorAll<HTMLElement>(".social-item");
+  const productItems = document.querySelectorAll<HTMLElement>(".product-card");
+  const socialEmpty = document.querySelector<HTMLElement>(
+    '[data-role="social-empty"]',
+  );
+  const productsEmpty = document.querySelector<HTMLElement>(
+    '[data-role="products-empty"]',
+  );
+  searchInput.addEventListener("input", () => {
+    filterList(searchInput.value, socialItems, socialEmpty);
+    filterList(searchInput.value, productItems, productsEmpty);
+  });
+
+  const revealEls = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+          if (entry.target.getAttribute("data-reveal") === "journey")
+            startJourneyLoop();
+        }
+      });
+    },
+    { threshold: 0.15, rootMargin: "0px 0px -10% 0px" },
+  );
+  revealEls.forEach((el) => observer.observe(el));
+
+  const journeySteps = document.querySelectorAll<HTMLElement>(".journey-step");
+  const journeyRunner = document.getElementById("journey-runner");
+  const journeyTrack = document.getElementById("journey-track");
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  function setActiveStep(i: number) {
+    journeySteps.forEach((el, idx) =>
+      el.classList.toggle("is-active", idx === i),
+    );
+    if (journeyRunner) {
+      const pct = ((i + 0.5) / journeySteps.length) * 100;
+      journeyRunner.style.left = `calc(${pct.toFixed(2)}% - 7px)`;
+    }
+    const track = journeyTrack;
+    const stepEl = journeySteps[i];
+    if (track && stepEl && track.scrollWidth > track.clientWidth) {
+      const target =
+        stepEl.offsetLeft + stepEl.clientWidth / 2 - track.clientWidth / 2;
+      track.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+    }
+  }
+  function startJourneyLoop() {
+    if (prefersReducedMotion || journeySteps.length === 0) {
+      setActiveStep(0);
+      return;
+    }
+    let i = 0;
+    const tick = () => {
+      setActiveStep(i);
+      setTimeout(() => {
+        i = (i + 1) % journeySteps.length;
+        tick();
+      }, 1400);
+    };
+    tick();
+  }
+
+  const backToTop = document.getElementById("back-to-top")!;
+  window.addEventListener(
+    "scroll",
+    () => {
+      backToTop.hidden = window.scrollY <= 400;
+    },
+    { passive: true },
+  );
+  backToTop.addEventListener("click", () =>
+    window.scrollTo({ top: 0, behavior: "smooth" }),
+  );
+</script>
