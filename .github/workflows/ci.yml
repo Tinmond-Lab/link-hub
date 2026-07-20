@@ -116,3 +116,39 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+
+  # 8. Performance / accessibility / SEO score gate on the built site.
+  lighthouse:
+    name: Lighthouse CI
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./.lighthouserc.json
+
+  # 9. Since this is a link-hub page, make sure every outbound link still resolves.
+  broken-links:
+    name: Broken link check
+    needs: lighthouse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress './dist/**/*.html'
+          fail: true
