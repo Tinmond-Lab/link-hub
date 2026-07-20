@@ -6,6 +6,10 @@ import {
   siShopee,
   siZalo,
 } from "simple-icons";
+import iconCode from "lucide-static/icons/code.svg?raw";
+import iconCuboid from "lucide-static/icons/cuboid.svg?raw";
+import iconPaintbrush from "lucide-static/icons/paintbrush.svg?raw";
+import iconLayers from "lucide-static/icons/layers.svg?raw";
 
 const socials = [
   {
@@ -98,10 +102,10 @@ const buildPublic = [
 ];
 
 const services = [
-  { vi: "Phát triển phần mềm", en: "Software Development", icon: "code" },
-  { vi: "Mô hình theo yêu cầu", en: "Custom Miniatures", icon: "gem" },
-  { vi: "Sơn figure", en: "Figure Painting", icon: "brush" },
-  { vi: "Thiết kế diorama", en: "Diorama Design", icon: "frame" },
+  { vi: "Phát triển phần mềm", en: "Software Development", svg: iconCode },
+  { vi: "Mô hình theo yêu cầu", en: "Custom Miniatures", svg: iconCuboid },
+  { vi: "Sơn figure", en: "Figure Painting", svg: iconPaintbrush },
+  { vi: "Thiết kế diorama", en: "Diorama Design", svg: iconLayers },
 ];
 
 const values = [
@@ -447,65 +451,7 @@ const faq = [
           {
             services.map((sv, i) => (
               <div class="service-card" style={`--i:${i}`}>
-                <div class="service-icon">
-                  {sv.icon === "code" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke="var(--accent)"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <polyline points="8,6 3,12 8,18" />
-                      <polyline points="16,6 21,12 16,18" />
-                    </svg>
-                  )}
-                  {sv.icon === "gem" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke="var(--accent)"
-                      stroke-width="2"
-                      stroke-linejoin="round"
-                    >
-                      <polygon points="12,3 21,9 17,21 7,21 3,9" />
-                    </svg>
-                  )}
-                  {sv.icon === "brush" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke="var(--accent)"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M4 20l4-4" />
-                      <path d="M8 16l9-9 3 3-9 9-3-3z" />
-                    </svg>
-                  )}
-                  {sv.icon === "frame" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke="var(--accent)"
-                      stroke-width="2"
-                      stroke-linejoin="round"
-                    >
-                      <rect x="3" y="4" width="18" height="14" rx="1" />
-                      <path d="M3 15l5-5 4 4 4-4 5 5" />
-                    </svg>
-                  )}
-                </div>
+                <div class="service-icon" set:html={sv.svg} />
                 <div class="service-label">
                   <span data-i18n="vi">{sv.vi}</span>
                   <span data-i18n="en">{sv.en}</span>
@@ -1227,6 +1173,11 @@ const faq = [
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--accent);
+  }
+  .service-icon svg {
+    width: 20px;
+    height: 20px;
   }
   .service-label {
     font-weight: 700;
