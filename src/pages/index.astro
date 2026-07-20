@@ -1026,7 +1026,7 @@ const faq = [
   .journey-runner {
     position: absolute;
     top: 23px;
-    left: calc(8.33% - 7px);
+    left: 0;
     width: 14px;
     height: 14px;
     border-radius: 999px;
@@ -1416,17 +1416,17 @@ const faq = [
     journeySteps.forEach((el, idx) =>
       el.classList.toggle("is-active", idx === i),
     );
-    if (journeyRunner) {
+    const stepEl = journeySteps[i];
+    if (journeyRunner && stepEl) {
       if (jump) journeyRunner.style.transition = "none";
-      const pct = ((i + 0.5) / journeySteps.length) * 100;
-      journeyRunner.style.left = `calc(${pct.toFixed(2)}% - 7px)`;
+      const center = stepEl.offsetLeft + stepEl.offsetWidth / 2;
+      journeyRunner.style.left = `${center - 7}px`;
       if (jump) {
         void journeyRunner.offsetHeight;
         journeyRunner.style.transition = "";
       }
     }
     const track = journeyTrack;
-    const stepEl = journeySteps[i];
     if (track && stepEl && track.scrollWidth > track.clientWidth) {
       const target = jump
         ? 0
