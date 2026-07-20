@@ -1,0 +1,31 @@
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "package.json"
+          - "package-lock.json"
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: "**/*.md"
+
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "eslint.config.js"
+          - ".prettierrc.json"
+          - ".prettierignore"
+          - "commitlint.config.cjs"
+          - "astro.config.mjs"
+          - "tsconfig.json"
+
+source:
+  - changed-files:
+      - any-glob-to-any-file: "src/**"
+
+public-assets:
+  - changed-files:
+      - any-glob-to-any-file: "public/**"
