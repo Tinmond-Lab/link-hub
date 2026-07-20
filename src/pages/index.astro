@@ -1412,20 +1412,29 @@ const faq = [
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
-  function setActiveStep(i: number) {
+  function setActiveStep(i: number, jump = false) {
     journeySteps.forEach((el, idx) =>
       el.classList.toggle("is-active", idx === i),
     );
     if (journeyRunner) {
+      if (jump) journeyRunner.style.transition = "none";
       const pct = ((i + 0.5) / journeySteps.length) * 100;
       journeyRunner.style.left = `calc(${pct.toFixed(2)}% - 7px)`;
+      if (jump) {
+        void journeyRunner.offsetHeight;
+        journeyRunner.style.transition = "";
+      }
     }
     const track = journeyTrack;
     const stepEl = journeySteps[i];
     if (track && stepEl && track.scrollWidth > track.clientWidth) {
-      const target =
-        stepEl.offsetLeft + stepEl.clientWidth / 2 - track.clientWidth / 2;
-      track.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+      const target = jump
+        ? 0
+        : stepEl.offsetLeft + stepEl.clientWidth / 2 - track.clientWidth / 2;
+      track.scrollTo({
+        left: Math.max(0, target),
+        behavior: jump ? "instant" : "smooth",
+      });
     }
   }
   function startJourneyLoop() {
@@ -1434,14 +1443,16 @@ const faq = [
       return;
     }
     let i = 0;
-    const tick = () => {
-      setActiveStep(i);
+    const tick = (jump = false) => {
+      setActiveStep(i, jump);
       setTimeout(() => {
-        i = (i + 1) % journeySteps.length;
-        tick();
+        const next = (i + 1) % journeySteps.length;
+        const wrapped = next === 0;
+        i = next;
+        tick(wrapped);
       }, 1400);
     };
-    tick();
+    tick(false);
   }
 
   const backToTop = document.getElementById("back-to-top")!;
