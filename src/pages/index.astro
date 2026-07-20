@@ -1,46 +1,58 @@
 ---
+import {
+  siYoutube,
+  siTiktok,
+  siFacebook,
+  siShopee,
+  siZalo,
+} from "simple-icons";
+import iconCode from "lucide-static/icons/code.svg?raw";
+import iconCuboid from "lucide-static/icons/cuboid.svg?raw";
+import iconPaintbrush from "lucide-static/icons/paintbrush.svg?raw";
+import iconLayers from "lucide-static/icons/layers.svg?raw";
+
 const socials = [
   {
     name: "YouTube",
     handle: "@timondlab",
     href: "https://youtube.com/@timondlab",
-    color: "#FF3B30",
-    icon: "youtube",
+    color: `#${siYoutube.hex}`,
+    path: siYoutube.path,
   },
   {
     name: "TikTok",
     handle: "@timondlab",
     href: "https://tiktok.com/@timondlab",
     color: "var(--text)",
-    icon: "tiktok",
+    path: siTiktok.path,
   },
   {
     name: "Facebook",
     handle: "@timondlab",
     href: "https://facebook.com/timondlab",
-    color: "#1877F2",
-    icon: "facebook",
+    color: `#${siFacebook.hex}`,
+    path: siFacebook.path,
   },
   {
     name: "Shopee",
     handle: "@timondlab",
     href: "https://shopee.vn/timondlab",
-    color: "#FF6B35",
-    icon: "shopee",
+    color: `#${siShopee.hex}`,
+    path: siShopee.path,
   },
   {
     name: "Zalo",
-    handle: "@timondlab",
-    href: "https://zalo.me/timondlab",
-    color: "#0068FF",
-    icon: "zalo",
+    handle: "0856694766",
+    href: "https://zalo.me/84856694766",
+    color: `#${siZalo.hex}`,
+    path: siZalo.path,
   },
   {
     name: "Email",
-    handle: "hello@timondlab.com",
-    href: "mailto:hello@timondlab.com",
+    handle: "timondlab@gmail.com",
+    href: "mailto:timondlab@gmail.com",
     color: "var(--accent)",
-    icon: "email",
+    path: null,
   },
 ];
 
@@ -49,9 +61,9 @@ const products = [
     slotId: "prod-thap",
     name: "Tháp Nghinh Phong",
     descVi:
-      "Diorama kiến trúc chi tiết, tái hiện công trình biểu tượng Đà Lạt.",
+      "Diorama kiến trúc chi tiết, tái hiện công trình biểu tượng Phú Yên.",
     descEn:
-      "Detailed architectural diorama recreating a landmark Đà Lạt tower.",
+      "Detailed architectural diorama recreating a landmark Phú Yên tower.",
   },
   {
     slotId: "prod-diorama",
@@ -90,10 +102,10 @@ const buildPublic = [
 ];
 
 const services = [
-  { vi: "Phát triển phần mềm", en: "Software Development", icon: "code" },
-  { vi: "Mô hình theo yêu cầu", en: "Custom Miniatures", icon: "gem" },
-  { vi: "Sơn figure", en: "Figure Painting", icon: "brush" },
-  { vi: "Thiết kế diorama", en: "Diorama Design", icon: "frame" },
+  { vi: "Phát triển phần mềm", en: "Software Development", svg: iconCode },
+  { vi: "Mô hình theo yêu cầu", en: "Custom Miniatures", svg: iconCuboid },
+  { vi: "Sơn figure", en: "Figure Painting", svg: iconPaintbrush },
+  { vi: "Thiết kế diorama", en: "Diorama Design", svg: iconLayers },
 ];
 
 const values = [
@@ -153,10 +165,6 @@ const faq = [
   </head>
   <body>
     <div class="topbar">
-      <div class="brand">
-        <div class="brand-logo">T</div>
-        <div class="brand-name">Timond Lab</div>
-      </div>
       <div class="search-box">
         <span class="search-icon">⌕</span>
         <input
@@ -199,14 +207,9 @@ const faq = [
         <div class="hero-brand">Timond Lab</div>
         <h1 class="hero-title">Build Ideas Into Reality</h1>
         <div class="hero-subtitle">
-          <span data-i18n="vi"
-            >Lập trình viên phần mềm • Nghệ sĩ Resin • Nhà sáng tạo Diorama •
-            Họa sĩ tô mô hình</span
+          <span data-i18n="vi">Lập trình viên phần mềm • Họa sĩ tô mô hình</span
           >
-          <span data-i18n="en"
-            >Software Developer • Resin Artist • Diorama Creator • Figure
-            Painter</span
-          >
+          <span data-i18n="en">Software Developer • Figure Painter</span>
         </div>
         <div class="hero-ctas">
           <a href="#products" class="btn btn-primary">
@@ -278,67 +281,16 @@ const faq = [
                   class="social-icon"
                   style={`background:color-mix(in srgb, ${s.color} 12%, transparent)`}
                 >
-                  {s.icon === "youtube" && (
+                  {s.path ? (
                     <svg
                       viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
+                      width="18"
+                      height="18"
                       fill={s.color}
                     >
-                      <polygon points="7,5 19,12 7,19" />
+                      <path d={s.path} />
                     </svg>
-                  )}
-                  {s.icon === "tiktok" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke={s.color}
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    >
-                      <circle
-                        cx="9"
-                        cy="17"
-                        r="3.2"
-                        fill={s.color}
-                        stroke="none"
-                      />
-                      <path d="M12 3v14" />
-                      <path d="M12 3c0 4 3 6 6 6" />
-                    </svg>
-                  )}
-                  {s.icon === "facebook" && (
-                    <span class="fb-glyph" style={`color:${s.color}`}>
-                      f
-                    </span>
-                  )}
-                  {s.icon === "shopee" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke={s.color}
-                      stroke-width="2"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M9 8a3 3 0 0 1 6 0" />
-                      <path d="M6 8h12l-1 12H7L6 8z" />
-                    </svg>
-                  )}
-                  {s.icon === "zalo" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill={s.color}
-                    >
-                      <path d="M4 5h16v10H9l-4 4V15H4z" />
-                    </svg>
-                  )}
-                  {s.icon === "email" && (
+                  ) : (
                     <svg
                       viewBox="0 0 24 24"
                       width="20"
@@ -494,65 +446,7 @@ const faq = [
           {
             services.map((sv, i) => (
               <div class="service-card" style={`--i:${i}`}>
-                <div class="service-icon">
-                  {sv.icon === "code" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke="var(--accent)"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <polyline points="8,6 3,12 8,18" />
-                      <polyline points="16,6 21,12 16,18" />
-                    </svg>
-                  )}
-                  {sv.icon === "gem" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke="var(--accent)"
-                      stroke-width="2"
-                      stroke-linejoin="round"
-                    >
-                      <polygon points="12,3 21,9 17,21 7,21 3,9" />
-                    </svg>
-                  )}
-                  {sv.icon === "brush" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke="var(--accent)"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M4 20l4-4" />
-                      <path d="M8 16l9-9 3 3-9 9-3-3z" />
-                    </svg>
-                  )}
-                  {sv.icon === "frame" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="20"
-                      height="20"
-                      fill="none"
-                      stroke="var(--accent)"
-                      stroke-width="2"
-                      stroke-linejoin="round"
-                    >
-                      <rect x="3" y="4" width="18" height="14" rx="1" />
-                      <path d="M3 15l5-5 4 4 4-4 5 5" />
-                    </svg>
-                  )}
-                </div>
+                <div class="service-icon" set:html={sv.svg} />
                 <div class="service-label">
                   <span data-i18n="vi">{sv.vi}</span>
                   <span data-i18n="en">{sv.en}</span>
@@ -651,8 +545,6 @@ const faq = [
     </div>
 
     <footer class="footer">
-      <div class="footer-name">Timond Lab</div>
-      <div class="footer-tagline">Build Ideas Into Reality</div>
       <div class="footer-copy">
         © 2026 Timond Lab · Designed by Nguyễn Hoàng Tín
       </div>
@@ -750,38 +642,6 @@ const faq = [
     background: var(--bar-bg);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-    min-width: 0;
-  }
-  .brand-logo {
-    width: 36px;
-    height: 36px;
-    border-radius: 9px;
-    background: var(--accent);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 15px;
-    flex-shrink: 0;
-    transition: transform 0.25s ease;
-  }
-  .brand-logo:hover {
-    transform: scale(1.1) rotate(-4deg);
-  }
-  .brand-name {
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: -0.2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   .search-box {
     flex: 1;
@@ -1036,11 +896,6 @@ const faq = [
     justify-content: center;
     flex-shrink: 0;
   }
-  .fb-glyph {
-    font-size: 19px;
-    font-weight: 800;
-    font-style: italic;
-  }
   .social-text {
     min-width: 0;
     flex: 1;
@@ -1164,7 +1019,7 @@ const faq = [
   .journey-runner {
     position: absolute;
     top: 23px;
-    left: calc(8.33% - 7px);
+    left: 0;
     width: 14px;
     height: 14px;
     border-radius: 999px;
@@ -1311,6 +1166,11 @@ const faq = [
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--accent);
+  }
+  .service-icon svg {
+    width: 20px;
+    height: 20px;
   }
   .service-label {
     font-weight: 700;
@@ -1415,19 +1275,9 @@ const faq = [
     padding: 32px 24px;
     text-align: center;
   }
-  .footer-name {
-    font-weight: 800;
-    font-size: 15px;
-  }
-  .footer-tagline {
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 4px;
-  }
   .footer-copy {
     font-size: 11.5px;
     color: var(--muted);
-    margin-top: 14px;
   }
 
   .back-to-top {
@@ -1545,20 +1395,29 @@ const faq = [
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
-  function setActiveStep(i: number) {
+  function setActiveStep(i: number, jump = false) {
     journeySteps.forEach((el, idx) =>
       el.classList.toggle("is-active", idx === i),
     );
-    if (journeyRunner) {
-      const pct = ((i + 0.5) / journeySteps.length) * 100;
-      journeyRunner.style.left = `calc(${pct.toFixed(2)}% - 7px)`;
+    const stepEl = journeySteps[i];
+    if (journeyRunner && stepEl) {
+      if (jump) journeyRunner.style.transition = "none";
+      const center = stepEl.offsetLeft + stepEl.offsetWidth / 2;
+      journeyRunner.style.left = `${center - 7}px`;
+      if (jump) {
+        void journeyRunner.offsetHeight;
+        journeyRunner.style.transition = "";
+      }
     }
     const track = journeyTrack;
-    const stepEl = journeySteps[i];
     if (track && stepEl && track.scrollWidth > track.clientWidth) {
-      const target =
-        stepEl.offsetLeft + stepEl.clientWidth / 2 - track.clientWidth / 2;
-      track.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+      const target = jump
+        ? 0
+        : stepEl.offsetLeft + stepEl.clientWidth / 2 - track.clientWidth / 2;
+      track.scrollTo({
+        left: Math.max(0, target),
+        behavior: jump ? "instant" : "smooth",
+      });
     }
   }
   function startJourneyLoop() {
@@ -1567,14 +1426,16 @@ const faq = [
       return;
     }
     let i = 0;
-    const tick = () => {
-      setActiveStep(i);
+    const tick = (jump = false) => {
+      setActiveStep(i, jump);
       setTimeout(() => {
-        i = (i + 1) % journeySteps.length;
-        tick();
+        const next = (i + 1) % journeySteps.length;
+        const wrapped = next === 0;
+        i = next;
+        tick(wrapped);
       }, 1400);
     };
-    tick();
+    tick(false);
   }
 
   const backToTop = document.getElementById("back-to-top")!;
