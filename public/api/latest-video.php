@@ -1,5 +1,9 @@
 <?php
 
+// PHP because the site currently deploys to shared PHP hosting — CORS rules out
+// calling YouTube straight from client JS, so the fetch has to happen server-side.
+// Moving host? See "Latest video thumbnail" in README.md for how to port this.
+
 declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
