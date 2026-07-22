@@ -1,7 +1,8 @@
-Drop product photos here with these exact filenames — the site already points to them, so uploading a file with the right name is all that's needed (no rebuild required):
+Product photos, referenced directly by `src/pages/index.astro`:
 
-- `prod-thap.jpg` — Tháp Nghinh Phong
-- `prod-diorama.jpg` — Miniature Diorama
-- `prod-figure.jpg` — Resin Figure
+- `prod-thap.webp` — Tháp Nghinh Phong
+- `prod-diorama.webp` — Miniature Diorama
+- `prod-figure.webp` — Resin Figure
+- `prod-soon.webp` — Coming Soon
 
-`prod-soon` (Coming Soon) has no image on purpose.
+Replacing a photo later? Uploading a file with the same name is enough — no rebuild required. Keep it `.webp`; compress it first (photos straight from a camera are typically several MB — see the compression note in the repo's README, or just re-run it through an image tool at ~80% quality, max ~1000px wide).
