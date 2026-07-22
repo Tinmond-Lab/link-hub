@@ -79,10 +79,14 @@ function fetch_url(string $url): array
     return ['body' => $body, 'error' => null, 'httpCode' => 200];
 }
 
+// Ordered most- to least-trustworthy. canonical/og:url identify the page's
+// own entity; "channelId"/"externalId" can also appear in embedded sidebar
+// widgets for unrelated suggested channels, so they're a last resort.
 const CHANNEL_ID_PATTERNS = [
+    '#<link rel="canonical" href="https://www\.youtube\.com/channel/(UC[a-zA-Z0-9_-]{22})"#',
+    '#<meta property="og:url" content="https://www\.youtube\.com/channel/(UC[a-zA-Z0-9_-]{22})"#',
     '/"channelId":"(UC[a-zA-Z0-9_-]{22})"/',
     '/"externalId":"(UC[a-zA-Z0-9_-]{22})"/',
-    '#youtube\.com/channel/(UC[a-zA-Z0-9_-]{22})#',
 ];
 
 /**
