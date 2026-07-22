@@ -64,6 +64,7 @@ const products = [
       "Diorama kiến trúc chi tiết, tái hiện công trình biểu tượng Phú Yên.",
     descEn:
       "Detailed architectural diorama recreating a landmark Phú Yên tower.",
+    img: "/products/prod-thap.jpg",
   },
   {
     slotId: "prod-diorama",
@@ -71,18 +72,21 @@ const products = [
     descVi:
       "Bối cảnh thu nhỏ kể chuyện, kết hợp ánh sáng và chi tiết thủ công.",
     descEn: "Storytelling miniature scenes with hand-detailing and lighting.",
+    img: "/products/prod-diorama.jpg",
   },
   {
     slotId: "prod-figure",
     name: "Resin Figure",
     descVi: "Figure resin sơn tay, giới hạn số lượng theo từng đợt.",
     descEn: "Hand-painted resin figures, released in limited batches.",
+    img: "/products/prod-figure.jpg",
   },
   {
     slotId: "prod-soon",
     name: "Coming Soon",
     descVi: "Dự án tiếp theo đang được phát triển — theo dõi để cập nhật.",
     descEn: "Next project in development — stay tuned for updates.",
+    img: null,
   },
 ];
 
@@ -96,9 +100,19 @@ const journeySteps = [
 ];
 
 const buildPublic = [
-  { slotId: "bip-0", vi: "Video mới nhất", en: "Latest Video" },
-  { slotId: "bip-1", vi: "Dự án đang làm", en: "Current Build" },
-  { slotId: "bip-2", vi: "Hậu trường", en: "Behind the Scenes" },
+  { slotId: "bip-0", vi: "Video mới nhất", en: "Latest Video", img: null },
+  {
+    slotId: "bip-1",
+    vi: "Dự án đang làm",
+    en: "Current Build",
+    img: "/build-in-public/bip-1.jpg",
+  },
+  {
+    slotId: "bip-2",
+    vi: "Hậu trường",
+    en: "Behind the Scenes",
+    img: "/build-in-public/bip-2.jpg",
+  },
 ];
 
 const services = [
@@ -344,6 +358,14 @@ const faq = [
                     🖼
                   </span>
                   <span class="placeholder-label">{p.name}</span>
+                  {p.img && (
+                    <img
+                      src={p.img}
+                      alt={p.name}
+                      loading="lazy"
+                      onerror="this.remove()"
+                    />
+                  )}
                 </div>
                 <div class="product-body">
                   <div class="product-name">{p.name}</div>
@@ -422,6 +444,14 @@ const faq = [
                   <span class="placeholder-icon" aria-hidden="true">
                     🖼
                   </span>
+                  {v.img && (
+                    <img
+                      src={v.img}
+                      alt={v.vi}
+                      loading="lazy"
+                      onerror="this.remove()"
+                    />
+                  )}
                 </div>
                 <div class="bip-label">
                   <span data-i18n="vi">{v.vi}</span>
@@ -945,6 +975,15 @@ const faq = [
   .product-image {
     width: 100%;
     aspect-ratio: 4 / 3;
+    position: relative;
+  }
+  .product-image img,
+  .bip-image img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .placeholder {
     background: var(--chip);
@@ -1128,6 +1167,7 @@ const faq = [
     width: 100%;
     aspect-ratio: 16 / 9;
     border-bottom: 1px dashed var(--border);
+    position: relative;
   }
   .bip-label {
     padding: 12px 14px;
