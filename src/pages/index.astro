@@ -11,6 +11,11 @@ import iconCuboid from "lucide-static/icons/cuboid.svg?raw";
 import iconPaintbrush from "lucide-static/icons/paintbrush.svg?raw";
 import iconLayers from "lucide-static/icons/layers.svg?raw";
 
+const SITE_URL = "https://timondlab.com";
+const SITE_TITLE = "Timond Lab · LinkHub";
+const SITE_DESCRIPTION =
+  "Timond Lab — studio sáng tạo kết hợp phát triển phần mềm với nghệ thuật mô hình thủ công.";
+
 const socials = [
   {
     name: "YouTube",
@@ -166,11 +171,27 @@ const faq = [
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <meta
-      name="description"
-      content="Timond Lab — studio sáng tạo kết hợp phát triển phần mềm với nghệ thuật mô hình thủ công."
-    />
-    <title>Timond Lab · LinkHub</title>
+    <meta name="description" content={SITE_DESCRIPTION} />
+    <meta name="theme-color" content="#1677ff" />
+    <link rel="canonical" href={SITE_URL} />
+    <title>{SITE_TITLE}</title>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Timond Lab" />
+    <meta property="og:title" content={SITE_TITLE} />
+    <meta property="og:description" content={SITE_DESCRIPTION} />
+    <meta property="og:url" content={SITE_URL} />
+    <meta property="og:image" content={`${SITE_URL}/og-image.jpg`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={SITE_TITLE} />
+    <meta name="twitter:description" content={SITE_DESCRIPTION} />
+    <meta name="twitter:image" content={`${SITE_URL}/og-image.jpg`} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"

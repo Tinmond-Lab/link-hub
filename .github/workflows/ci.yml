@@ -155,5 +155,9 @@ jobs:
           path: dist
       - uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress --root-dir "${{ github.workspace }}/dist" './dist/**/*.html'
+          # Exclude the site's own absolute self-references (og:image, canonical,
+          # og:url, ...): the site deploys via manual upload, so the live host can
+          # lag behind what's in this build — those URLs can't be verified until
+          # after deploy, unlike genuinely external links.
+          args: --no-progress --root-dir "${{ github.workspace }}/dist" --exclude '^https://timondlab\.com' './dist/**/*.html'
           fail: true
