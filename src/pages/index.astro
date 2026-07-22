@@ -1449,4 +1449,28 @@ const faq = [
   backToTop.addEventListener("click", () =>
     window.scrollTo({ top: 0, behavior: "smooth" }),
   );
+
+  const latestVideoSlot = document.querySelector<HTMLElement>(
+    '[data-slot="bip-0"]',
+  );
+  if (latestVideoSlot) {
+    fetch("/api/latest-video.php")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || data.error || !data.thumbnailUrl) return;
+        latestVideoSlot.classList.remove("placeholder");
+        latestVideoSlot.innerHTML = "";
+        latestVideoSlot.style.backgroundImage = `url(${data.thumbnailUrl})`;
+        latestVideoSlot.style.backgroundSize = "cover";
+        latestVideoSlot.style.backgroundPosition = "center";
+        const card = latestVideoSlot.closest<HTMLElement>(".bip-card");
+        if (card && data.videoUrl) {
+          card.style.cursor = "pointer";
+          card.addEventListener("click", () =>
+            window.open(data.videoUrl, "_blank", "noopener"),
+          );
+        }
+      })
+      .catch(() => {});
+  }
 </script>
