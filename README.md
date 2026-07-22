@@ -48,6 +48,8 @@ This lives in PHP because the site currently deploys to shared PHP hosting. A cl
 
 Either way, keep the JSON response shape (`{ videoId, title, videoUrl, thumbnailUrl }`) so the client script in `index.astro` doesn't need to change.
 
+**Before deploying:** `latest-video.php` has a `?debug=1&token=...` mode for troubleshooting (see the comment at the top of the file). It's gated behind a token so it can't be used by outside visitors to force unlimited live requests or read server details — set your own via the `LATEST_VIDEO_DEBUG_TOKEN` environment variable if your host supports one, otherwise change `DEBUG_TOKEN_FALLBACK` in the file to your own random string. The cache file is also written outside the web root (two directories above the script) when possible, rather than a predictable path in the shared system temp directory.
+
 ## CI
 
 Every pull request runs: PR title lint, commitlint, gitleaks, `astro check`, ESLint, Prettier check, build, Lighthouse CI (performance/accessibility/SEO gate), and a broken-link check (lychee) against the built HTML. Releases are automated with [release-please](https://github.com/googleapis/release-please).
