@@ -22,11 +22,21 @@ const CONNECT_TIMEOUT = 4;
 $cacheFile = sys_get_temp_dir() . '/timondlab_latest_video.json';
 $debug = isset($_GET['debug']);
 
+const BROWSER_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+
 /**
  * @return array{body: ?string, error: ?string, httpCode: ?int}
  */
 function fetch_url(string $url): array
 {
+    // A plain bot UA gets YouTube's EU cookie-consent interstitial instead of
+    // the real page, which has none of the channel data we're looking for.
+    // A real browser UA + a pre-accepted consent cookie avoids that.
+    $headers = [
+        'Accept-Language: en-US,en;q=0.9',
+        'Cookie: CONSENT=YES+1',
+    ];
+
     if (function_exists('curl_init')) {
         $ch = curl_init($url);
         curl_setopt_array($ch, [
@@ -34,7 +44,8 @@ function fetch_url(string $url): array
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_TIMEOUT => REQUEST_TIMEOUT,
             CURLOPT_CONNECTTIMEOUT => CONNECT_TIMEOUT,
-            CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; TimondLabBot/1.0)',
+            CURLOPT_USERAGENT => BROWSER_USER_AGENT,
+            CURLOPT_HTTPHEADER => $headers,
         ]);
         $body = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -57,7 +68,7 @@ function fetch_url(string $url): array
     $context = stream_context_create([
         'http' => [
             'timeout' => REQUEST_TIMEOUT,
-            'header' => "User-Agent: Mozilla/5.0 (compatible; TimondLabBot/1.0)\r\n",
+            'header' => 'User-Agent: ' . BROWSER_USER_AGENT . "\r\n" . implode("\r\n", $headers) . "\r\n",
         ],
     ]);
     $body = @file_get_contents($url, false, $context);
@@ -68,19 +79,38 @@ function fetch_url(string $url): array
     return ['body' => $body, 'error' => null, 'httpCode' => 200];
 }
 
+const CHANNEL_ID_PATTERNS = [
+    '/"channelId":"(UC[a-zA-Z0-9_-]{22})"/',
+    '/"externalId":"(UC[a-zA-Z0-9_-]{22})"/',
+    '#youtube\.com/channel/(UC[a-zA-Z0-9_-]{22})#',
+];
+
 /**
- * @return array{channelId: ?string, error: ?string}
+ * @return array{channelId: ?string, error: ?string, debug?: array}
  */
-function resolve_channel_id(string $handle): array
+function resolve_channel_id(string $handle, bool $debug = false): array
 {
     $result = fetch_url("https://www.youtube.com/@{$handle}");
     if ($result['body'] === null) {
         return ['channelId' => null, 'error' => $result['error']];
     }
-    if (preg_match('/"channelId":"(UC[a-zA-Z0-9_-]{22})"/', $result['body'], $matches)) {
-        return ['channelId' => $matches[1], 'error' => null];
+
+    foreach (CHANNEL_ID_PATTERNS as $pattern) {
+        if (preg_match($pattern, $result['body'], $matches)) {
+            return ['channelId' => $matches[1], 'error' => null];
+        }
     }
-    return ['channelId' => null, 'error' => 'channelId pattern not found in channel page HTML'];
+
+    $error = ['channelId' => null, 'error' => 'no channelId pattern matched the channel page HTML'];
+    if ($debug) {
+        $error['debug'] = [
+            'bodyLength' => strlen($result['body']),
+            'bodySnippet' => substr($result['body'], 0, 800),
+            'looksLikeConsentPage' => str_contains($result['body'], 'consent.youtube.com')
+                || str_contains(strtolower($result['body']), 'before you continue'),
+        ];
+    }
+    return $error;
 }
 
 /**
@@ -123,7 +153,7 @@ if ($debug) {
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store');
 
-    $channelResult = resolve_channel_id(CHANNEL_HANDLE);
+    $channelResult = resolve_channel_id(CHANNEL_HANDLE, true);
     $videoResult = $channelResult['channelId'] !== null
         ? fetch_latest_video($channelResult['channelId'])
         : ['video' => null, 'error' => 'skipped: no channel id'];
