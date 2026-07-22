@@ -1,43 +1,44 @@
-# Astro Starter Kit: Minimal
+# LinkHub — Timond Lab
 
-```sh
-npm create astro@latest -- --template minimal
-```
+A bilingual (VI/EN) link-in-bio landing page for **Timond Lab**, a studio blending software development with handcrafted miniature art (diorama, resin figures, figure painting). Built with [Astro](https://astro.build).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Live sections: hero, about, social links (with live search filter), featured products, the making journey, build-in-public, services, values, and FAQ — plus light/dark theme and VI/EN language toggle, both persisted in `localStorage`.
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Project Structure
 
 ```text
 /
-├── public/
+├── public/            # Static assets (favicon, avatar)
 ├── src/
 │   └── pages/
-│       └── index.astro
+│       └── index.astro   # The entire single-page site
+├── .github/workflows/     # CI: lint, format, build, lighthouse, broken-link check
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+The site is currently a single page (`src/pages/index.astro`) containing markup, scoped styles, and a small client-side script (theme/language toggle, search filter, scroll-reveal animations, journey step runner).
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Commands
 
-Any static assets, like images, can be placed in the `public/` directory.
+All commands run from the root of the project:
 
-## 🧞 Commands
+| Command                | Action                                     |
+| :--------------------- | :----------------------------------------- |
+| `npm install`          | Install dependencies                       |
+| `npm run dev`          | Start local dev server at `localhost:4321` |
+| `npm run build`        | Build the production site to `./dist/`     |
+| `npm run preview`      | Preview the production build locally       |
+| `npm run lint`         | Type/template-check with `astro check`     |
+| `npm run lint:eslint`  | Lint with ESLint                           |
+| `npm run format`       | Format the codebase with Prettier          |
+| `npm run format:check` | Check formatting without writing changes   |
 
-All commands are run from the root of the project, from a terminal:
+When developing with an agent (Claude Code), start the dev server in background mode: `astro dev --background`, then manage it with `astro dev stop` / `astro dev status` / `astro dev logs`.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## CI
 
-## 👀 Want to learn more?
+Every pull request runs: PR title lint, commitlint, gitleaks, `astro check`, ESLint, Prettier check, build, Lighthouse CI (performance/accessibility/SEO gate), and a broken-link check (lychee) against the built HTML. Releases are automated with [release-please](https://github.com/googleapis/release-please).
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Learn more
+
+[Astro documentation](https://docs.astro.build)
