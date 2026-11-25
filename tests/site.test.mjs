@@ -387,6 +387,8 @@ describe("Cloudflare deploy config", () => {
     assert.equal(cfg.name, "link-hub");
     assert.equal(cfg.assets.directory, "./dist");
     assert.match(cfg.compatibility_date, /^\d{4}-\d{2}-\d{2}$/);
+    // `wrangler preview` (used for non-production branch builds) refuses to run without this block.
+    assert.equal(typeof cfg.previews, "object");
   });
 });
 
