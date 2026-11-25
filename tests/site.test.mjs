@@ -20,3 +20,39 @@ describe("routing", () => {
     assert.match(read("en/index.html"), /<html lang="en"/);
   });
 });
+
+describe("one language per URL", () => {
+  it("vi page is Vietnamese only", () => {
+    const html = read("index.html");
+    assert.doesNotMatch(html, /data-i18n/);
+    assert.match(html, /Khám phá sản phẩm/);
+    assert.doesNotMatch(html, /Explore Products/);
+  });
+
+  it("en page is English only", () => {
+    const html = read("en/index.html");
+    assert.doesNotMatch(html, /data-i18n/);
+    assert.match(html, /Explore Products/);
+    assert.doesNotMatch(html, /Khám phá sản phẩm/);
+  });
+
+  it("language toggle links to the other locale", () => {
+    assert.match(
+      read("index.html"),
+      /<a[^>]*id="lang-toggle"[^>]*href="\/en\/"/,
+    );
+    assert.match(
+      read("en/index.html"),
+      /<a[^>]*id="lang-toggle"[^>]*href="\/"/,
+    );
+  });
+
+  it("never stores or reads a language preference", () => {
+    for (const f of ["index.html", "en/index.html"]) {
+      const html = read(f);
+      // Astro inlines and minifies the script, turning "theme" into `theme`.
+      assert.match(html, /localStorage\.getItem\([`"']theme[`"']\)/);
+      assert.doesNotMatch(html, /(get|set)Item\([`"']lang[`"']/);
+    }
+  });
+});

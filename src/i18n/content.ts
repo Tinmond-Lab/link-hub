@@ -1,0 +1,310 @@
+import type { Locale } from "./locales";
+
+export interface Product {
+  slotId: string;
+  slug: string | null;
+  name: string;
+  desc: string;
+  img: string;
+  priceUsd: number | null;
+  leadTime: string | null;
+}
+
+export interface Social {
+  key: "youtube" | "tiktok" | "facebook" | "shopee" | "zalo" | "email";
+  name: string;
+  handle: string;
+  href: string;
+}
+
+export interface Content {
+  ui: Record<string, string>;
+  socials: Social[];
+  products: Product[];
+  journeySteps: string[];
+  buildPublic: { slotId: string; label: string; img: string | null }[];
+  services: {
+    key: "code" | "cuboid" | "paintbrush" | "layers";
+    label: string;
+  }[];
+  values: string[];
+  faq: { q: string; a: string }[];
+}
+
+const socials: Social[] = [
+  {
+    key: "youtube",
+    name: "YouTube",
+    handle: "@timondlab",
+    href: "https://youtube.com/@timondlab",
+  },
+  {
+    key: "tiktok",
+    name: "TikTok",
+    handle: "@timondlab",
+    href: "https://tiktok.com/@timondlab",
+  },
+  {
+    key: "facebook",
+    name: "Facebook",
+    handle: "@timondlab",
+    href: "https://facebook.com/timondlab",
+  },
+  {
+    key: "shopee",
+    name: "Shopee",
+    handle: "@timondlab",
+    href: "https://shopee.vn/timondlab",
+  },
+  {
+    key: "zalo",
+    name: "Zalo",
+    handle: "0856694766",
+    href: "https://zalo.me/84856694766",
+  },
+  {
+    key: "email",
+    name: "Email",
+    handle: "timondlab@gmail.com",
+    href: "mailto:timondlab@gmail.com",
+  },
+];
+
+const productBase = [
+  {
+    slotId: "prod-thap",
+    slug: "nghinh-phong-tower",
+    name: "Tháp Nghinh Phong",
+    img: "/products/prod-thap.webp",
+  },
+  {
+    slotId: "prod-diorama",
+    slug: "miniature-diorama",
+    name: "Miniature Diorama",
+    img: "/products/prod-diorama.webp",
+  },
+  {
+    slotId: "prod-figure",
+    slug: "resin-figure",
+    name: "Resin Figure",
+    img: "/products/prod-figure.webp",
+  },
+  {
+    slotId: "prod-soon",
+    slug: null,
+    name: "Coming Soon",
+    img: "/products/prod-soon.webp",
+  },
+];
+
+const productDesc: Record<Locale, string[]> = {
+  vi: [
+    "Diorama kiến trúc chi tiết, tái hiện công trình biểu tượng Phú Yên.",
+    "Bối cảnh thu nhỏ kể chuyện, kết hợp ánh sáng và chi tiết thủ công.",
+    "Figure resin sơn tay, giới hạn số lượng theo từng đợt.",
+    "Dự án tiếp theo đang được phát triển — theo dõi để cập nhật.",
+  ],
+  en: [
+    "Detailed architectural diorama recreating a landmark Phú Yên tower.",
+    "Storytelling miniature scenes with hand-detailing and lighting.",
+    "Hand-painted resin figures, released in limited batches.",
+    "Next project in development — stay tuned for updates.",
+  ],
+};
+
+const products = (locale: Locale): Product[] =>
+  productBase.map((p, i) => ({
+    ...p,
+    desc: productDesc[locale][i],
+    priceUsd: null,
+    leadTime: null,
+  }));
+
+const services: Content["services"] = [
+  { key: "code", label: "" },
+  { key: "cuboid", label: "" },
+  { key: "paintbrush", label: "" },
+  { key: "layers", label: "" },
+];
+const withLabels = (labels: string[]): Content["services"] =>
+  services.map((s, i) => ({ ...s, label: labels[i] }));
+
+const vi: Content = {
+  ui: {
+    searchPlaceholder: "Tìm liên kết, sản phẩm...",
+    langLabel: "EN",
+    langAria: "Switch to English",
+    themeAria: "Toggle theme",
+    avatarAlt: "Timond Lab avatar",
+    heroSubtitle: "Lập trình viên phần mềm • Họa sĩ tô mô hình",
+    ctaProducts: "Khám phá sản phẩm",
+    ctaJourney: "Xem hành trình",
+    ctaContact: "Liên hệ",
+    aboutEyebrow: "Về Timond Lab",
+    aboutBody:
+      "Timond Lab là studio sáng tạo kết hợp phát triển phần mềm với nghệ thuật mô hình thủ công — nơi công nghệ và thủ công gặp nhau để tạo ra những sản phẩm độc bản, cùng câu chuyện phía sau từng ý tưởng: từ concept, in 3D, đổ resin, sơn vẽ, đóng gói đến phát triển phần mềm.",
+    socialTitle: "Kết nối với Timond Lab",
+    noResults: "Không tìm thấy kết quả phù hợp.",
+    productsTitle: "Bộ sưu tập nổi bật",
+    viewDetails: "Xem chi tiết",
+    journeyTitle: "Hành trình tạo tác phẩm",
+    bipTitle: "Build in Public",
+    bipSub: "Dự án mới nhất, hậu trường & hành trình học hỏi",
+    servicesTitle: "Dịch vụ",
+    valuesTitle: "Giá trị cốt lõi",
+    faqTitle: "Câu hỏi thường gặp",
+    closingTitle: "Sẵn sàng bắt đầu?",
+    closingSub:
+      "Liên hệ Timond Lab để đặt sản phẩm hoặc trao đổi ý tưởng của bạn.",
+    closingCta: "Liên hệ",
+    backToTop: "Back to top",
+  },
+  socials,
+  products: products("vi"),
+  journeySteps: [
+    "Ý tưởng",
+    "Dựng 3D",
+    "In 3D",
+    "Sơn vẽ",
+    "Đóng gói",
+    "Vận chuyển",
+  ],
+  buildPublic: [
+    { slotId: "bip-0", label: "Video mới nhất", img: null },
+    {
+      slotId: "bip-1",
+      label: "Dự án đang làm",
+      img: "/build-in-public/bip-1.webp",
+    },
+    {
+      slotId: "bip-2",
+      label: "Hậu trường",
+      img: "/build-in-public/bip-2.webp",
+    },
+  ],
+  services: withLabels([
+    "Phát triển phần mềm",
+    "Mô hình theo yêu cầu",
+    "Sơn figure",
+    "Thiết kế diorama",
+  ]),
+  values: [
+    "Chất lượng hàng đầu",
+    "Thủ công tỉ mỉ",
+    "Chú trọng chi tiết",
+    "Học hỏi không ngừng",
+    "Khách hàng là trọng tâm",
+    "Sáng tạo",
+  ],
+  faq: [
+    {
+      q: "Bạn sử dụng chất liệu gì?",
+      a: "Chủ yếu là nhựa resin cao cấp, nhựa in 3D và sơn chuyên dụng cho mô hình, được lựa chọn kỹ để đảm bảo độ bền và chi tiết.",
+    },
+    {
+      q: "Sản phẩm được làm như thế nào?",
+      a: "Mỗi sản phẩm trải qua quy trình: lên ý tưởng, dựng mô hình 3D, in 3D, đổ resin, sơn tay và đóng gói thủ công.",
+    },
+    {
+      q: "Tôi có thể đặt làm theo yêu cầu không?",
+      a: "Có. Timond Lab nhận thực hiện các dự án custom theo ý tưởng riêng của bạn, từ figure đến diorama.",
+    },
+    {
+      q: "Có giao hàng quốc tế không?",
+      a: "Có, Timond Lab hỗ trợ giao hàng quốc tế cho một số sản phẩm và đơn custom.",
+    },
+  ],
+};
+
+const en: Content = {
+  ui: {
+    searchPlaceholder: "Search links, products...",
+    langLabel: "VI",
+    langAria: "Chuyển sang tiếng Việt",
+    themeAria: "Toggle theme",
+    avatarAlt: "Timond Lab avatar",
+    heroSubtitle: "Software Developer • Figure Painter",
+    ctaProducts: "Explore Products",
+    ctaJourney: "Watch My Journey",
+    ctaContact: "Contact Me",
+    aboutEyebrow: "About Timond Lab",
+    aboutBody:
+      "Timond Lab is a creative studio blending software development with handcrafted miniature art — where technology and craftsmanship meet to build unique products, sharing every step of the journey: concept, 3D printing, resin casting, painting, packaging and software development.",
+    socialTitle: "Connect with Timond Lab",
+    noResults: "No matching results.",
+    productsTitle: "Featured Collections",
+    viewDetails: "View Details",
+    journeyTitle: "The Making Journey",
+    bipTitle: "Build in Public",
+    bipSub: "Latest projects, behind the scenes & the learning journey",
+    servicesTitle: "Services",
+    valuesTitle: "Values",
+    faqTitle: "FAQ",
+    closingTitle: "Ready to start?",
+    closingSub:
+      "Reach out to Timond Lab to order a piece or talk through your idea.",
+    closingCta: "Contact Me",
+    backToTop: "Back to top",
+  },
+  socials,
+  products: products("en"),
+  journeySteps: [
+    "Idea",
+    "3D Modeling",
+    "Printing",
+    "Painting",
+    "Packaging",
+    "Shipping",
+  ],
+  buildPublic: [
+    { slotId: "bip-0", label: "Latest Video", img: null },
+    {
+      slotId: "bip-1",
+      label: "Current Build",
+      img: "/build-in-public/bip-1.webp",
+    },
+    {
+      slotId: "bip-2",
+      label: "Behind the Scenes",
+      img: "/build-in-public/bip-2.webp",
+    },
+  ],
+  services: withLabels([
+    "Software Development",
+    "Custom Miniatures",
+    "Figure Painting",
+    "Diorama Design",
+  ]),
+  values: [
+    "Quality First",
+    "Handcrafted",
+    "Attention to Detail",
+    "Continuous Learning",
+    "Customer First",
+    "Creativity",
+  ],
+  faq: [
+    {
+      q: "What materials do you use?",
+      a: "Mainly premium resin, 3D-printed filament/resin, and dedicated miniature paints, chosen for durability and fine detail.",
+    },
+    {
+      q: "How are products made?",
+      a: "Each piece goes through: idea, 3D modeling, 3D printing, resin casting, hand painting and packaging.",
+    },
+    {
+      q: "Can I order custom work?",
+      a: "Yes — Timond Lab takes on custom projects, from figures to full dioramas, built around your idea.",
+    },
+    {
+      q: "Do you ship internationally?",
+      a: "Yes, international shipping is available for select products and custom orders.",
+    },
+  ],
+};
+
+const content: Record<Locale, Content> = { vi, en };
+
+export function getContent(locale: Locale): Content {
+  return content[locale];
+}

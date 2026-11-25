@@ -10,164 +10,41 @@ import iconCode from "lucide-static/icons/code.svg?raw";
 import iconCuboid from "lucide-static/icons/cuboid.svg?raw";
 import iconPaintbrush from "lucide-static/icons/paintbrush.svg?raw";
 import iconLayers from "lucide-static/icons/layers.svg?raw";
-import type { Locale } from "../i18n/locales";
+import { getContent } from "../i18n/content";
+import {
+  SITE_URL,
+  localePath,
+  otherLocale,
+  type Locale,
+} from "../i18n/locales";
 
 const { locale } = Astro.props as { locale: Locale };
+const c = getContent(locale);
+const t = c.ui;
 
-const SITE_URL = "https://timondlab.com";
 const SITE_TITLE = "Timond Lab · LinkHub";
 const SITE_DESCRIPTION =
   "Timond Lab — studio sáng tạo kết hợp phát triển phần mềm với nghệ thuật mô hình thủ công.";
+const pageUrl = `${SITE_URL}${localePath(locale)}`;
 
-const socials = [
-  {
-    name: "YouTube",
-    handle: "@timondlab",
-    href: "https://youtube.com/@timondlab",
-    color: `#${siYoutube.hex}`,
-    path: siYoutube.path,
-  },
-  {
-    name: "TikTok",
-    handle: "@timondlab",
-    href: "https://tiktok.com/@timondlab",
-    color: "var(--text)",
-    path: siTiktok.path,
-  },
-  {
-    name: "Facebook",
-    handle: "@timondlab",
-    href: "https://facebook.com/timondlab",
-    color: `#${siFacebook.hex}`,
-    path: siFacebook.path,
-  },
-  {
-    name: "Shopee",
-    handle: "@timondlab",
-    href: "https://shopee.vn/timondlab",
-    color: `#${siShopee.hex}`,
-    path: siShopee.path,
-  },
-  {
-    name: "Zalo",
-    handle: "0856694766",
-    href: "https://zalo.me/84856694766",
-    color: `#${siZalo.hex}`,
-    path: siZalo.path,
-  },
-  {
-    name: "Email",
-    handle: "timondlab@gmail.com",
-    href: "mailto:timondlab@gmail.com",
-    color: "var(--accent)",
-    path: null,
-  },
-];
-
-const products = [
-  {
-    slotId: "prod-thap",
-    name: "Tháp Nghinh Phong",
-    descVi:
-      "Diorama kiến trúc chi tiết, tái hiện công trình biểu tượng Phú Yên.",
-    descEn:
-      "Detailed architectural diorama recreating a landmark Phú Yên tower.",
-    img: "/products/prod-thap.webp",
-  },
-  {
-    slotId: "prod-diorama",
-    name: "Miniature Diorama",
-    descVi:
-      "Bối cảnh thu nhỏ kể chuyện, kết hợp ánh sáng và chi tiết thủ công.",
-    descEn: "Storytelling miniature scenes with hand-detailing and lighting.",
-    img: "/products/prod-diorama.webp",
-  },
-  {
-    slotId: "prod-figure",
-    name: "Resin Figure",
-    descVi: "Figure resin sơn tay, giới hạn số lượng theo từng đợt.",
-    descEn: "Hand-painted resin figures, released in limited batches.",
-    img: "/products/prod-figure.webp",
-  },
-  {
-    slotId: "prod-soon",
-    name: "Coming Soon",
-    descVi: "Dự án tiếp theo đang được phát triển — theo dõi để cập nhật.",
-    descEn: "Next project in development — stay tuned for updates.",
-    img: "/products/prod-soon.webp",
-  },
-];
-
-const journeySteps = [
-  { vi: "Ý tưởng", en: "Idea" },
-  { vi: "Dựng 3D", en: "3D Modeling" },
-  { vi: "In 3D", en: "Printing" },
-  { vi: "Sơn vẽ", en: "Painting" },
-  { vi: "Đóng gói", en: "Packaging" },
-  { vi: "Vận chuyển", en: "Shipping" },
-];
-
-const buildPublic = [
-  { slotId: "bip-0", vi: "Video mới nhất", en: "Latest Video", img: null },
-  {
-    slotId: "bip-1",
-    vi: "Dự án đang làm",
-    en: "Current Build",
-    img: "/build-in-public/bip-1.webp",
-  },
-  {
-    slotId: "bip-2",
-    vi: "Hậu trường",
-    en: "Behind the Scenes",
-    img: "/build-in-public/bip-2.webp",
-  },
-];
-
-const services = [
-  { vi: "Phát triển phần mềm", en: "Software Development", svg: iconCode },
-  { vi: "Mô hình theo yêu cầu", en: "Custom Miniatures", svg: iconCuboid },
-  { vi: "Sơn figure", en: "Figure Painting", svg: iconPaintbrush },
-  { vi: "Thiết kế diorama", en: "Diorama Design", svg: iconLayers },
-];
-
-const values = [
-  { vi: "Chất lượng hàng đầu", en: "Quality First" },
-  { vi: "Thủ công tỉ mỉ", en: "Handcrafted" },
-  { vi: "Chú trọng chi tiết", en: "Attention to Detail" },
-  { vi: "Học hỏi không ngừng", en: "Continuous Learning" },
-  { vi: "Khách hàng là trọng tâm", en: "Customer First" },
-  { vi: "Sáng tạo", en: "Creativity" },
-];
-
-const faq = [
-  {
-    qVi: "Bạn sử dụng chất liệu gì?",
-    qEn: "What materials do you use?",
-    aVi: "Chủ yếu là nhựa resin cao cấp, nhựa in 3D và sơn chuyên dụng cho mô hình, được lựa chọn kỹ để đảm bảo độ bền và chi tiết.",
-    aEn: "Mainly premium resin, 3D-printed filament/resin, and dedicated miniature paints, chosen for durability and fine detail.",
-  },
-  {
-    qVi: "Sản phẩm được làm như thế nào?",
-    qEn: "How are products made?",
-    aVi: "Mỗi sản phẩm trải qua quy trình: lên ý tưởng, dựng mô hình 3D, in 3D, đổ resin, sơn tay và đóng gói thủ công.",
-    aEn: "Each piece goes through: idea, 3D modeling, 3D printing, resin casting, hand painting and packaging.",
-  },
-  {
-    qVi: "Tôi có thể đặt làm theo yêu cầu không?",
-    qEn: "Can I order custom work?",
-    aVi: "Có. Timond Lab nhận thực hiện các dự án custom theo ý tưởng riêng của bạn, từ figure đến diorama.",
-    aEn: "Yes — Timond Lab takes on custom projects, from figures to full dioramas, built around your idea.",
-  },
-  {
-    qVi: "Có giao hàng quốc tế không?",
-    qEn: "Do you ship internationally?",
-    aVi: "Có, Timond Lab hỗ trợ giao hàng quốc tế cho một số sản phẩm và đơn custom.",
-    aEn: "Yes, international shipping is available for select products and custom orders.",
-  },
-];
+const brand = {
+  youtube: { color: `#${siYoutube.hex}`, path: siYoutube.path },
+  tiktok: { color: "var(--text)", path: siTiktok.path },
+  facebook: { color: `#${siFacebook.hex}`, path: siFacebook.path },
+  shopee: { color: `#${siShopee.hex}`, path: siShopee.path },
+  zalo: { color: `#${siZalo.hex}`, path: siZalo.path },
+  email: { color: "var(--accent)", path: null },
+} as const;
+const socials = c.socials.map((s) => ({ ...s, ...brand[s.key] }));
+const serviceIcons = {
+  code: iconCode,
+  cuboid: iconCuboid,
+  paintbrush: iconPaintbrush,
+  layers: iconLayers,
+};
 ---
 
-<html lang={locale} data-lang={locale}>
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -176,14 +53,14 @@ const faq = [
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={SITE_DESCRIPTION} />
     <meta name="theme-color" content="#1677ff" />
-    <link rel="canonical" href={SITE_URL} />
+    <link rel="canonical" href={pageUrl} />
     <title>{SITE_TITLE}</title>
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Timond Lab" />
     <meta property="og:title" content={SITE_TITLE} />
     <meta property="og:description" content={SITE_DESCRIPTION} />
-    <meta property="og:url" content={SITE_URL} />
+    <meta property="og:url" content={pageUrl} />
     <meta property="og:image" content={`${SITE_URL}/og-image.jpg`} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -209,23 +86,22 @@ const faq = [
           id="search-input"
           class="search-input"
           type="text"
-          data-i18n-placeholder-vi="Tìm liên kết, sản phẩm..."
-          data-i18n-placeholder-en="Search links, products..."
-          placeholder="Tìm liên kết, sản phẩm..."
+          placeholder={t.searchPlaceholder}
         />
       </div>
       <div class="topbar-actions">
-        <button
+        <a
           id="lang-toggle"
           class="pill-btn"
-          type="button"
-          aria-label="Toggle language">VI</button
+          href={localePath(otherLocale(locale))}
+          hreflang={otherLocale(locale)}
+          aria-label={t.langAria}>{t.langLabel}</a
         >
         <button
           id="theme-toggle"
           class="pill-btn icon-btn"
           type="button"
-          aria-label="Toggle theme">☾</button
+          aria-label={t.themeAria}>☾</button
         >
       </div>
     </div>
@@ -236,7 +112,7 @@ const faq = [
           <div class="hero-avatar">
             <img
               src="/avatar.webp"
-              alt="Timond Lab avatar"
+              alt={t.avatarAlt}
               width="128"
               height="128"
             />
@@ -244,24 +120,11 @@ const faq = [
         </div>
         <div class="hero-brand">Timond Lab</div>
         <h1 class="hero-title">Build Ideas Into Reality</h1>
-        <div class="hero-subtitle">
-          <span data-i18n="vi">Lập trình viên phần mềm • Họa sĩ tô mô hình</span
-          >
-          <span data-i18n="en">Software Developer • Figure Painter</span>
-        </div>
+        <div class="hero-subtitle">{t.heroSubtitle}</div>
         <div class="hero-ctas">
-          <a href="#products" class="btn btn-primary">
-            <span data-i18n="vi">Khám phá sản phẩm</span>
-            <span data-i18n="en">Explore Products</span>
-          </a>
-          <a href="#journey" class="btn btn-secondary">
-            <span data-i18n="vi">Xem hành trình</span>
-            <span data-i18n="en">Watch My Journey</span>
-          </a>
-          <a href="#social" class="btn btn-secondary">
-            <span data-i18n="vi">Liên hệ</span>
-            <span data-i18n="en">Contact Me</span>
-          </a>
+          <a href="#products" class="btn btn-primary">{t.ctaProducts}</a>
+          <a href="#journey" class="btn btn-secondary">{t.ctaJourney}</a>
+          <a href="#social" class="btn btn-secondary">{t.ctaContact}</a>
         </div>
       </section>
 
@@ -271,25 +134,9 @@ const faq = [
         data-screen-label="About"
       >
         <div class="about-card">
-          <div class="eyebrow">
-            <span data-i18n="vi">Về Timond Lab</span>
-            <span data-i18n="en">About Timond Lab</span>
-          </div>
+          <div class="eyebrow">{t.aboutEyebrow}</div>
           <div class="about-body">
-            <p data-i18n="vi">
-              Timond Lab là studio sáng tạo kết hợp phát triển phần mềm với nghệ
-              thuật mô hình thủ công — nơi công nghệ và thủ công gặp nhau để tạo
-              ra những sản phẩm độc bản, cùng câu chuyện phía sau từng ý tưởng:
-              từ concept, in 3D, đổ resin, sơn vẽ, đóng gói đến phát triển phần
-              mềm.
-            </p>
-            <p data-i18n="en">
-              Timond Lab is a creative studio blending software development with
-              handcrafted miniature art — where technology and craftsmanship
-              meet to build unique products, sharing every step of the journey:
-              concept, 3D printing, resin casting, painting, packaging and
-              software development.
-            </p>
+            <p>{t.aboutBody}</p>
           </div>
         </div>
       </section>
@@ -300,10 +147,7 @@ const faq = [
         data-reveal="social"
         data-screen-label="Social Links"
       >
-        <h2 class="section-title">
-          <span data-i18n="vi">Kết nối với Timond Lab</span>
-          <span data-i18n="en">Connect with Timond Lab</span>
-        </h2>
+        <h2 class="section-title">{t.socialTitle}</h2>
         <div class="social-list">
           {
             socials.map((s, i) => (
@@ -353,10 +197,7 @@ const faq = [
             ))
           }
         </div>
-        <p class="no-results" data-role="social-empty" hidden>
-          <span data-i18n="vi">Không tìm thấy kết quả phù hợp.</span>
-          <span data-i18n="en">No matching results.</span>
-        </p>
+        <p class="no-results" data-role="social-empty" hidden>{t.noResults}</p>
       </section>
 
       <section
@@ -365,13 +206,10 @@ const faq = [
         data-reveal="products"
         data-screen-label="Products"
       >
-        <h2 class="section-title">
-          <span data-i18n="vi">Bộ sưu tập nổi bật</span>
-          <span data-i18n="en">Featured Collections</span>
-        </h2>
+        <h2 class="section-title">{t.productsTitle}</h2>
         <div class="products-grid">
           {
-            products.map((p, i) => (
+            c.products.map((p, i) => (
               <div
                 class="product-card"
                 data-filter={p.name.toLowerCase()}
@@ -382,24 +220,18 @@ const faq = [
                     🖼
                   </span>
                   <span class="placeholder-label">{p.name}</span>
-                  {p.img && (
-                    <img
-                      src={p.img}
-                      alt={p.name}
-                      loading="lazy"
-                      onerror="this.remove()"
-                    />
-                  )}
+                  <img
+                    src={p.img}
+                    alt={p.name}
+                    loading="lazy"
+                    onerror="this.remove()"
+                  />
                 </div>
                 <div class="product-body">
                   <div class="product-name">{p.name}</div>
-                  <div class="product-desc">
-                    <span data-i18n="vi">{p.descVi}</span>
-                    <span data-i18n="en">{p.descEn}</span>
-                  </div>
+                  <div class="product-desc">{p.desc}</div>
                   <a href="#" class="product-link">
-                    <span data-i18n="vi">Xem chi tiết</span>
-                    <span data-i18n="en">View Details</span>
+                    {t.viewDetails}
                   </a>
                 </div>
               </div>
@@ -407,8 +239,7 @@ const faq = [
           }
         </div>
         <p class="no-results" data-role="products-empty" hidden>
-          <span data-i18n="vi">Không tìm thấy kết quả phù hợp.</span>
-          <span data-i18n="en">No matching results.</span>
+          {t.noResults}
         </p>
       </section>
 
@@ -418,22 +249,18 @@ const faq = [
         data-reveal="journey"
         data-screen-label="Journey"
       >
-        <h2 class="section-title">
-          <span data-i18n="vi">Hành trình tạo tác phẩm</span>
-          <span data-i18n="en">The Making Journey</span>
-        </h2>
+        <h2 class="section-title">{t.journeyTitle}</h2>
         <div class="journey-wrap">
           <div id="journey-track" class="journey-track">
             <div id="journey-runner" class="journey-runner"></div>
             {
-              journeySteps.map((step, i) => (
+              c.journeySteps.map((step, i) => (
                 <div class="journey-step" style={`--i:${i}`} data-step={i}>
-                  {i < journeySteps.length - 1 && <div class="journey-line" />}
+                  {i < c.journeySteps.length - 1 && (
+                    <div class="journey-line" />
+                  )}
                   <div class="journey-badge">{i + 1}</div>
-                  <div class="journey-label">
-                    <span data-i18n="vi">{step.vi}</span>
-                    <span data-i18n="en">{step.en}</span>
-                  </div>
+                  <div class="journey-label">{step}</div>
                 </div>
               ))
             }
@@ -448,21 +275,11 @@ const faq = [
         data-reveal="buildpublic"
         data-screen-label="Build in Public"
       >
-        <h2 class="section-title" style="margin-bottom:4px">
-          <span data-i18n="vi">Build in Public</span>
-          <span data-i18n="en">Build in Public</span>
-        </h2>
-        <div class="section-sub">
-          <span data-i18n="vi"
-            >Dự án mới nhất, hậu trường & hành trình học hỏi</span
-          >
-          <span data-i18n="en"
-            >Latest projects, behind the scenes & the learning journey</span
-          >
-        </div>
+        <h2 class="section-title" style="margin-bottom:4px">{t.bipTitle}</h2>
+        <div class="section-sub">{t.bipSub}</div>
         <div class="buildpublic-grid">
           {
-            buildPublic.map((v, i) => (
+            c.buildPublic.map((v, i) => (
               <div class="bip-card" style={`--i:${i}`}>
                 <div class="bip-image placeholder" data-slot={v.slotId}>
                   <span class="placeholder-icon" aria-hidden="true">
@@ -471,16 +288,13 @@ const faq = [
                   {v.img && (
                     <img
                       src={v.img}
-                      alt={v.vi}
+                      alt={v.label}
                       loading="lazy"
                       onerror="this.remove()"
                     />
                   )}
                 </div>
-                <div class="bip-label">
-                  <span data-i18n="vi">{v.vi}</span>
-                  <span data-i18n="en">{v.en}</span>
-                </div>
+                <div class="bip-label">{v.label}</div>
               </div>
             ))
           }
@@ -492,19 +306,13 @@ const faq = [
         data-reveal="services"
         data-screen-label="Services"
       >
-        <h2 class="section-title">
-          <span data-i18n="vi">Dịch vụ</span>
-          <span data-i18n="en">Services</span>
-        </h2>
+        <h2 class="section-title">{t.servicesTitle}</h2>
         <div class="services-grid">
           {
-            services.map((sv, i) => (
+            c.services.map((sv, i) => (
               <div class="service-card" style={`--i:${i}`}>
-                <div class="service-icon" set:html={sv.svg} />
-                <div class="service-label">
-                  <span data-i18n="vi">{sv.vi}</span>
-                  <span data-i18n="en">{sv.en}</span>
-                </div>
+                <div class="service-icon" set:html={serviceIcons[sv.key]} />
+                <div class="service-label">{sv.label}</div>
               </div>
             ))
           }
@@ -516,13 +324,10 @@ const faq = [
         data-reveal="values"
         data-screen-label="Values"
       >
-        <h2 class="section-title">
-          <span data-i18n="vi">Giá trị cốt lõi</span>
-          <span data-i18n="en">Values</span>
-        </h2>
+        <h2 class="section-title">{t.valuesTitle}</h2>
         <div class="values-grid">
           {
-            values.map((val, i) => (
+            c.values.map((val, i) => (
               <div class="value-item" style={`--i:${i}`}>
                 <div class="value-check">
                   <svg
@@ -538,10 +343,7 @@ const faq = [
                     <polyline points="5,13 10,18 19,7" />
                   </svg>
                 </div>
-                <div class="value-label">
-                  <span data-i18n="vi">{val.vi}</span>
-                  <span data-i18n="en">{val.en}</span>
-                </div>
+                <div class="value-label">{val}</div>
               </div>
             ))
           }
@@ -549,27 +351,18 @@ const faq = [
       </section>
 
       <section class="section reveal" data-reveal="faq" data-screen-label="FAQ">
-        <h2 class="section-title">
-          <span data-i18n="vi">Câu hỏi thường gặp</span>
-          <span data-i18n="en">FAQ</span>
-        </h2>
+        <h2 class="section-title">{t.faqTitle}</h2>
         <div class="faq-list">
           {
-            faq.map((item, i) => (
+            c.faq.map((item, i) => (
               <details class="faq-item" style={`--i:${i}`}>
                 <summary class="faq-question">
-                  <span class="faq-question-text">
-                    <span data-i18n="vi">{item.qVi}</span>
-                    <span data-i18n="en">{item.qEn}</span>
-                  </span>
+                  <span class="faq-question-text">{item.q}</span>
                   <span class="faq-icon" aria-hidden="true">
                     +
                   </span>
                 </summary>
-                <div class="faq-answer">
-                  <span data-i18n="vi">{item.aVi}</span>
-                  <span data-i18n="en">{item.aEn}</span>
-                </div>
+                <div class="faq-answer">{item.a}</div>
               </details>
             ))
           }
@@ -579,22 +372,9 @@ const faq = [
 
     <div class="closing-wrap">
       <div class="closing-card">
-        <div class="closing-title">
-          <span data-i18n="vi">Sẵn sàng bắt đầu?</span>
-          <span data-i18n="en">Ready to start?</span>
-        </div>
-        <div class="closing-sub">
-          <span data-i18n="vi"
-            >Liên hệ Timond Lab để đặt sản phẩm hoặc trao đổi ý tưởng của bạn.</span
-          >
-          <span data-i18n="en"
-            >Reach out to Timond Lab to order a piece or talk through your idea.</span
-          >
-        </div>
-        <a href="#social" class="btn btn-primary">
-          <span data-i18n="vi">Liên hệ</span>
-          <span data-i18n="en">Contact Me</span>
-        </a>
+        <div class="closing-title">{t.closingTitle}</div>
+        <div class="closing-sub">{t.closingSub}</div>
+        <a href="#social" class="btn btn-primary">{t.closingCta}</a>
       </div>
     </div>
 
@@ -608,7 +388,7 @@ const faq = [
       id="back-to-top"
       class="back-to-top"
       type="button"
-      aria-label="Back to top"
+      aria-label={t.backToTop}
       hidden>↑</button
     >
   </body>
@@ -662,16 +442,6 @@ const faq = [
   }
   a {
     color: inherit;
-  }
-
-  [data-i18n="en"] {
-    display: none;
-  }
-  html[data-lang="en"] [data-i18n="en"] {
-    display: unset;
-  }
-  html[data-lang="en"] [data-i18n="vi"] {
-    display: none;
   }
 
   @keyframes fadeUp {
@@ -741,6 +511,7 @@ const faq = [
   }
   .pill-btn {
     cursor: pointer;
+    text-decoration: none;
     font: inherit;
     font-size: 12px;
     font-weight: 700;
@@ -1390,25 +1161,9 @@ const faq = [
     }
   });
 
-  const langToggle = document.getElementById("lang-toggle")!;
   const searchInput = document.getElementById(
     "search-input",
   ) as HTMLInputElement;
-  function applyLang(lang: string) {
-    root.setAttribute("data-lang", lang);
-    langToggle.textContent = lang === "vi" ? "VI" : "EN";
-    const key =
-      lang === "vi" ? "data-i18n-placeholder-vi" : "data-i18n-placeholder-en";
-    const placeholder = searchInput.getAttribute(key);
-    if (placeholder) searchInput.setAttribute("placeholder", placeholder);
-  }
-  const savedLang = localStorage.getItem("lang");
-  if (savedLang === "en") applyLang("en");
-  langToggle.addEventListener("click", () => {
-    const next = root.getAttribute("data-lang") === "vi" ? "en" : "vi";
-    applyLang(next);
-    localStorage.setItem("lang", next);
-  });
 
   function filterList(
     input: string,
