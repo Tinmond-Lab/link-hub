@@ -1,0 +1,110 @@
+---
+import { getContent } from "../../i18n/content";
+import type { Locale } from "../../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { hero } = getContent(Astro.props.locale);
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="media">
+    <img
+      src="/products/prod-thap.webp"
+      alt={hero.imageAlt}
+      width="1000"
+      height="1000"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
+  <div class="copy">
+    <p class="eyebrow">{hero.eyebrow}</p>
+    <h1 id="hero-title">{hero.title}</h1>
+    <p class="subtitle">{hero.subtitle}</p>
+    <div class="ctas">
+      {
+        hero.ctas.map((cta) => (
+          <a href={cta.href} class={`btn btn-${cta.variant}`}>
+            {cta.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 0 8px;
+  }
+  .media {
+    background: var(--surface);
+  }
+  .media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  .copy {
+    padding: 40px var(--gutter) 0;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(38px, 6vw, 72px);
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  .subtitle {
+    max-width: 46ch;
+    margin: 24px 0 0;
+    color: var(--muted);
+    font-size: 18px;
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 36px;
+  }
+  @media (min-width: 640px) and (max-width: 899px) {
+    .media {
+      margin: 24px var(--gutter) 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    /* Keep the headline in the first screen on tablets. */
+    .media img {
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      object-position: 50% 20%;
+    }
+  }
+  @media (min-width: 900px) {
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+      gap: clamp(40px, 5vw, 80px);
+      padding: 56px var(--gutter) 0;
+    }
+    .copy {
+      grid-area: 1 / 1;
+      padding: 0;
+    }
+    .media {
+      grid-area: 1 / 2;
+      max-width: 1000px;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+  }
+</style>

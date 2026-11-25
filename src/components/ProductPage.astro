@@ -1,5 +1,5 @@
 ---
-import InfoPage from "./InfoPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 import { getContent } from "../i18n/content";
 import { productJsonLd } from "../seo/jsonld";
 import { SITE_URL, localePath, type Locale } from "../i18n/locales";
@@ -17,7 +17,7 @@ const price =
   product.priceUsd === null ? t.priceOnRequest : `$${product.priceUsd} USD`;
 ---
 
-<InfoPage
+<BaseLayout
   locale={locale}
   path={`/products/${slug}/`}
   title={`${product.name} · Timond Lab`}
@@ -25,42 +25,101 @@ const price =
   image={`${SITE_URL}${product.img}`}
   jsonLd={[productJsonLd(locale, product)]}
 >
-  <h1>{product.name}</h1>
-  <p class="lead">{product.desc}</p>
-  <img
-    class="hero-img"
-    src={product.img}
-    alt={product.name}
-    width="720"
-    height="540"
-  />
-  <div class="card facts">
-    <div><strong>{t.priceLabel}:</strong> {price}</div>
-    <div>
-      <strong>{t.leadTimeLabel}:</strong>{" "}
-      {product.leadTime ?? t.quotedPerOrder}
+  <article class="product">
+    <div class="frame">
+      <img
+        src={product.img}
+        alt={product.name}
+        width="720"
+        height="540"
+        fetchpriority="high"
+      />
     </div>
-  </div>
-  <p>
-    <a class="btn" href={`mailto:timondlab@gmail.com?subject=${subject}`}
-      >{t.productEnquire}</a
-    >
-  </p>
-  <p class="more">
-    <a href={localePath(locale, "/shipping/")}>{t.shippingLink}</a>{" "}
-    ·{" "}
-    <a href={localePath(locale, "/commission/")}>{t.commissionLink}</a>
-  </p>
-</InfoPage>
+    <div class="details">
+      <h1>{product.name}</h1>
+      <p class="lead">{product.desc}</p>
+      <div class="facts">
+        <div><strong>{t.priceLabel}:</strong> {price}</div>
+        <div>
+          <strong>{t.leadTimeLabel}:</strong>{" "}
+          {product.leadTime ?? t.quotedPerOrder}
+        </div>
+      </div>
+      <p>
+        <a
+          class="btn btn-primary"
+          href={`mailto:timondlab@gmail.com?subject=${subject}`}
+          >{t.productEnquire}</a
+        >
+      </p>
+      <p class="more">
+        <a href={localePath(locale, "/shipping/")}>{t.shippingLink}</a>{" "}
+        ·{" "}
+        <a href={localePath(locale, "/commission/")}>{t.commissionLink}</a>
+      </p>
+    </div>
+  </article>
+</BaseLayout>
 
 <style>
-  .hero-img {
+  .product {
+    display: grid;
+    gap: 32px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 32px var(--gutter) 0;
+  }
+  .frame {
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  .frame img {
+    display: block;
     width: 100%;
     height: auto;
-    border-radius: 16px;
-    margin-bottom: 16px;
+  }
+  h1 {
+    margin: 0 0 16px;
+    font-size: clamp(32px, 5vw, 48px);
+  }
+  .lead {
+    margin: 0 0 28px;
+    color: var(--muted);
+    font-size: 18px;
   }
   .facts {
-    margin-bottom: 20px;
+    display: grid;
+    gap: 10px;
+    margin: 0 0 28px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .facts strong {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .more {
+    margin-top: 24px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .more a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  @media (min-width: 900px) {
+    .product {
+      grid-template-columns: 3fr 2fr;
+      align-items: start;
+      gap: 56px;
+      padding-top: 48px;
+    }
+    .details {
+      position: sticky;
+      top: 96px;
+    }
   }
 </style>

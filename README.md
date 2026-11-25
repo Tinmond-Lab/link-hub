@@ -2,7 +2,7 @@
 
 A bilingual (VI/EN) link-in-bio landing page with a separate indexable URL per language for **Timond Lab**, a studio blending software development with handcrafted miniature art (diorama, resin figures, figure painting). Built with [Astro](https://astro.build).
 
-Live sections: hero, about, social links (with live search filter), featured products, the making journey, build-in-public, services, values, and FAQ — plus a light/dark theme persisted in `localStorage`. Vietnamese lives at `/`, English at `/en/`; the language toggle is a plain link between the two.
+A dark "gallery" studio site. The home page sections are a hero, selected works, process, latest video, about, a commission band and an FAQ. The full list of social channels lives on a separate `/links/` page (`/en/links/` in English). Vietnamese lives at `/`, English at `/en/`; the language toggle is a plain link between the two. The theme is dark only, with tokens in `src/styles/theme.css`.
 
 ## Project Structure
 
@@ -12,14 +12,25 @@ Live sections: hero, about, social links (with live search filter), featured pro
 ├── src/
 │   ├── i18n/          # locales.ts (URL helpers) and content.ts (all copy and data per locale)
 │   ├── seo/           # JSON-LD builders
-│   ├── components/    # Home, InfoPage, ProductPage, CommissionPage, ShippingPage, HeadMeta
-│   └── pages/         # index, commission, shipping, products/[slug] — each with an en/ twin
+│   ├── layouts/       # BaseLayout: header, footer, skip link, mobile menu, reveal script
+│   ├── components/    # Home, LinksPage, ProductPage, CommissionPage, ShippingPage, header/footer, social icons
+│   │   └── home/      # Home sections: Hero, Works, Process, LatestVideo, About, CommissionBand, Faq
+│   ├── styles/        # theme.css (design tokens, buttons, base styles)
+│   └── pages/         # index, links, commission, shipping, products/[slug] — each with an en/ twin
 ├── tests/             # node:test assertions on the built dist/ (npm test)
 ├── .github/workflows/     # CI: lint, format, build, lighthouse, broken-link check
 └── package.json
 ```
 
-`src/components/Home.astro` is the home page document (markup, scoped styles and a small client script: theme toggle, search filter, scroll-reveal animations, journey step runner). It renders one language per URL from `getContent(locale)`; the pages under `src/pages/` are thin wrappers that pick the locale.
+`src/layouts/BaseLayout.astro` wraps every page (header, footer, skip link, `<details>` mobile menu that closes on Escape, scroll-reveal script that respects `prefers-reduced-motion`). `src/components/Home.astro` composes the sections in `src/components/home/`; each renders one language per URL from `getContent(locale)`. The pages under `src/pages/` are thin wrappers that pick the locale.
+
+### Links page and social bios
+
+`/links/` and `/en/links/` list every channel for that locale. Point social-profile bios (YouTube, TikTok, Facebook, etc.) at `https://timondlab.com/links/` (Vietnamese) or `https://timondlab.com/en/links/`.
+
+### Maker photo
+
+The About section shows a photo of the maker only when `MAKER_PHOTO` in `src/i18n/content.ts` is set. It is `null` by default (no photo is shown). Put the image under `public/` and set it to its path, e.g. `export const MAKER_PHOTO: string | null = "/maker.webp";`.
 
 ### Editing copy and data
 
@@ -56,7 +67,7 @@ When developing with an agent (Claude Code), start the dev server in background 
 
 ## Latest video
 
-The "Latest Video" card on the home page is built at build time from one constant, `LATEST_VIDEO_URL` in `src/i18n/content.ts`. To show a newer video, paste its YouTube link there (Shorts, `watch?v=` and `youtu.be` links all work), then deploy. The thumbnail is derived from the video id (`https://i.ytimg.com/vi/<id>/maxresdefault.jpg`) and the card links to the video.
+The "Latest Video" section on the home page is built at build time from one constant, `LATEST_VIDEO_URL` in `src/i18n/content.ts`. To show a newer video, paste its YouTube link there (Shorts, `watch?v=` and `youtu.be` links all work), then deploy. The thumbnail is derived from the video id (`https://i.ytimg.com/vi/<id>/maxresdefault.jpg`) and the card links to the video.
 
 There is no server code: the site is fully static, so it deploys anywhere.
 

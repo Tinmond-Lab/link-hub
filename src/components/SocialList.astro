@@ -1,0 +1,105 @@
+---
+import { getContent } from "../i18n/content";
+import type { Locale } from "../i18n/locales";
+import { socialBrand } from "./social-brand";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const socials = getContent(locale).socials.map((s) => ({
+  ...s,
+  path: socialBrand(s.key).path,
+  external: !s.href.startsWith("mailto:"),
+}));
+---
+
+<ul class="social-list">
+  {
+    socials.map((s) => (
+      <li>
+        <a
+          href={s.href}
+          {...(s.external ? { target: "_blank", rel: "noopener" } : {})}
+          class="social-item"
+        >
+          {s.path ? (
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d={s.path} />
+            </svg>
+          ) : (
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linejoin="round"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="M4 7l8 6 8-6" />
+            </svg>
+          )}
+          <span class="social-name">{s.name}</span>
+          <span class="social-handle">{s.handle}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .social-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .social-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 56px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .social-item:hover {
+    background: var(--surface-2);
+    border-color: var(--accent);
+  }
+  .social-item svg {
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  .social-name {
+    font-weight: 600;
+  }
+  .social-handle {
+    margin-left: auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--muted);
+    font-size: 14px;
+  }
+</style>

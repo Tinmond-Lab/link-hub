@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SocialList from "./SocialList.astro";
+import { getContent } from "../i18n/content";
+import { localePath, type Locale } from "../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = getContent(locale);
+const ui = content.ui;
+---
+
+<BaseLayout
+  locale={locale}
+  path="/links/"
+  title={ui.linksTitle}
+  description={ui.linksLead}
+>
+  <section class="links">
+    <img src="/favicon-32.png" alt="" width="64" height="64" class="monogram" />
+    <h1>Timond Lab</h1>
+    <p class="lead">{ui.linksLead}</p>
+    <a class="btn btn-primary visit" href={localePath(locale)}
+      >{ui.visitStudio}</a
+    >
+    <SocialList locale={locale} />
+  </section>
+</BaseLayout>
+
+<style>
+  .links {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 48px var(--gutter) 0;
+    text-align: center;
+  }
+  .monogram {
+    align-self: center;
+    border-radius: 8px;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(32px, 6vw, 44px);
+  }
+  .lead {
+    margin: -8px 0 0;
+    color: var(--muted);
+  }
+  .visit {
+    justify-content: center;
+    min-height: 48px;
+  }
+</style>

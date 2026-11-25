@@ -1,0 +1,84 @@
+---
+import { getContent, MAKER_PHOTO } from "../../i18n/content";
+import type { Locale } from "../../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { about, ui: t } = getContent(Astro.props.locale);
+---
+
+<section id="about" class="section reveal" aria-labelledby="about-title">
+  <div class="layout">
+    <header>
+      <p class="eyebrow">{about.eyebrow}</p>
+      <h2 id="about-title" class="section-title">{about.title}</h2>
+      {
+        MAKER_PHOTO && (
+          <img
+            class="portrait"
+            src={MAKER_PHOTO}
+            alt={t.makerPhotoAlt}
+            width="800"
+            height="1000"
+            loading="lazy"
+            decoding="async"
+          />
+        )
+      }
+    </header>
+    <div class="body">
+      <p class="story">{about.body}</p>
+      <ul class="makes">
+        {about.makes.map((m) => <li>{m}</li>)}
+      </ul>
+      <p class="aside">{about.software}</p>
+      <p class="aside">{about.values}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .layout {
+    display: grid;
+    gap: 32px;
+  }
+  .portrait {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    margin-top: 32px;
+    border-radius: var(--radius);
+  }
+  .story {
+    margin: 0;
+    font-size: clamp(19px, 2vw, 23px);
+    line-height: 1.55;
+  }
+  .makes {
+    margin: 32px 0 24px;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--border);
+  }
+  .makes li {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .aside {
+    margin: 8px 0 0;
+    color: var(--muted);
+  }
+  @media (min-width: 900px) {
+    .layout {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 64px;
+      align-items: start;
+    }
+  }
+</style>

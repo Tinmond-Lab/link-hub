@@ -1,12 +1,25 @@
 import { describe, it, before } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const dist = (rel) => resolve(root, "dist", rel);
 const read = (rel) => readFileSync(dist(rel), "utf8");
+
+const workCards = (html) =>
+  [
+    ...html.matchAll(/<article class="work-card"[^>]*>[\s\S]*?<\/article>/g),
+  ].map((m) => m[0]);
+
+const allCss = () => {
+  const dir = dist("_astro");
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".css"))
+    .map((f) => readFileSync(resolve(dir, f), "utf8"))
+    .join("\n");
+};
 
 before(() => {
   execFileSync("npx", ["astro", "build"], { cwd: root, stdio: "pipe" });
@@ -25,15 +38,15 @@ describe("one language per URL", () => {
   it("vi page is Vietnamese only", () => {
     const html = read("index.html");
     assert.doesNotMatch(html, /data-i18n/);
-    assert.match(html, /Khám phá sản phẩm/);
-    assert.doesNotMatch(html, /Explore Products/);
+    assert.match(html, /Xem tác phẩm/);
+    assert.doesNotMatch(html, /View works/);
   });
 
   it("en page is English only", () => {
     const html = read("en/index.html");
     assert.doesNotMatch(html, /data-i18n/);
-    assert.match(html, /Explore Products/);
-    assert.doesNotMatch(html, /Khám phá sản phẩm/);
+    assert.match(html, /View works/);
+    assert.doesNotMatch(html, /Xem tác phẩm/);
   });
 
   it("language toggle links to the other locale", () => {
@@ -47,12 +60,9 @@ describe("one language per URL", () => {
     );
   });
 
-  it("never stores or reads a language preference", () => {
+  it("uses no localStorage", () => {
     for (const f of ["index.html", "en/index.html"]) {
-      const html = read(f);
-      // Astro inlines and minifies the script, turning "theme" into `theme`.
-      assert.match(html, /localStorage\.getItem\([`"']theme[`"']\)/);
-      assert.doesNotMatch(html, /(get|set)Item\([`"']lang[`"']/);
+      assert.doesNotMatch(read(f), /localStorage/);
     }
   });
 });
@@ -60,6 +70,9 @@ describe("one language per URL", () => {
 const SITE = "https://timondlab.com";
 const EN_DESC =
   "Handmade miniatures, dioramas and hand-painted resin figures from Vietnam. Custom commissions welcome, worldwide shipping available.";
+
+const VI_DESC =
+  "Mô hình thu nhỏ, diorama và figure resin sơn tay, làm thủ công tại Việt Nam. Nhận đặt làm theo yêu cầu, giao hàng quốc tế.";
 
 describe("head metadata", () => {
   const pages = [
@@ -95,10 +108,14 @@ describe("head metadata", () => {
     assert.ok(html.includes(`property="og:description" content="${EN_DESC}"`));
   });
 
-  it("vi page keeps Vietnamese title and description", () => {
+  it("vi page has the studio title and description", () => {
     const html = read("index.html");
-    assert.match(html, /<title>Timond Lab · LinkHub<\/title>/);
-    assert.match(html, /studio sáng tạo kết hợp phát triển phần mềm/);
+    assert.match(
+      html,
+      /<title>Timond Lab · Mô hình thủ công &amp; diorama từ Việt Nam<\/title>/,
+    );
+    assert.ok(html.includes(`<meta name="description" content="${VI_DESC}"`));
+    assert.ok(html.includes(`property="og:description" content="${VI_DESC}"`));
   });
 });
 
@@ -182,11 +199,15 @@ describe("product pages", () => {
     assert.equal(existsSync(dist("en/products/prod-soon")), false);
     for (const f of ["index.html", "en/index.html"]) {
       const html = read(f);
-      const card = html.match(
-        /<div class="product-card"[^>]*data-filter="coming soon"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/,
-      );
+      const cards = [
+        ...html.matchAll(
+          /<article class="work-card"[^>]*>[\s\S]*?<\/article>/g,
+        ),
+      ].map((m) => m[0]);
+      const card = cards.find((c) => c.includes("Coming Soon"));
       assert.ok(card, "coming soon card not found");
-      assert.doesNotMatch(card[0], /href=/);
+      assert.doesNotMatch(card, /data-slug=/);
+      assert.doesNotMatch(card, /href=/);
     }
   });
 
@@ -195,9 +216,22 @@ describe("product pages", () => {
       read("en/index.html").includes('href="/en/products/resin-figure/"'),
     );
     assert.ok(read("index.html").includes('href="/products/resin-figure/"'));
-    assert.doesNotMatch(
-      read("en/index.html"),
-      /class="product-link"[^>]*href="#"|href="#"[^>]*class="product-link"/,
+    for (const f of ["index.html", "en/index.html"]) {
+      const cards = workCards(read(f));
+      assert.ok(cards.length > 0, "no work cards found");
+      for (const c of cards) assert.doesNotMatch(c, /href="#"/);
+    }
+  });
+
+  it("work card matcher can detect href=# (guard against vacuous test)", () => {
+    const probe = '<article class="work-card"><a href="#">x</a></article>';
+    assert.match(workCards(probe)[0], /href="#"/);
+  });
+
+  it("vi home marks the English video eyebrow with lang=en", () => {
+    assert.match(
+      read("index.html"),
+      /<[a-z0-9]+[^>]*lang="en"[^>]*>\s*Build in Public\s*</,
     );
   });
 
@@ -234,7 +268,8 @@ describe("commission page", () => {
   it("en mailto asks for reference images, size, budget, deadline and country", () => {
     const html = decodeURIComponent(
       read("en/commission/index.html")
-        .match(/mailto:[^"]+/)[0]
+        // The header and footer also link plain mailto:; pick the commission one, which has a body.
+        .match(/mailto:[^"]+&amp;body=[^"]+/)[0]
         .replace(/&amp;/g, "&"),
     );
     for (const word of [
@@ -286,45 +321,38 @@ describe("channels and hero per locale", () => {
     assert.doesNotMatch(html, /instagram\.com/);
   });
 
-  it("en page lists Email first", () => {
-    const html = read("en/index.html");
-    const hrefs = [
-      ...html.matchAll(/<a href="([^"]+)"[^>]*class="social-item"/g),
-    ].map((m) => m[1]);
-    assert.equal(hrefs[0], "mailto:timondlab@gmail.com");
-    assert.ok(hrefs.includes("https://youtube.com/@timondlab"));
+  it("home still exposes every channel", () => {
+    const vi = read("index.html");
+    for (const href of ["zalo.me", "shopee.vn", "youtube.com/@timondlab"]) {
+      assert.ok(vi.includes(href), `vi home lacks ${href}`);
+    }
+    assert.ok(read("en/index.html").includes("mailto:timondlab@gmail.com"));
   });
 
-  it("vi page keeps Zalo and Shopee and original order", () => {
-    const html = read("index.html");
-    assert.ok(html.includes("zalo.me/84856694766"));
-    assert.ok(html.includes("shopee.vn/timondlab"));
-    const hrefs = [
-      ...html.matchAll(/<a href="([^"]+)"[^>]*class="social-item"/g),
-    ].map((m) => m[1]);
-    assert.equal(hrefs[0], "https://youtube.com/@timondlab");
-  });
-
-  it("en hero promotes commissions; vi hero is unchanged", () => {
+  it("heroes promote commissions", () => {
     const en = read("en/index.html");
     assert.match(
       en,
-      /Handmade miniatures, dioramas &amp; figure painting from Vietnam/,
+      /Dioramas, architectural miniatures and hand-painted resin figures/,
     );
     assert.match(
       en,
-      /<a href="\/en\/commission\/" class="btn btn-primary"[^>]*>Request a custom piece<\/a>/,
+      /<a href="\/en\/commission\/" class="btn btn-primary"[^>]*>Request a commission<\/a>/,
     );
     assert.match(
       en,
-      /<a href="#products" class="btn btn-secondary"[^>]*>Explore Products<\/a>/,
+      /<a href="#works" class="btn btn-secondary"[^>]*>View works<\/a>/,
     );
     const vi = read("index.html");
     assert.match(
       vi,
-      /<a href="#products" class="btn btn-primary"[^>]*>Khám phá sản phẩm<\/a>/,
+      /<a href="\/commission\/" class="btn btn-primary"[^>]*>Đặt làm theo yêu cầu<\/a>/,
     );
-    assert.match(vi, /Lập trình viên phần mềm • Họa sĩ tô mô hình/);
+    assert.match(vi, /Diorama, mô hình kiến trúc và figure resin sơn tay/);
+    for (const html of [en, vi]) {
+      assert.doesNotMatch(html, /Lập trình viên phần mềm/);
+      assert.doesNotMatch(html, /Software Developer/);
+    }
   });
 });
 
@@ -416,8 +444,8 @@ describe("latest video card", () => {
   for (const f of ["index.html", "en/index.html"]) {
     it(`${f}: latest video is a real link with its thumbnail, rendered at build time`, () => {
       const html = read(f);
-      const card = html.match(/<a\b[^>]*class="bip-card"[^>]*>[\s\S]*?<\/a>/);
-      assert.ok(card, "no linked bip-card");
+      const card = html.match(/<a\b[^>]*class="video-card"[^>]*>[\s\S]*?<\/a>/);
+      assert.ok(card, "no linked video-card");
       assert.ok(card[0].includes(`href="${URL}"`));
       assert.match(card[0], /target="_blank"/);
       assert.match(card[0], /rel="noopener/);
@@ -491,4 +519,244 @@ describe("favicon", () => {
     assert.deepEqual(png("favicon-32.png"), { w: 32, h: 32 });
     assert.deepEqual(png("apple-touch-icon.png"), { w: 180, h: 180 });
   });
+});
+
+const cssAll = () => {
+  const dir = dist("_astro");
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".css"))
+    .map((f) => readFileSync(resolve(dir, f), "utf8"))
+    .join("\n");
+};
+
+const INFO_PAGES = [
+  "commission/index.html",
+  "en/commission/index.html",
+  "shipping/index.html",
+  "en/shipping/index.html",
+  ...["nghinh-phong-tower", "miniature-diorama", "resin-figure"].flatMap(
+    (s) => [`products/${s}/index.html`, `en/products/${s}/index.html`],
+  ),
+];
+const CHROME_PAGES = ["index.html", "en/index.html", ...INFO_PAGES];
+
+describe("site chrome", () => {
+  for (const f of CHROME_PAGES) {
+    it(`${f}: header, footer, skip link, main landmark, studio fonts`, () => {
+      const html = read(f);
+      assert.match(html, /<header class="site-header"/);
+      assert.match(html, /<footer class="site-footer"/);
+      assert.match(html, /<a class="skip-link" href="#main"/);
+      assert.match(html, /<main id="main"/);
+      assert.match(html, /family=Archivo/);
+      assert.match(html, /family=Space\+Grotesk/);
+      assert.doesNotMatch(html, /Be\+Vietnam\+Pro/);
+    });
+  }
+
+  it("header anchors point at the home page", () => {
+    const en = read("en/products/resin-figure/index.html");
+    for (const a of ["works", "process", "commission", "about"]) {
+      assert.ok(en.includes(`href="/en/#${a}"`), `missing /en/#${a}`);
+    }
+    assert.ok(
+      read("products/resin-figure/index.html").includes('href="/#works"'),
+    );
+  });
+
+  it("mobile menu is a native details element holding the nav", () => {
+    assert.match(
+      read("en/commission/index.html"),
+      /<details class="site-menu"[\s\S]*href="\/en\/#works"[\s\S]*<\/details>/,
+    );
+  });
+
+  it("language link text is part of its accessible name", () => {
+    for (const [f, label] of [
+      ["commission/index.html", "EN"],
+      ["en/commission/index.html", "VI"],
+    ]) {
+      const m = read(f).match(/<a[^>]*id="lang-toggle"[^>]*>([^<]*)</);
+      assert.ok(m, `no lang-toggle in ${f}`);
+      assert.equal(m[1].trim(), label);
+      const aria = m[0].match(/aria-label="([^"]*)"/);
+      assert.ok(
+        aria && aria[1].startsWith(label),
+        `aria-label must start with ${label}`,
+      );
+    }
+  });
+
+  it("reveal is gated behind html.js and motion respects reduced-motion", () => {
+    const css = cssAll();
+    assert.match(css, /\.js \.reveal/);
+    assert.match(css, /prefers-reduced-motion/);
+    // A .reveal rule that hides content without the .js ancestor would leave it invisible without JS.
+    assert.doesNotMatch(css, /(?<!\.js )\.reveal(\[[^\]]*\])?\{opacity:0/);
+  });
+
+  it("dark tokens are defined", () => {
+    const css = cssAll().toLowerCase();
+    assert.match(css, /--bg:\s*#000(000)?\b/);
+    assert.match(css, /--accent:\s*#4c9aff/);
+  });
+});
+
+describe("links page", () => {
+  const hrefsOf = (html) =>
+    [...html.matchAll(/<a href="([^"]+)"[^>]*class="social-item"/g)].map(
+      (m) => m[1],
+    );
+
+  it("exists in both locales with canonical and hreflang", () => {
+    for (const [file, self] of [
+      ["links/index.html", "/links/"],
+      ["en/links/index.html", "/en/links/"],
+    ]) {
+      assert.ok(existsSync(dist(file)), file);
+      const html = read(file);
+      assert.ok(html.includes(`<link rel="canonical" href="${SITE}${self}"`));
+      assert.ok(html.includes(`hreflang="vi" href="${SITE}/links/"`));
+      assert.ok(html.includes(`hreflang="en" href="${SITE}/en/links/"`));
+    }
+  });
+
+  it("links to the studio home in each locale", () => {
+    assert.match(
+      read("links/index.html"),
+      /<a [^>]*href="\/"[^>]*>\s*Ghé thăm studio\s*<\/a>/,
+    );
+    assert.match(
+      read("en/links/index.html"),
+      /<a [^>]*href="\/en\/"[^>]*>\s*Visit the studio\s*<\/a>/,
+    );
+  });
+
+  it("en lists Email first without Vietnam-only channels", () => {
+    const html = read("en/links/index.html");
+    const hrefs = hrefsOf(html);
+    assert.equal(hrefs[0], "mailto:timondlab@gmail.com");
+    assert.ok(hrefs.includes("https://youtube.com/@timondlab"));
+    assert.doesNotMatch(html, /zalo\.me/);
+    assert.doesNotMatch(html, /shopee\.vn/);
+  });
+
+  it("vi keeps YouTube first plus Zalo and Shopee", () => {
+    const html = read("links/index.html");
+    assert.equal(hrefsOf(html)[0], "https://youtube.com/@timondlab");
+    assert.ok(html.includes("zalo.me"));
+    assert.ok(html.includes("shopee.vn"));
+  });
+
+  it("localizes the page title", () => {
+    assert.match(
+      read("links/index.html"),
+      /<title>Timond Lab · Liên kết<\/title>/,
+    );
+    assert.match(
+      read("en/links/index.html"),
+      /<title>Timond Lab · Links<\/title>/,
+    );
+  });
+
+  it("is in the sitemap", () => {
+    const xml = read("sitemap-0.xml");
+    assert.ok(xml.includes(`<loc>${SITE}/links/</loc>`));
+    assert.ok(xml.includes(`<loc>${SITE}/en/links/</loc>`));
+  });
+});
+
+describe("studio copy and data", () => {
+  it("exposes process chapters, hero, about, maker photo and latest video", async () => {
+    const mod = await import("../src/i18n/content.ts");
+    const chapters = mod.processChapters("en");
+    assert.equal(chapters.length, 6);
+    assert.equal(chapters[0].title, "Idea");
+    assert.equal(chapters[5].text, mod.getContent("en").shipping.intro);
+    assert.equal(
+      mod.getContent("vi").hero.title,
+      "Điêu khắc, in 3D và sơn tay tại Việt Nam.",
+    );
+    assert.equal(mod.MAKER_PHOTO, null);
+    assert.equal(mod.latestVideo.href, mod.LATEST_VIDEO_URL);
+    assert.equal(mod.getContent("en").about.makes.length, 3);
+  });
+});
+
+const htmlFiles = (dir = dist(".")) =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const full = resolve(dir, e.name);
+    if (e.isDirectory()) return htmlFiles(full);
+    return e.name.endsWith(".html") ? [full] : [];
+  });
+
+describe("home page", () => {
+  const pages = ["index.html", "en/index.html"];
+
+  it("home has the four anchor sections", () => {
+    for (const f of pages) {
+      const html = read(f);
+      for (const id of ["works", "process", "about", "commission"]) {
+        assert.ok(html.includes(`id="${id}"`), `${f} lacks #${id}`);
+      }
+    }
+  });
+
+  it("anchored sections clear the sticky header", () => {
+    assert.match(cssAll(), /scroll-margin-top/);
+  });
+
+  it("process shows six chapters", () => {
+    for (const f of pages) {
+      assert.equal((read(f).match(/class="process-step"/g) ?? []).length, 6, f);
+    }
+  });
+
+  it("about has no portrait while MAKER_PHOTO is null", () => {
+    for (const f of pages) {
+      const about = read(f).match(/<section[^>]*id="about"[\s\S]*?<\/section>/);
+      assert.ok(about, `${f}: no #about section`);
+      assert.doesNotMatch(about[0], /<img/);
+    }
+  });
+
+  it("no emoji in rendered HTML", () => {
+    // ©, ® and ™ are Extended_Pictographic but render as text symbols, not emoji.
+    const emoji = /(?![\u00a9\u00ae\u2122])\p{Extended_Pictographic}/u;
+    for (const file of htmlFiles()) {
+      const text = readFileSync(file, "utf8").replace(
+        /<script\b[\s\S]*?<\/script>/g,
+        "",
+      );
+      const m = text.match(emoji);
+      assert.equal(m, null, `${file} contains ${m?.[0]}`);
+    }
+  });
+});
+
+describe("touch targets", () => {
+  for (const sel of [".shipping", ".more"]) {
+    it(`standalone links in ${sel} are at least 44px tall`, () => {
+      const re = new RegExp(
+        `\\${sel}(?:\\[[^\\]]+\\])?\\s+a(?:\\[[^\\]]+\\])?\\{[^}]*min-height:44px`,
+      );
+      const inline = [
+        read("en/index.html"),
+        read("en/products/resin-figure/index.html"),
+      ].join("\n");
+      assert.match(allCss() + inline, re);
+    });
+  }
+});
+
+describe("site header", () => {
+  const css = () => allCss() + read("index.html");
+  for (const sel of [".wordmark", "nav a"]) {
+    it(`${sel} never wraps mid-label (white-space:nowrap)`, () => {
+      const re = new RegExp(
+        `${sel.replace(".", "\\.").replace(" ", "(?:\\[[^\\]]+\\])?\\s+")}(?:\\[[^\\]]+\\])?\\{[^}]*white-space:nowrap`,
+      );
+      assert.match(css(), re);
+    });
+  }
 });

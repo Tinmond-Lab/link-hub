@@ -1,0 +1,103 @@
+---
+import { getContent } from "../../i18n/content";
+import { localePath, type Locale } from "../../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { faq, ui: t } = getContent(locale);
+---
+
+<section class="section reveal" aria-labelledby="faq-title">
+  <div class="layout">
+    <div>
+      <p class="eyebrow">{t.faqEyebrow}</p>
+      <h2 id="faq-title" class="section-title">{t.faqTitle}</h2>
+    </div>
+    <div class="list">
+      {
+        faq.map((f) => (
+          <details>
+            <summary>
+              <span>{f.q}</span>
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                aria-hidden="true"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </summary>
+            <div class="faq-answer">
+              {f.a}{" "}
+              {f.link && (
+                <a href={localePath(locale, f.link.path)}>{f.link.label}</a>
+              )}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .layout {
+    display: grid;
+    gap: 32px;
+  }
+  .list {
+    border-top: 1px solid var(--border);
+  }
+  details {
+    border-bottom: 1px solid var(--border);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 64px;
+    padding: 16px 0;
+    font-family: var(--font-heading);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary svg {
+    flex: none;
+    color: var(--muted);
+    transition: transform 0.3s ease;
+  }
+  details[open] summary svg {
+    transform: rotate(45deg);
+  }
+  .faq-answer {
+    max-width: 60ch;
+    padding: 0 0 24px;
+    color: var(--muted);
+  }
+  .faq-answer a {
+    display: inline-block;
+    padding: 4px 0;
+  }
+  @media (min-width: 900px) {
+    .layout {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 64px;
+      align-items: start;
+    }
+  }
+</style>
