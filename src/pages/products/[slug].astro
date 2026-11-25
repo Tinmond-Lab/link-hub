@@ -1,0 +1,12 @@
+---
+import ProductPage from "../../components/ProductPage.astro";
+import { getContent } from "../../i18n/content";
+
+export function getStaticPaths() {
+  return getContent("vi")
+    .products.filter((p) => p.slug)
+    .map((p) => ({ params: { slug: p.slug! } }));
+}
+---
+
+<ProductPage locale="vi" slug={Astro.params.slug!} />

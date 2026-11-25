@@ -1,8 +1,8 @@
 # LinkHub — Timond Lab
 
-A bilingual (VI/EN) link-in-bio landing page for **Timond Lab**, a studio blending software development with handcrafted miniature art (diorama, resin figures, figure painting). Built with [Astro](https://astro.build).
+A bilingual (VI/EN) link-in-bio landing page with a separate indexable URL per language for **Timond Lab**, a studio blending software development with handcrafted miniature art (diorama, resin figures, figure painting). Built with [Astro](https://astro.build).
 
-Live sections: hero, about, social links (with live search filter), featured products, the making journey, build-in-public, services, values, and FAQ — plus light/dark theme and VI/EN language toggle, both persisted in `localStorage`.
+Live sections: hero, about, social links (with live search filter), featured products, the making journey, build-in-public, services, values, and FAQ — plus a light/dark theme persisted in `localStorage`. Vietnamese lives at `/`, English at `/en/`; the language toggle is a plain link between the two.
 
 ## Project Structure
 
@@ -10,13 +10,32 @@ Live sections: hero, about, social links (with live search filter), featured pro
 /
 ├── public/            # Static assets (favicon, avatar)
 ├── src/
-│   └── pages/
-│       └── index.astro   # The entire single-page site
+│   ├── i18n/          # locales.ts (URL helpers) and content.ts (all copy and data per locale)
+│   ├── seo/           # JSON-LD builders
+│   ├── components/    # Home, InfoPage, ProductPage, CommissionPage, ShippingPage, HeadMeta
+│   └── pages/         # index, commission, shipping, products/[slug] — each with an en/ twin
+├── tests/             # node:test assertions on the built dist/ (npm test)
 ├── .github/workflows/     # CI: lint, format, build, lighthouse, broken-link check
 └── package.json
 ```
 
-The site is currently a single page (`src/pages/index.astro`) containing markup, scoped styles, and a small client-side script (theme/language toggle, search filter, scroll-reveal animations, journey step runner).
+`src/components/Home.astro` is the home page document (markup, scoped styles and a small client script: theme toggle, search filter, scroll-reveal animations, journey step runner). It renders one language per URL from `getContent(locale)`; the pages under `src/pages/` are thin wrappers that pick the locale.
+
+### Editing copy and data
+
+All text, products, FAQ and social links live in `src/i18n/content.ts`. Add or change a string in both the `vi` and `en` objects. Product pages are generated from `products` entries that have a `slug`.
+
+### Still needed from the owner
+
+These ship as safe placeholders ("Price on request", "Quoted per order") until filled in `content.ts`:
+
+- `priceUsd` and `leadTime` for each product, in the `productFacts` table in `content.ts` (a product with `priceUsd: null` emits no `offers` in its JSON-LD)
+- the shipping table (`shipping.regions`) and the wording of `dutiesNotice` / `returnsNotice`
+- `INSTAGRAM_URL` (the Instagram link stays hidden on the English page while it is `null`)
+
+## Tests
+
+`npm test` builds the site and asserts on the generated HTML in `dist/`: locale routing, hreflang/canonical/OG tags, sitemap, JSON-LD, product/commission/shipping pages, and per-locale channels.
 
 ## Commands
 

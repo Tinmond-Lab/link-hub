@@ -1,0 +1,59 @@
+---
+import InfoPage from "./InfoPage.astro";
+import { getContent } from "../i18n/content";
+import type { Locale } from "../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const c = getContent(locale).shipping;
+const quoted = getContent(locale).ui.quotedPerOrder;
+---
+
+<InfoPage
+  locale={locale}
+  path="/shipping/"
+  title={`${c.title} · Timond Lab`}
+  description={c.intro}
+>
+  <h1>{c.title}</h1>
+  <p class="lead">{c.intro}</p>
+
+  <table class="rates">
+    <thead>
+      <tr><th>{c.regionCol}</th><th>{c.timeCol}</th><th>{c.costCol}</th></tr>
+    </thead>
+    <tbody>
+      {
+        c.regions.map((r) => (
+          <tr>
+            <td>{r.name}</td>
+            <td>{r.days ?? quoted}</td>
+            <td>{r.cost}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <h2>{c.dutiesTitle}</h2>
+  <p>{c.dutiesNotice}</p>
+
+  <h2>{c.returnsTitle}</h2>
+  <p>{c.returnsNotice}</p>
+</InfoPage>
+
+<style>
+  .rates {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .rates th,
+  .rates td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+</style>

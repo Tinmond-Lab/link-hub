@@ -1,0 +1,66 @@
+---
+import InfoPage from "./InfoPage.astro";
+import { getContent } from "../i18n/content";
+import { productJsonLd } from "../seo/jsonld";
+import { SITE_URL, localePath, type Locale } from "../i18n/locales";
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const t = getContent(locale).ui;
+const product = getContent(locale).products.find((p) => p.slug === slug)!;
+const subject = encodeURIComponent(`${t.enquirySubject}: ${product.name}`);
+const price =
+  product.priceUsd === null ? t.priceOnRequest : `$${product.priceUsd} USD`;
+---
+
+<InfoPage
+  locale={locale}
+  path={`/products/${slug}/`}
+  title={`${product.name} · Timond Lab`}
+  description={product.desc}
+  image={`${SITE_URL}${product.img}`}
+  jsonLd={[productJsonLd(locale, product)]}
+>
+  <h1>{product.name}</h1>
+  <p class="lead">{product.desc}</p>
+  <img
+    class="hero-img"
+    src={product.img}
+    alt={product.name}
+    width="720"
+    height="540"
+  />
+  <div class="card facts">
+    <div><strong>{t.priceLabel}:</strong> {price}</div>
+    <div>
+      <strong>{t.leadTimeLabel}:</strong>{" "}
+      {product.leadTime ?? t.quotedPerOrder}
+    </div>
+  </div>
+  <p>
+    <a class="btn" href={`mailto:timondlab@gmail.com?subject=${subject}`}
+      >{t.productEnquire}</a
+    >
+  </p>
+  <p class="more">
+    <a href={localePath(locale, "/shipping/")}>{t.shippingLink}</a>{" "}
+    ·{" "}
+    <a href={localePath(locale, "/commission/")}>{t.commissionLink}</a>
+  </p>
+</InfoPage>
+
+<style>
+  .hero-img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+  .facts {
+    margin-bottom: 20px;
+  }
+</style>
