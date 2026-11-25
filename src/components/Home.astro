@@ -30,6 +30,14 @@ const brand = {
   email: { color: "var(--accent)", path: null },
 } as const;
 const socials = c.socials.map((s) => ({ ...s, ...brand[s.key] }));
+// The card that carries a link (the latest video) renders as <a>, the rest as <div>.
+const bipCards = c.buildPublic.map((v) => ({
+  ...v,
+  Tag: (v.href ? "a" : "div") as "a" | "div",
+  linkAttrs: (v.href
+    ? { href: v.href, target: "_blank", rel: "noopener" }
+    : {}) as Record<string, string>,
+}));
 const serviceIcons = {
   code: iconCode,
   cuboid: iconCuboid,
@@ -268,8 +276,8 @@ const serviceIcons = {
         <div class="section-sub">{t.bipSub}</div>
         <div class="buildpublic-grid">
           {
-            c.buildPublic.map((v, i) => (
-              <div class="bip-card" style={`--i:${i}`}>
+            bipCards.map(({ Tag, linkAttrs, ...v }, i) => (
+              <Tag class="bip-card" style={`--i:${i}`} {...linkAttrs}>
                 <div class="bip-image placeholder" data-slot={v.slotId}>
                   <span class="placeholder-icon" aria-hidden="true">
                     🖼
@@ -284,7 +292,7 @@ const serviceIcons = {
                   )}
                 </div>
                 <div class="bip-label">{v.label}</div>
-              </div>
+              </Tag>
             ))
           }
         </div>
@@ -946,6 +954,9 @@ const serviceIcons = {
     gap: 14px;
   }
   .bip-card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
     border-radius: 14px;
     overflow: hidden;
     background: var(--surface);
@@ -1267,28 +1278,4 @@ const serviceIcons = {
   backToTop.addEventListener("click", () =>
     window.scrollTo({ top: 0, behavior: "smooth" }),
   );
-
-  const latestVideoSlot = document.querySelector<HTMLElement>(
-    '[data-slot="bip-0"]',
-  );
-  if (latestVideoSlot) {
-    fetch("/api/latest-video.php")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!data || data.error || !data.thumbnailUrl) return;
-        latestVideoSlot.classList.remove("placeholder");
-        latestVideoSlot.innerHTML = "";
-        latestVideoSlot.style.backgroundImage = `url(${data.thumbnailUrl})`;
-        latestVideoSlot.style.backgroundSize = "cover";
-        latestVideoSlot.style.backgroundPosition = "center";
-        const card = latestVideoSlot.closest<HTMLElement>(".bip-card");
-        if (card && data.videoUrl) {
-          card.style.cursor = "pointer";
-          card.addEventListener("click", () =>
-            window.open(data.videoUrl, "_blank", "noopener"),
-          );
-        }
-      })
-      .catch(() => {});
-  }
 </script>
