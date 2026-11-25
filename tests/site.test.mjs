@@ -386,3 +386,14 @@ describe("product page spacing", () => {
     }
   });
 });
+
+describe("Cloudflare deploy config", () => {
+  it("wrangler.jsonc deploys the static dist/ so wrangler never auto-configures an adapter", () => {
+    const cfg = JSON.parse(
+      readFileSync(resolve(root, "wrangler.jsonc"), "utf8"),
+    );
+    assert.equal(cfg.name, "link-hub");
+    assert.equal(cfg.assets.directory, "./dist");
+    assert.match(cfg.compatibility_date, /^\d{4}-\d{2}-\d{2}$/);
+  });
+});
