@@ -201,3 +201,24 @@ html.js .reveal.is-visible {
   height: 0;
   scroll-margin-top: 64px;
 }
+
+/* A text-only button for the least important action next to the main ones. */
+.btn-quiet {
+  padding-inline: 4px;
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-color: transparent;
+  transition:
+    color 0.3s var(--ease-soft),
+    text-decoration-color 0.3s var(--ease-soft),
+    transform 0.3s var(--ease);
+}
+
+.btn-quiet:hover {
+  background: transparent;
+  color: var(--text);
+  text-decoration-color: currentColor;
+}

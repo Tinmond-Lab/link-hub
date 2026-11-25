@@ -4,6 +4,8 @@ Status: approved by the owner (direction A; the owner answered "ok" to the recom
 
 ## Owner decisions
 
+- **Primary action is a chat, not a form or an email (owner request after launch).** The hero, the home commission band, the commission page and every product page offer two buttons, "Message on Facebook" (`MESSENGER_URL`, a `m.me` link to the Facebook page) and "Message on Zalo" (`ZALO_URL`), shown on both locales. The commission page still explains what to send in the chat; the pre-filled email is gone. The header nav item is "Contact" / "Liên hệ". The footer and `/links` keep the full channel lists (English still hides Zalo, Shopee and an unset Instagram there).
+
 - **Both locales get the studio positioning.** The Vietnamese home page changes like the English one: new title, meta description, OG text, hero subtitle and primary CTA (to the commission page). "Software developer" is no longer part of the hero on either locale; software development stays as one secondary line in About. Tests that pinned the old VI hero, title and description are updated to the new intended copy.
 - **Photos are treated as unverified.** Until the owner confirms which images are real photos of their work and supplies a maker photo: About has no portrait (layout is typographic, with an optional `MAKER_PHOTO: string | null = null` in `content.ts` that shows a photo when set); Process chapters are typographic; `bip-1` and `bip-2` are not shown as proof of process or as the maker. Product images stay in Selected works as the catalog.
 

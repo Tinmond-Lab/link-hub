@@ -235,12 +235,15 @@ describe("product pages", () => {
     );
   });
 
-  it("enquiry mailto includes the product name in the subject", () => {
-    const html = read("en/products/resin-figure/index.html");
-    assert.match(
-      html,
-      /mailto:timondlab@gmail\.com\?subject=[^"]*Resin%20Figure/,
-    );
+  it("enquiries go to Facebook and Zalo chat, not email", () => {
+    for (const [f, labels] of [
+      ["en/products/resin-figure/index.html", CHAT.en],
+      ["products/resin-figure/index.html", CHAT.vi],
+    ]) {
+      const html = read(f);
+      assertChatLinks(html, labels, f);
+      assert.doesNotMatch(html, /mailto:timondlab@gmail\.com\?subject=/);
+    }
   });
 });
 
@@ -249,15 +252,13 @@ describe("commission page", () => {
     ["vi", "", `${SITE}/commission/`],
     ["en", "en/", `${SITE}/en/commission/`],
   ]) {
-    it(`${prefix}commission: six steps, enquiry mailto, canonical and hreflang`, () => {
+    it(`${prefix}commission: six steps, chat buttons, canonical and hreflang`, () => {
       const file = `${prefix}commission/index.html`;
       assert.ok(existsSync(dist(file)), `${file} missing`);
       const html = read(file);
       assert.equal((html.match(/<li class="step"/g) ?? []).length, 6);
-      assert.match(
-        html,
-        /mailto:timondlab@gmail\.com\?subject=[^"]+&amp;body=[^"]+/,
-      );
+      assertChatLinks(html, CHAT[locale], file);
+      assert.doesNotMatch(html, /mailto:[^"]*body=/);
       assert.ok(html.includes(`<link rel="canonical" href="${self}"`));
       assert.ok(html.includes(`hreflang="vi" href="${SITE}/commission/"`));
       assert.ok(html.includes(`hreflang="en" href="${SITE}/en/commission/"`));
@@ -265,21 +266,16 @@ describe("commission page", () => {
     });
   }
 
-  it("en mailto asks for reference images, size, budget, deadline and country", () => {
-    const html = decodeURIComponent(
-      read("en/commission/index.html")
-        // The header and footer also link plain mailto:; pick the commission one, which has a body.
-        .match(/mailto:[^"]+&amp;body=[^"]+/)[0]
-        .replace(/&amp;/g, "&"),
-    );
+  it("tells visitors what to send in the chat", () => {
+    const html = read("en/commission/index.html");
     for (const word of [
       "Reference images",
-      "size",
+      "Approximate size",
       "Budget",
       "Deadline",
       "Country",
     ]) {
-      assert.ok(html.includes(word), `mailto body lacks ${word}`);
+      assert.ok(html.includes(word), `commission page lacks "${word}"`);
     }
   });
 });
@@ -314,9 +310,13 @@ describe("shipping page", () => {
 });
 
 describe("channels and hero per locale", () => {
-  it("en page hides Vietnam-only channels and Instagram while unset", () => {
+  it("en channel lists hide Vietnam-only channels and Instagram while unset", () => {
     const html = read("en/index.html");
-    assert.doesNotMatch(html, /zalo\.me/);
+    const lists = html.match(/<ul class="social-icons"[\s\S]*?<\/ul>/g) ?? [];
+    assert.ok(lists.length >= 2, "expected the header and footer icon lists");
+    for (const list of lists) {
+      assert.doesNotMatch(list, /zalo\.me|shopee\.vn|instagram\.com/);
+    }
     assert.doesNotMatch(html, /shopee\.vn/);
     assert.doesNotMatch(html, /instagram\.com/);
   });
@@ -329,29 +329,48 @@ describe("channels and hero per locale", () => {
     assert.ok(read("en/index.html").includes("mailto:timondlab@gmail.com"));
   });
 
-  it("heroes promote commissions", () => {
+  it("heroes send people to chat on Facebook or Zalo", () => {
     const en = read("en/index.html");
+    const vi = read("index.html");
     assert.match(
       en,
       /Dioramas, architectural miniatures and hand-painted resin figures/,
     );
-    assert.match(
-      en,
-      /<a href="\/en\/commission\/" class="btn btn-primary"[^>]*>Request a commission<\/a>/,
-    );
-    assert.match(
-      en,
-      /<a href="#works" class="btn btn-secondary"[^>]*>View works<\/a>/,
-    );
-    const vi = read("index.html");
-    assert.match(
-      vi,
-      /<a href="\/commission\/" class="btn btn-primary"[^>]*>Đặt làm theo yêu cầu<\/a>/,
-    );
     assert.match(vi, /Diorama, mô hình kiến trúc và figure resin sơn tay/);
-    for (const html of [en, vi]) {
+    for (const [html, labels, works] of [
+      [en, CHAT.en, "View works"],
+      [vi, CHAT.vi, "Xem tác phẩm"],
+    ]) {
+      assert.match(
+        html,
+        new RegExp(
+          `<a href="${MESSENGER.replace(/[./]/g, "\\$&")}" class="btn btn-primary"[^>]*>${labels.fb}</a>`,
+        ),
+      );
+      assert.match(
+        html,
+        new RegExp(
+          `<a href="${ZALO.replace(/[./]/g, "\\$&")}" class="btn btn-secondary"[^>]*>${labels.zalo}</a>`,
+        ),
+      );
+      assert.match(
+        html,
+        new RegExp(`<a href="#works" class="btn btn-quiet"[^>]*>${works}</a>`),
+      );
       assert.doesNotMatch(html, /Lập trình viên phần mềm/);
       assert.doesNotMatch(html, /Software Developer/);
+    }
+  });
+
+  it("the commission band on the home page also offers the chat buttons", () => {
+    for (const [f, labels] of [
+      ["en/index.html", CHAT.en],
+      ["index.html", CHAT.vi],
+    ]) {
+      const band = read(f).match(
+        /<section[^>]*id="commission"[\s\S]*?<\/section>/,
+      )[0];
+      assertChatLinks(band, labels, `${f} commission band`);
     }
   });
 });
@@ -527,6 +546,36 @@ const cssAll = () => {
     .filter((f) => f.endsWith(".css"))
     .map((f) => readFileSync(resolve(dir, f), "utf8"))
     .join("\n");
+};
+
+const MESSENGER = "https://m.me/timondlab";
+const ZALO = "https://zalo.me/84856694766";
+const CHAT = {
+  en: { fb: "Message on Facebook", zalo: "Message on Zalo" },
+  vi: { fb: "Nhắn tin Facebook", zalo: "Nhắn tin Zalo" },
+};
+// Both chat buttons are present, link to the right place and open in a new tab.
+const assertChatLinks = (html, labels, where) => {
+  for (const [href, label] of [
+    [MESSENGER, labels.fb],
+    [ZALO, labels.zalo],
+  ]) {
+    const re = new RegExp(
+      `<a[^>]*href="${href.replace(/[./]/g, "\\$&")}"[^>]*>${label}</a>`,
+    );
+    const tag = html.match(re)?.[0];
+    assert.ok(tag, `${where}: no "${label}" link to ${href}`);
+    assert.match(
+      tag,
+      /target="_blank"/,
+      `${where}: ${label} should open in a new tab`,
+    );
+    assert.match(
+      tag,
+      /rel="noopener"/,
+      `${where}: ${label} needs rel=noopener`,
+    );
+  }
 };
 
 const INFO_PAGES = [
