@@ -388,9 +388,9 @@ describe("product page spacing", () => {
 });
 
 describe("Cloudflare deploy config", () => {
-  it("wrangler.jsonc deploys the static dist/ so wrangler never auto-configures an adapter", () => {
+  it("wrangler.json deploys the static dist/ so wrangler never auto-configures an adapter", () => {
     const cfg = JSON.parse(
-      readFileSync(resolve(root, "wrangler.jsonc"), "utf8"),
+      readFileSync(resolve(root, "wrangler.json"), "utf8"),
     );
     assert.equal(cfg.name, "link-hub");
     assert.equal(cfg.assets.directory, "./dist");
