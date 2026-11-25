@@ -619,6 +619,17 @@ describe("links page", () => {
     assert.ok(html.includes("shopee.vn"));
   });
 
+  it("localizes the page title", () => {
+    assert.match(
+      read("links/index.html"),
+      /<title>Timond Lab · Liên kết<\/title>/,
+    );
+    assert.match(
+      read("en/links/index.html"),
+      /<title>Timond Lab · Links<\/title>/,
+    );
+  });
+
   it("is in the sitemap", () => {
     const xml = read("sitemap-0.xml");
     assert.ok(xml.includes(`<loc>${SITE}/links/</loc>`));

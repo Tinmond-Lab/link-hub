@@ -323,6 +323,7 @@ const vi: Content = {
   },
   ui: {
     searchPlaceholder: "Tìm liên kết, sản phẩm...",
+    linksTitle: "Timond Lab · Liên kết",
     linksLead: "Mô hình thủ công từ Việt Nam",
     visitStudio: "Ghé thăm studio",
     langLabel: "EN",
@@ -509,6 +510,7 @@ const en: Content = {
   },
   ui: {
     searchPlaceholder: "Search links, products...",
+    linksTitle: "Timond Lab · Links",
     linksLead: "Handmade miniatures from Vietnam",
     visitStudio: "Visit the studio",
     langLabel: "VI",
