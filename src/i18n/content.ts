@@ -18,6 +18,12 @@ export interface Social {
 }
 
 export interface Content {
+  meta: {
+    title: string;
+    description: string;
+    ogLocale: string;
+    ogAlternate: string;
+  };
   ui: Record<string, string>;
   socials: Social[];
   products: Product[];
@@ -130,6 +136,13 @@ const withLabels = (labels: string[]): Content["services"] =>
   services.map((s, i) => ({ ...s, label: labels[i] }));
 
 const vi: Content = {
+  meta: {
+    title: "Timond Lab · LinkHub",
+    description:
+      "Timond Lab — studio sáng tạo kết hợp phát triển phần mềm với nghệ thuật mô hình thủ công.",
+    ogLocale: "vi_VN",
+    ogAlternate: "en_US",
+  },
   ui: {
     searchPlaceholder: "Tìm liên kết, sản phẩm...",
     langLabel: "EN",
@@ -217,6 +230,13 @@ const vi: Content = {
 };
 
 const en: Content = {
+  meta: {
+    title: "Timond Lab · Handmade miniatures & dioramas from Vietnam",
+    description:
+      "Handmade miniatures, dioramas and hand-painted resin figures from Vietnam. Custom commissions welcome, worldwide shipping available.",
+    ogLocale: "en_US",
+    ogAlternate: "vi_VN",
+  },
   ui: {
     searchPlaceholder: "Search links, products...",
     langLabel: "VI",

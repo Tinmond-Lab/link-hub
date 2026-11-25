@@ -56,3 +56,59 @@ describe("one language per URL", () => {
     }
   });
 });
+
+const SITE = "https://timondlab.com";
+const EN_DESC =
+  "Handmade miniatures, dioramas and hand-painted resin figures from Vietnam. Custom commissions welcome, worldwide shipping available.";
+
+describe("head metadata", () => {
+  const pages = [
+    { file: "index.html", url: `${SITE}/`, ogLocale: "vi_VN" },
+    { file: "en/index.html", url: `${SITE}/en/`, ogLocale: "en_US" },
+  ];
+
+  for (const { file, url, ogLocale } of pages) {
+    it(`${file}: canonical, hreflang and og:locale`, () => {
+      const html = read(file);
+      assert.ok(html.includes(`<link rel="canonical" href="${url}"`));
+      assert.ok(html.includes(`rel="alternate" hreflang="vi" href="${SITE}/"`));
+      assert.ok(
+        html.includes(`rel="alternate" hreflang="en" href="${SITE}/en/"`),
+      );
+      assert.ok(
+        html.includes(
+          `rel="alternate" hreflang="x-default" href="${SITE}/en/"`,
+        ),
+      );
+      assert.ok(html.includes(`property="og:locale" content="${ogLocale}"`));
+      assert.ok(html.includes(`property="og:url" content="${url}"`));
+    });
+  }
+
+  it("en page has English title and description", () => {
+    const html = read("en/index.html");
+    assert.match(
+      html,
+      /<title>Timond Lab · Handmade miniatures &amp; dioramas from Vietnam<\/title>/,
+    );
+    assert.ok(html.includes(`<meta name="description" content="${EN_DESC}"`));
+    assert.ok(html.includes(`property="og:description" content="${EN_DESC}"`));
+  });
+
+  it("vi page keeps Vietnamese title and description", () => {
+    const html = read("index.html");
+    assert.match(html, /<title>Timond Lab · LinkHub<\/title>/);
+    assert.match(html, /studio sáng tạo kết hợp phát triển phần mềm/);
+  });
+});
+
+describe("sitemap", () => {
+  it("lists both locales with alternates and no slash-less /en", () => {
+    const xml = read("sitemap-0.xml");
+    assert.ok(xml.includes(`<loc>${SITE}/</loc>`));
+    assert.ok(xml.includes(`<loc>${SITE}/en/</loc>`));
+    assert.ok(xml.includes('hreflang="en-US"'));
+    assert.ok(xml.includes('hreflang="vi-VN"'));
+    assert.ok(!xml.includes(`${SITE}/en<`));
+  });
+});
