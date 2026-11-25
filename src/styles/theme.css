@@ -186,3 +186,18 @@ html.js .reveal.is-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* Printing never runs the reveal script, so show every section. */
+@media print {
+  html.js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Invisible targets that keep old home links (#products, #journey) working. */
+.anchor-alias {
+  display: block;
+  height: 0;
+  scroll-margin-top: 64px;
+}

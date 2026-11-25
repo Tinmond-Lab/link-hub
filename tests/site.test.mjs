@@ -554,19 +554,24 @@ describe("site chrome", () => {
     });
   }
 
+  const headerOf = (html) =>
+    html.match(/<header class="site-header"[\s\S]*?<\/header>/)[0];
+
   it("header anchors point at the home page", () => {
-    const en = read("en/products/resin-figure/index.html");
+    const en = headerOf(read("en/products/resin-figure/index.html"));
     for (const a of ["works", "process", "commission", "about"]) {
       assert.ok(en.includes(`href="/en/#${a}"`), `missing /en/#${a}`);
     }
     assert.ok(
-      read("products/resin-figure/index.html").includes('href="/#works"'),
+      headerOf(read("products/resin-figure/index.html")).includes(
+        'href="/#works"',
+      ),
     );
   });
 
   it("mobile menu is a native details element holding the nav", () => {
     assert.match(
-      read("en/commission/index.html"),
+      headerOf(read("en/commission/index.html")),
       /<details class="site-menu"[\s\S]*href="\/en\/#works"[\s\S]*<\/details>/,
     );
   });
@@ -635,15 +640,26 @@ describe("links page", () => {
   it("en lists Email first without Vietnam-only channels", () => {
     const html = read("en/links/index.html");
     const hrefs = hrefsOf(html);
-    assert.equal(hrefs[0], "mailto:timondlab@gmail.com");
-    assert.ok(hrefs.includes("https://youtube.com/@timondlab"));
+    assert.deepEqual(hrefs, [
+      "mailto:timondlab@gmail.com",
+      "https://youtube.com/@timondlab",
+      "https://tiktok.com/@timondlab",
+      "https://facebook.com/timondlab",
+    ]);
     assert.doesNotMatch(html, /zalo\.me/);
     assert.doesNotMatch(html, /shopee\.vn/);
   });
 
   it("vi keeps YouTube first plus Zalo and Shopee", () => {
     const html = read("links/index.html");
-    assert.equal(hrefsOf(html)[0], "https://youtube.com/@timondlab");
+    assert.deepEqual(hrefsOf(html), [
+      "https://youtube.com/@timondlab",
+      "https://tiktok.com/@timondlab",
+      "https://facebook.com/timondlab",
+      "https://shopee.vn/timondlab",
+      "https://zalo.me/84856694766",
+      "mailto:timondlab@gmail.com",
+    ]);
     assert.ok(html.includes("zalo.me"));
     assert.ok(html.includes("shopee.vn"));
   });
@@ -672,7 +688,17 @@ describe("studio copy and data", () => {
     const chapters = mod.processChapters("en");
     assert.equal(chapters.length, 6);
     assert.equal(chapters[0].title, "Idea");
-    assert.equal(chapters[5].text, mod.getContent("en").shipping.intro);
+    const c = mod.getContent("en");
+    assert.deepEqual(
+      chapters.map((ch) => ch.text),
+      [0, 2, 3, 4, 5]
+        .map((i) => c.commission.steps[i].text)
+        .concat(c.shipping.intro),
+    );
+    assert.deepEqual(
+      chapters.map((ch) => ch.title),
+      c.journeySteps,
+    );
     assert.equal(
       mod.getContent("vi").hero.title,
       "In 3D, đổ resin và sơn tay tại Việt Nam.",
@@ -780,5 +806,116 @@ describe("copy accuracy", () => {
         `${f} mentions sculpting`,
       );
     }
+  });
+});
+
+// Minimal WebP size reader (VP8, VP8L, VP8X) so image attributes can be checked against the real files.
+const webpSize = (rel) => {
+  const b = readFileSync(resolve(root, "public", rel));
+  assert.equal(b.subarray(8, 12).toString(), "WEBP", `${rel} is not WebP`);
+  const kind = b.subarray(12, 16).toString();
+  if (kind === "VP8X")
+    return { w: 1 + b.readUIntLE(24, 3), h: 1 + b.readUIntLE(27, 3) };
+  if (kind === "VP8 ")
+    return { w: b.readUInt16LE(26) & 0x3fff, h: b.readUInt16LE(28) & 0x3fff };
+  const bits = b.readUInt32LE(21);
+  return { w: 1 + (bits & 0x3fff), h: 1 + ((bits >> 14) & 0x3fff) };
+};
+
+describe("polish after the final review", () => {
+  it("printing does not leave reveal sections invisible", () => {
+    assert.match(cssAll(), /@media print\{[^@]*\.reveal[^}]*opacity:1/);
+  });
+
+  it("the English footer tagline is marked lang=en on vi pages only", () => {
+    const tag = (f) => read(f).match(/<p class="tagline"[^>]*>/)[0];
+    assert.match(tag("index.html"), /lang="en"/);
+    assert.match(tag("commission/index.html"), /lang="en"/);
+    assert.doesNotMatch(tag("en/index.html"), /lang=/);
+  });
+
+  it("English pages use one wording for the commission call to action", () => {
+    for (const f of [
+      "en/index.html",
+      "en/products/resin-figure/index.html",
+      "en/shipping/index.html",
+    ]) {
+      assert.doesNotMatch(read(f), /Request a custom piece/, f);
+      assert.match(read(f), /Request a commission/, f);
+    }
+  });
+
+  it("the footer links the email address once", () => {
+    for (const f of ["index.html", "en/index.html"]) {
+      const footer = read(f).match(
+        /<footer class="site-footer"[\s\S]*?<\/footer>/,
+      )[0];
+      assert.equal((footer.match(/href="mailto:/g) ?? []).length, 1, f);
+    }
+  });
+
+  it("the desktop and mobile navs have different accessible names", () => {
+    const header = read("en/index.html").match(
+      /<header class="site-header"[\s\S]*?<\/header>/,
+    )[0];
+    const names = [...header.matchAll(/<nav[^>]*aria-label="([^"]+)"/g)].map(
+      (m) => m[1],
+    );
+    assert.equal(names.length, 2);
+    assert.notEqual(names[0], names[1]);
+  });
+
+  it("old home anchors still land on the matching sections", () => {
+    for (const f of ["index.html", "en/index.html"]) {
+      const html = read(f);
+      for (const id of ["products", "journey", "social"]) {
+        assert.ok(html.includes(`id="${id}"`), `${f} lacks #${id}`);
+      }
+    }
+  });
+
+  it("product images declare their real dimensions", () => {
+    const pages = [
+      "index.html",
+      "en/index.html",
+      "products/resin-figure/index.html",
+      "products/nghinh-phong-tower/index.html",
+    ];
+    let checked = 0;
+    for (const f of pages) {
+      for (const tag of read(f).match(/<img\b[^>]*>/g) ?? []) {
+        const src = tag.match(/src="(\/products\/[^"]+\.webp)"/)?.[1];
+        if (!src) continue;
+        const real = webpSize(src.slice(1));
+        assert.equal(
+          Number(tag.match(/width="(\d+)"/)?.[1]),
+          real.w,
+          `${f} ${src} width`,
+        );
+        assert.equal(
+          Number(tag.match(/height="(\d+)"/)?.[1]),
+          real.h,
+          `${f} ${src} height`,
+        );
+        checked++;
+      }
+    }
+    assert.ok(checked >= 6, `only ${checked} product images checked`);
+  });
+
+  it("the hero image is not decoded lazily", () => {
+    const tag = read("en/index.html").match(
+      /<img\b[^>]*fetchpriority="high"[^>]*>/,
+    )[0];
+    assert.doesNotMatch(tag, /decoding="async"/);
+  });
+
+  it("the /links monogram is a real 128px asset, not an upscaled favicon", () => {
+    for (const f of ["links/index.html", "en/links/index.html"]) {
+      assert.match(read(f), /<img src="\/monogram-128\.png"/);
+    }
+    const b = readFileSync(dist("monogram-128.png"));
+    assert.equal(b.readUInt32BE(16), 128);
+    assert.equal(b.readUInt32BE(20), 128);
   });
 });

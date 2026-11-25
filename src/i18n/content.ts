@@ -6,6 +6,8 @@ export interface Product {
   name: string;
   desc: string;
   img: string;
+  imgWidth: number;
+  imgHeight: number;
   priceUsd: number | null;
   leadTime: string | null;
 }
@@ -194,24 +196,32 @@ const productBase = [
     slug: "nghinh-phong-tower",
     name: "Tháp Nghinh Phong",
     img: "/products/prod-thap.webp",
+    imgWidth: 1000,
+    imgHeight: 1000,
   },
   {
     slotId: "prod-diorama",
     slug: "miniature-diorama",
     name: "Miniature Diorama",
     img: "/products/prod-diorama.webp",
+    imgWidth: 1000,
+    imgHeight: 750,
   },
   {
     slotId: "prod-figure",
     slug: "resin-figure",
     name: "Resin Figure",
     img: "/products/prod-figure.webp",
+    imgWidth: 1000,
+    imgHeight: 800,
   },
   {
     slotId: "prod-soon",
     slug: null,
     name: "Coming Soon",
     img: "/products/prod-soon.webp",
+    imgWidth: 1000,
+    imgHeight: 750,
   },
 ];
 
@@ -370,6 +380,7 @@ const vi: Content = {
     navCommission: "Đặt làm",
     navAbout: "Giới thiệu",
     menu: "Menu",
+    navMain: "Điều hướng chính",
     skipToContent: "Bỏ qua đến nội dung",
     footerTagline: "Build Ideas Into Reality",
     linksPage: "Tất cả liên kết",
@@ -531,12 +542,13 @@ const en: Content = {
     productEnquire: "Ask about this piece",
     enquirySubject: "Enquiry",
     shippingLink: "Shipping & import duties",
-    commissionLink: "Request a custom piece",
+    commissionLink: "Request a commission",
     navWorks: "Works",
     navProcess: "Process",
     navCommission: "Commission",
     navAbout: "About",
     menu: "Menu",
+    navMain: "Main navigation",
     skipToContent: "Skip to content",
     footerTagline: "Build Ideas Into Reality",
     linksPage: "All links",

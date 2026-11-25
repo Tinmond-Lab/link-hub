@@ -16,6 +16,7 @@ const works = products.map((p) => ({
 ---
 
 <section id="works" class="section reveal" aria-labelledby="works-title">
+  <span id="products" class="anchor-alias"></span>
   <p class="eyebrow">{t.worksEyebrow}</p>
   <h2 id="works-title" class="section-title">{t.worksTitle}</h2>
   <ul class="grid">
@@ -27,8 +28,8 @@ const works = products.map((p) => ({
               <img
                 src={w.img}
                 alt={w.alt}
-                width="1000"
-                height="750"
+                width={w.imgWidth}
+                height={w.imgHeight}
                 loading="lazy"
                 decoding="async"
               />

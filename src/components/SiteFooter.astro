@@ -17,10 +17,12 @@ const links = [
 ];
 ---
 
-<footer class="site-footer">
+<footer class="site-footer" id="social">
   <div class="inner">
     <div class="lead">
-      <p class="tagline">{t.footerTagline}</p>
+      <p class="tagline" lang={locale === "en" ? undefined : "en"}>
+        {t.footerTagline}
+      </p>
       {
         email && (
           <a class="email" href={email.href}>
@@ -28,7 +30,7 @@ const links = [
           </a>
         )
       }
-      <SocialIcons locale={locale} />
+      <SocialIcons locale={locale} omit={["email"]} />
     </div>
     <ul class="links">
       {
