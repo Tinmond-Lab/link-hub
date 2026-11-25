@@ -345,7 +345,17 @@ const serviceIcons = {
                     +
                   </span>
                 </summary>
-                <div class="faq-answer">{item.a}</div>
+                <div class="faq-answer">
+                  {item.a}
+                  {item.link && (
+                    <>
+                      {" "}
+                      <a href={localePath(locale, item.link.path)}>
+                        {item.link.label}
+                      </a>
+                    </>
+                  )}
+                </div>
               </details>
             ))
           }

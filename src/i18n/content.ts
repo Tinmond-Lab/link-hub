@@ -29,8 +29,22 @@ export interface Commission {
   mailIntro: string;
 }
 
+export interface Shipping {
+  title: string;
+  intro: string;
+  regionCol: string;
+  timeCol: string;
+  costCol: string;
+  regions: { name: string; days: string | null; cost: string }[];
+  dutiesTitle: string;
+  dutiesNotice: string;
+  returnsTitle: string;
+  returnsNotice: string;
+}
+
 export interface Content {
   commission: Commission;
+  shipping: Shipping;
   meta: {
     title: string;
     description: string;
@@ -47,7 +61,7 @@ export interface Content {
     label: string;
   }[];
   values: string[];
-  faq: { q: string; a: string }[];
+  faq: { q: string; a: string; link?: { path: string; label: string } }[];
 }
 
 const socials: Social[] = [
@@ -149,6 +163,30 @@ const withLabels = (labels: string[]): Content["services"] =>
   services.map((s, i) => ({ ...s, label: labels[i] }));
 
 const vi: Content = {
+  shipping: {
+    title: "Vận chuyển & thuế",
+    intro:
+      "Timond Lab gửi hàng quốc tế cho một số sản phẩm và đơn custom. Phí và thời gian được báo theo từng đơn, tuỳ quốc gia nhận hàng.",
+    regionCol: "Khu vực",
+    timeCol: "Thời gian",
+    costCol: "Phí vận chuyển",
+    regions: [
+      { name: "Bắc Mỹ", days: null, cost: "Báo theo từng đơn" },
+      { name: "Châu Âu", days: null, cost: "Báo theo từng đơn" },
+      {
+        name: "Châu Á - Thái Bình Dương",
+        days: null,
+        cost: "Báo theo từng đơn",
+      },
+      { name: "Khu vực khác", days: null, cost: "Báo theo từng đơn" },
+    ],
+    dutiesTitle: "Thuế & hải quan",
+    dutiesNotice:
+      "Thuế nhập khẩu, VAT và phí hải quan do nước nhận hàng thu và chưa nằm trong giá sản phẩm. Người mua chịu các khoản này khi nhận hàng.",
+    returnsTitle: "Hàng hư hỏng khi vận chuyển",
+    returnsNotice:
+      "Nếu tác phẩm đến nơi bị hư hỏng, hãy gửi email kèm ảnh để chúng tôi cùng xử lý. Việc đổi trả được thống nhất theo từng trường hợp.",
+  },
   commission: {
     title: "Đặt làm theo yêu cầu",
     intro:
@@ -285,11 +323,32 @@ const vi: Content = {
     {
       q: "Có giao hàng quốc tế không?",
       a: "Có, Timond Lab hỗ trợ giao hàng quốc tế cho một số sản phẩm và đơn custom.",
+      link: { path: "/shipping/", label: "Xem vận chuyển & thuế" },
     },
   ],
 };
 
 const en: Content = {
+  shipping: {
+    title: "Shipping & duties",
+    intro:
+      "Timond Lab ships internationally for select products and custom orders. Cost and delivery time are quoted per order, depending on your country.",
+    regionCol: "Region",
+    timeCol: "Delivery time",
+    costCol: "Shipping cost",
+    regions: [
+      { name: "North America", days: null, cost: "Quoted per order" },
+      { name: "Europe", days: null, cost: "Quoted per order" },
+      { name: "Asia-Pacific", days: null, cost: "Quoted per order" },
+      { name: "Rest of world", days: null, cost: "Quoted per order" },
+    ],
+    dutiesTitle: "Duties & taxes",
+    dutiesNotice:
+      "Import duties, VAT and customs fees are charged by your country and are not included in the product price. They are the buyer's responsibility and are collected on delivery.",
+    returnsTitle: "Damaged in transit",
+    returnsNotice:
+      "If your piece arrives damaged, email us photos and we'll sort it out together. Return arrangements are agreed case by case.",
+  },
   commission: {
     title: "Custom commissions",
     intro:
@@ -429,6 +488,7 @@ const en: Content = {
     {
       q: "Do you ship internationally?",
       a: "Yes, international shipping is available for select products and custom orders.",
+      link: { path: "/shipping/", label: "See shipping & duties" },
     },
   ],
 };

@@ -248,3 +248,32 @@ describe("commission page", () => {
     }
   });
 });
+
+describe("shipping page", () => {
+  it("en shipping page states duties and quotes per order", () => {
+    const html = read("en/shipping/index.html");
+    assert.match(html, /Import duties, VAT and customs fees/);
+    assert.match(html, /Quoted per order/);
+    assert.ok(
+      html.includes(`<link rel="canonical" href="${SITE}/en/shipping/"`),
+    );
+    assert.ok(html.includes(`hreflang="vi" href="${SITE}/shipping/"`));
+  });
+
+  it("vi shipping page exists in Vietnamese", () => {
+    const html = read("shipping/index.html");
+    assert.match(html, /<html lang="vi"/);
+    assert.match(html, /Báo theo từng đơn/);
+  });
+
+  it("international-shipping FAQ links to the locale shipping page", () => {
+    assert.match(
+      read("en/index.html"),
+      /<div class="faq-answer"[^>]*>[^<]*<a href="\/en\/shipping\/"/,
+    );
+    assert.match(
+      read("index.html"),
+      /<div class="faq-answer"[^>]*>[^<]*<a href="\/shipping\/"/,
+    );
+  });
+});
