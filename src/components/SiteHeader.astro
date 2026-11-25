@@ -90,10 +90,20 @@ const nav = [
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgb(0 0 0 / 0.82);
+    background: rgb(0 0 0 / 0.55);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 0.5s var(--ease-soft),
+      border-color 0.5s var(--ease-soft);
+  }
+  .site-header.is-scrolled {
+    background: rgb(0 0 0 / 0.88);
+    border-bottom-color: var(--border);
+  }
+  .site-menu[open] .menu-panel {
+    animation: drop-in 0.4s var(--ease) both;
   }
   .bar {
     position: relative;

@@ -32,7 +32,7 @@ const keySteps = commission.steps.slice(0, 3);
         <a href={localePath(locale, "/shipping/")}>{t.seeShipping}</a>
       </p>
     </div>
-    <ol class="steps">
+    <ol class="steps" data-stagger>
       {
         keySteps.map((s, i) => (
           <li>

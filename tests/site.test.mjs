@@ -919,3 +919,81 @@ describe("polish after the final review", () => {
     assert.equal(b.readUInt32BE(20), 128);
   });
 });
+
+describe("motion", () => {
+  const homes = ["index.html", "en/index.html"];
+
+  it("defines a shared easing token", () => {
+    assert.match(cssAll(), /--ease:\s*cubic-bezier\(/);
+  });
+
+  it("staggered groups exist on both home pages", () => {
+    for (const f of homes) {
+      const n = (read(f).match(/data-stagger/g) ?? []).length;
+      assert.ok(n >= 5, `${f} has only ${n} staggered groups`);
+    }
+  });
+
+  it("staggered content is hidden only when JS runs, never by default", () => {
+    const css = cssAll();
+    assert.match(css, /html\.js \[data-stagger\]/);
+    assert.doesNotMatch(
+      css,
+      /(?:^|[};])\s*\[data-stagger\][^{}]*\{[^}]*opacity:\s*0/,
+    );
+  });
+
+  it("reduced motion removes delays and shows staggered content at once", () => {
+    const css = cssAll();
+    const block =
+      css.match(/@media \(prefers-reduced-motion:\s*reduce\)\{[\s\S]*$/)?.[0] ??
+      "";
+    assert.match(block, /animation-delay:\s*0s/);
+    assert.match(block, /transition-delay:\s*0s/);
+    assert.match(block, /\[data-stagger\]/);
+  });
+
+  it("the hero title is split into words yet still reads as the original title", async () => {
+    const { getContent } = await import("../src/i18n/content.ts");
+    for (const [f, locale] of [
+      ["index.html", "vi"],
+      ["en/index.html", "en"],
+    ]) {
+      const h1 = read(f).match(/<h1 id="hero-title"[^>]*>([\s\S]*?)<\/h1>/)[1];
+      assert.match(h1, /class="word"/, `${f} hero title is not split`);
+      const text = h1
+        .replace(/<[^>]+>/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      assert.equal(text, getContent(locale).hero.title);
+    }
+  });
+
+  it("a scroll progress bar exists, hidden from assistive technology", () => {
+    for (const f of homes) {
+      assert.match(read(f), /<div class="scroll-progress" aria-hidden="true"/);
+    }
+    // `scroll(root)` only appears in the real declaration, not in the @supports condition (`scroll()`).
+    assert.match(cssAll(), /animation-timeline:\s*scroll\(root\)/);
+  });
+
+  it("pages cross-fade with view transitions while the header stays put", () => {
+    const css = cssAll();
+    assert.match(css, /@view-transition\{navigation:\s*auto\}/);
+    assert.match(css, /view-transition-name:\s*site-header/);
+    assert.match(
+      css,
+      /@media \(prefers-reduced-motion:\s*reduce\)\{[^@]*@view-transition\{navigation:\s*none\}/,
+    );
+  });
+
+  it("no rule animates every property", () => {
+    assert.doesNotMatch(cssAll(), /transition:\s*all\b/);
+  });
+
+  it("the page script observes staggered groups and marks a scrolled header", () => {
+    const html = read("en/index.html");
+    assert.match(html, /data-stagger/);
+    assert.match(html, /is-scrolled/);
+  });
+});

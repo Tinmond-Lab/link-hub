@@ -1,5 +1,6 @@
 ---
 import "../styles/theme.css";
+import "../styles/motion.css";
 import HeadMeta from "../components/HeadMeta.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
@@ -50,6 +51,7 @@ const { meta, ui: t } = getContent(locale);
     />
   </head>
   <body>
+    <div class="scroll-progress" aria-hidden="true"></div>
     <a class="skip-link" href="#main">{t.skipToContent}</a>
     <SiteHeader locale={locale} path={path} />
     <main id="main">
@@ -60,7 +62,18 @@ const { meta, ui: t } = getContent(locale);
 </html>
 
 <script>
-  const reveals = document.querySelectorAll<HTMLElement>(".reveal");
+  // Number the children of each staggered group so CSS can delay them one after another.
+  document
+    .querySelectorAll<HTMLElement>("[data-stagger]")
+    .forEach((group) =>
+      Array.from(group.children).forEach((child, i) =>
+        (child as HTMLElement).style.setProperty("--i", String(Math.min(i, 6))),
+      ),
+    );
+
+  const reveals = document.querySelectorAll<HTMLElement>(
+    ".reveal, [data-stagger]",
+  );
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -76,6 +89,18 @@ const { meta, ui: t } = getContent(locale);
   } else {
     reveals.forEach((el) => el.classList.add("is-visible"));
   }
+
+  // The header settles into a solid bar once the page is scrolled.
+  const header = document.querySelector<HTMLElement>(".site-header");
+  let scrolled = false;
+  const onScroll = () => {
+    const now = window.scrollY > 8;
+    if (now === scrolled) return;
+    scrolled = now;
+    header?.classList.toggle("is-scrolled", now);
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;

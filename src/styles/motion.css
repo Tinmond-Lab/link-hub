@@ -1,0 +1,169 @@
+/*
+ * Motion for the whole site. Rules of the house:
+ * - only transform, opacity, clip-path and scale are animated (cheap for the browser);
+ * - content is hidden for an entrance only when JS runs (html.js), so it never stays invisible;
+ * - everything is switched off, delays included, under prefers-reduced-motion.
+ */
+
+:root {
+  --ease: cubic-bezier(0.22, 0.8, 0.2, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes word-in {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes media-in {
+  from {
+    opacity: 0;
+    scale: 1.08;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Staggered groups: each child enters a beat after the previous one. The page script sets --i. */
+html.js [data-stagger] > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s var(--ease),
+    transform 0.7s var(--ease);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+
+html.js [data-stagger].is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Thin progress line along the top edge, driven by scroll position (no JS). */
+.scroll-progress {
+  display: none;
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+  animation: scroll-grow linear both;
+}
+
+/*
+ * The scroll timeline lives in its own @supports rule on purpose: when it sat in the same
+ * rule, the CSS minifier folded it into the `animation` shorthand and browsers dropped it.
+ */
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    display: block;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes scroll-grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Page to page: a soft cross-fade, with the header held still. */
+@view-transition {
+  navigation: auto;
+}
+
+.site-header {
+  view-transition-name: site-header;
+}
+
+::view-transition-old(root) {
+  animation: 0.22s var(--ease-soft) both fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 0.4s var(--ease-soft) both fade-in;
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Buttons: a small lift on hover, a press on click. */
+.btn {
+  transition:
+    transform 0.3s var(--ease),
+    background-color 0.3s var(--ease-soft),
+    border-color 0.3s var(--ease-soft),
+    color 0.3s var(--ease-soft);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 0.1s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+
+  .scroll-progress {
+    display: none !important;
+  }
+
+  html.js [data-stagger] > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-delay: 0s !important;
+    transition-delay: 0s !important;
+  }
+}

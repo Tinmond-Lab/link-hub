@@ -30,7 +30,7 @@ const { about, ui: t } = getContent(Astro.props.locale);
     </header>
     <div class="body">
       <p class="story">{about.body}</p>
-      <ul class="makes">
+      <ul class="makes" data-stagger>
         {about.makes.map((m) => <li>{m}</li>)}
       </ul>
       <p class="aside">{about.software}</p>

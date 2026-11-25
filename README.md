@@ -2,7 +2,7 @@
 
 The bilingual (VI/EN) website of **Timond Lab**, a studio making handmade miniatures, dioramas and hand-painted resin figures in Vietnam. Each language has its own indexable URL. Built with [Astro](https://astro.build).
 
-A dark "gallery" studio site. The home page sections are a hero, selected works, process, latest video, about, a commission band and an FAQ. The full list of social channels lives on a separate `/links/` page (`/en/links/` in English). Vietnamese lives at `/`, English at `/en/`; the language toggle is a plain link between the two. The theme is dark only, with tokens in `src/styles/theme.css`.
+A dark "gallery" studio site. The home page sections are a hero, selected works, process, latest video, about, a commission band and an FAQ. The full list of social channels lives on a separate `/links/` page (`/en/links/` in English). Vietnamese lives at `/`, English at `/en/`; the language toggle is a plain link between the two. The theme is dark only, with tokens in `src/styles/theme.css`. All motion lives in `src/styles/motion.css` (CSS only, no animation library); it is off under `prefers-reduced-motion` and never hides content when JavaScript is off. To stagger a new group of cards, put `data-stagger` on their container.
 
 ## Project Structure
 
