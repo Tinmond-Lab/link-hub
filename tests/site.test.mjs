@@ -675,7 +675,7 @@ describe("studio copy and data", () => {
     assert.equal(chapters[5].text, mod.getContent("en").shipping.intro);
     assert.equal(
       mod.getContent("vi").hero.title,
-      "Điêu khắc, in 3D và sơn tay tại Việt Nam.",
+      "In 3D, đổ resin và sơn tay tại Việt Nam.",
     );
     assert.equal(mod.MAKER_PHOTO, null);
     assert.equal(mod.latestVideo.href, mod.LATEST_VIDEO_URL);
@@ -759,4 +759,26 @@ describe("site header", () => {
       assert.match(css(), re);
     });
   }
+});
+
+describe("copy accuracy", () => {
+  it("no built page claims the studio sculpts", () => {
+    const walk = (dir) =>
+      readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory()
+          ? walk(resolve(dir, e.name))
+          : e.name.endsWith(".html")
+            ? [resolve(dir, e.name)]
+            : [],
+      );
+    const pages = walk(dist("."));
+    assert.ok(pages.length >= 14, "expected the built pages");
+    for (const f of pages) {
+      assert.doesNotMatch(
+        readFileSync(f, "utf8"),
+        /đi[êe]u kh[ắa]c|sculpt/i,
+        `${f} mentions sculpting`,
+      );
+    }
+  });
 });

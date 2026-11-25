@@ -241,7 +241,7 @@ const products = (locale: Locale): Product[] =>
 const vi: Content = {
   hero: {
     eyebrow: "Mô hình thủ công",
-    title: "Điêu khắc, in 3D và sơn tay tại Việt Nam.",
+    title: "In 3D, đổ resin và sơn tay tại Việt Nam.",
     subtitle:
       "Diorama, mô hình kiến trúc và figure resin sơn tay. Nhận đặt làm theo yêu cầu, giao hàng quốc tế.",
     imageAlt: "Mô hình kiến trúc Tháp Nghinh Phong trên nền tối",
@@ -303,7 +303,7 @@ const vi: Content = {
       },
       {
         title: "Duyệt bản 3D",
-        text: "Với tác phẩm điêu khắc, bạn duyệt mô hình 3D trước khi bắt đầu in.",
+        text: "Bạn duyệt mô hình 3D trước khi bắt đầu in.",
       },
       { title: "In 3D & đổ resin", text: "Tác phẩm được in 3D và đổ resin." },
       {
@@ -409,7 +409,7 @@ const vi: Content = {
 const en: Content = {
   hero: {
     eyebrow: "Handmade miniatures",
-    title: "Sculpted, printed and hand-painted in Vietnam.",
+    title: "3D-printed, resin-cast and hand-painted in Vietnam.",
     subtitle:
       "Dioramas, architectural miniatures and hand-painted resin figures. Custom commissions welcome, shipped worldwide.",
     imageAlt: "Tháp Nghinh Phong architectural miniature on a dark background",
@@ -467,7 +467,7 @@ const en: Content = {
       },
       {
         title: "Approve the 3D design",
-        text: "For sculpted pieces you approve the 3D model before anything is printed.",
+        text: "You approve the 3D model before anything is printed.",
       },
       {
         title: "Print & cast",
