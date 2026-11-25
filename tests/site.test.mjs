@@ -112,3 +112,30 @@ describe("sitemap", () => {
     assert.ok(!xml.includes(`${SITE}/en<`));
   });
 });
+
+const jsonLdBlocks = (html) =>
+  [
+    ...html.matchAll(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
+    ),
+  ].map((m) => JSON.parse(m[1]));
+
+describe("organization structured data", () => {
+  it("en home page has Organization JSON-LD", () => {
+    const org = jsonLdBlocks(read("en/index.html")).find(
+      (b) => b["@type"] === "Organization",
+    );
+    assert.ok(org, "no Organization block");
+    assert.equal(org.name, "Timond Lab");
+    assert.equal(org.url, "https://timondlab.com/en/");
+    assert.ok(org.sameAs.includes("https://youtube.com/@timondlab"));
+    assert.equal(org.logo, "https://timondlab.com/avatar.webp");
+  });
+
+  it("vi home page marks its own URL", () => {
+    const org = jsonLdBlocks(read("index.html")).find(
+      (b) => b["@type"] === "Organization",
+    );
+    assert.equal(org.url, "https://timondlab.com/");
+  });
+});

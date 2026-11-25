@@ -12,6 +12,7 @@ import iconPaintbrush from "lucide-static/icons/paintbrush.svg?raw";
 import iconLayers from "lucide-static/icons/layers.svg?raw";
 import HeadMeta from "./HeadMeta.astro";
 import { getContent } from "../i18n/content";
+import { jsonLdScript, organizationJsonLd } from "../seo/jsonld";
 import { localePath, otherLocale, type Locale } from "../i18n/locales";
 
 const { locale } = Astro.props as { locale: Locale };
@@ -44,6 +45,10 @@ const serviceIcons = {
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#1677ff" />
     <HeadMeta locale={locale} />
+    <script
+      type="application/ld+json"
+      set:html={jsonLdScript(organizationJsonLd(locale))}
+    />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
