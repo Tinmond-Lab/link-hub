@@ -47,12 +47,9 @@ describe("one language per URL", () => {
     );
   });
 
-  it("never stores or reads a language preference", () => {
+  it("uses no localStorage", () => {
     for (const f of ["index.html", "en/index.html"]) {
-      const html = read(f);
-      // Astro inlines and minifies the script, turning "theme" into `theme`.
-      assert.match(html, /localStorage\.getItem\([`"']theme[`"']\)/);
-      assert.doesNotMatch(html, /(get|set)Item\([`"']lang[`"']/);
+      assert.doesNotMatch(read(f), /localStorage/);
     }
   });
 });
@@ -60,6 +57,9 @@ describe("one language per URL", () => {
 const SITE = "https://timondlab.com";
 const EN_DESC =
   "Handmade miniatures, dioramas and hand-painted resin figures from Vietnam. Custom commissions welcome, worldwide shipping available.";
+
+const VI_DESC =
+  "Mô hình thu nhỏ, diorama và figure resin sơn tay, làm thủ công tại Việt Nam. Nhận đặt làm theo yêu cầu, giao hàng quốc tế.";
 
 describe("head metadata", () => {
   const pages = [
@@ -95,13 +95,14 @@ describe("head metadata", () => {
     assert.ok(html.includes(`property="og:description" content="${EN_DESC}"`));
   });
 
-  it("vi page keeps Vietnamese title and description", () => {
+  it("vi page has the studio title and description", () => {
     const html = read("index.html");
     assert.match(
       html,
       /<title>Timond Lab · Mô hình thủ công &amp; diorama từ Việt Nam<\/title>/,
     );
-    assert.match(html, /Mô hình thu nhỏ, diorama và figure resin sơn tay/);
+    assert.ok(html.includes(`<meta name="description" content="${VI_DESC}"`));
+    assert.ok(html.includes(`property="og:description" content="${VI_DESC}"`));
   });
 });
 
@@ -185,11 +186,15 @@ describe("product pages", () => {
     assert.equal(existsSync(dist("en/products/prod-soon")), false);
     for (const f of ["index.html", "en/index.html"]) {
       const html = read(f);
-      const card = html.match(
-        /<div class="product-card"[^>]*data-filter="coming soon"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/,
-      );
+      const cards = [
+        ...html.matchAll(
+          /<article class="work-card"[^>]*>[\s\S]*?<\/article>/g,
+        ),
+      ].map((m) => m[0]);
+      const card = cards.find((c) => c.includes("Coming Soon"));
       assert.ok(card, "coming soon card not found");
-      assert.doesNotMatch(card[0], /href=/);
+      assert.doesNotMatch(card, /data-slug=/);
+      assert.doesNotMatch(card, /href=/);
     }
   });
 
@@ -200,7 +205,7 @@ describe("product pages", () => {
     assert.ok(read("index.html").includes('href="/products/resin-figure/"'));
     assert.doesNotMatch(
       read("en/index.html"),
-      /class="product-link"[^>]*href="#"|href="#"[^>]*class="product-link"/,
+      /class="work-card"[^>]*href="#"|href="#"[^>]*class="work-card"/,
     );
   });
 
@@ -290,26 +295,15 @@ describe("channels and hero per locale", () => {
     assert.doesNotMatch(html, /instagram\.com/);
   });
 
-  it("en page lists Email first", () => {
-    const html = read("en/index.html");
-    const hrefs = [
-      ...html.matchAll(/<a href="([^"]+)"[^>]*class="social-item"/g),
-    ].map((m) => m[1]);
-    assert.equal(hrefs[0], "mailto:timondlab@gmail.com");
-    assert.ok(hrefs.includes("https://youtube.com/@timondlab"));
+  it("home still exposes every channel", () => {
+    const vi = read("index.html");
+    for (const href of ["zalo.me", "shopee.vn", "youtube.com/@timondlab"]) {
+      assert.ok(vi.includes(href), `vi home lacks ${href}`);
+    }
+    assert.ok(read("en/index.html").includes("mailto:timondlab@gmail.com"));
   });
 
-  it("vi page keeps Zalo and Shopee and original order", () => {
-    const html = read("index.html");
-    assert.ok(html.includes("zalo.me/84856694766"));
-    assert.ok(html.includes("shopee.vn/timondlab"));
-    const hrefs = [
-      ...html.matchAll(/<a href="([^"]+)"[^>]*class="social-item"/g),
-    ].map((m) => m[1]);
-    assert.equal(hrefs[0], "https://youtube.com/@timondlab");
-  });
-
-  it("en hero promotes commissions; vi hero is unchanged", () => {
+  it("heroes promote commissions", () => {
     const en = read("en/index.html");
     assert.match(
       en,
@@ -329,6 +323,10 @@ describe("channels and hero per locale", () => {
       /<a href="\/commission\/" class="btn btn-primary"[^>]*>Đặt làm theo yêu cầu<\/a>/,
     );
     assert.match(vi, /Diorama, mô hình kiến trúc và figure resin sơn tay/);
+    for (const html of [en, vi]) {
+      assert.doesNotMatch(html, /Lập trình viên phần mềm/);
+      assert.doesNotMatch(html, /Software Developer/);
+    }
   });
 });
 
@@ -420,8 +418,8 @@ describe("latest video card", () => {
   for (const f of ["index.html", "en/index.html"]) {
     it(`${f}: latest video is a real link with its thumbnail, rendered at build time`, () => {
       const html = read(f);
-      const card = html.match(/<a\b[^>]*class="bip-card"[^>]*>[\s\S]*?<\/a>/);
-      assert.ok(card, "no linked bip-card");
+      const card = html.match(/<a\b[^>]*class="video-card"[^>]*>[\s\S]*?<\/a>/);
+      assert.ok(card, "no linked video-card");
       assert.ok(card[0].includes(`href="${URL}"`));
       assert.match(card[0], /target="_blank"/);
       assert.match(card[0], /rel="noopener/);
@@ -514,7 +512,7 @@ const INFO_PAGES = [
     (s) => [`products/${s}/index.html`, `en/products/${s}/index.html`],
   ),
 ];
-const CHROME_PAGES = [...INFO_PAGES];
+const CHROME_PAGES = ["index.html", "en/index.html", ...INFO_PAGES];
 
 describe("site chrome", () => {
   for (const f of CHROME_PAGES) {
@@ -567,6 +565,8 @@ describe("site chrome", () => {
     const css = cssAll();
     assert.match(css, /\.js \.reveal/);
     assert.match(css, /prefers-reduced-motion/);
+    // A .reveal rule that hides content without the .js ancestor would leave it invisible without JS.
+    assert.doesNotMatch(css, /(?<!\.js )\.reveal(\[[^\]]*\])?\{opacity:0/);
   });
 
   it("dark tokens are defined", () => {
@@ -654,5 +654,56 @@ describe("studio copy and data", () => {
     assert.equal(mod.MAKER_PHOTO, null);
     assert.equal(mod.latestVideo.href, mod.LATEST_VIDEO_URL);
     assert.equal(mod.getContent("en").about.makes.length, 3);
+  });
+});
+
+const htmlFiles = (dir = dist(".")) =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const full = resolve(dir, e.name);
+    if (e.isDirectory()) return htmlFiles(full);
+    return e.name.endsWith(".html") ? [full] : [];
+  });
+
+describe("home page", () => {
+  const pages = ["index.html", "en/index.html"];
+
+  it("home has the four anchor sections", () => {
+    for (const f of pages) {
+      const html = read(f);
+      for (const id of ["works", "process", "about", "commission"]) {
+        assert.ok(html.includes(`id="${id}"`), `${f} lacks #${id}`);
+      }
+    }
+  });
+
+  it("anchored sections clear the sticky header", () => {
+    assert.match(cssAll(), /scroll-margin-top/);
+  });
+
+  it("process shows six chapters", () => {
+    for (const f of pages) {
+      assert.equal((read(f).match(/class="process-step"/g) ?? []).length, 6, f);
+    }
+  });
+
+  it("about has no portrait while MAKER_PHOTO is null", () => {
+    for (const f of pages) {
+      const about = read(f).match(/<section[^>]*id="about"[\s\S]*?<\/section>/);
+      assert.ok(about, `${f}: no #about section`);
+      assert.doesNotMatch(about[0], /<img/);
+    }
+  });
+
+  it("no emoji in rendered HTML", () => {
+    // ©, ® and ™ are Extended_Pictographic but render as text symbols, not emoji.
+    const emoji = /(?![\u00a9\u00ae\u2122])\p{Extended_Pictographic}/u;
+    for (const file of htmlFiles()) {
+      const text = readFileSync(file, "utf8").replace(
+        /<script\b[\s\S]*?<\/script>/g,
+        "",
+      );
+      const m = text.match(emoji);
+      assert.equal(m, null, `${file} contains ${m?.[0]}`);
+    }
   });
 });

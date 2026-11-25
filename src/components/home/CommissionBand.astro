@@ -1,0 +1,111 @@
+---
+import { getContent } from "../../i18n/content";
+import { localePath, type Locale } from "../../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { commission, ui: t } = getContent(locale);
+// The three steps that are the client's part: idea, quote, approval.
+const keySteps = commission.steps.slice(0, 3);
+---
+
+<section
+  id="commission"
+  class="section reveal"
+  aria-labelledby="commission-title"
+>
+  <div class="band">
+    <div class="pitch">
+      <p class="eyebrow">{t.commissionEyebrow}</p>
+      <h2 id="commission-title" class="section-title">{commission.title}</h2>
+      <p class="section-lead">{commission.intro}</p>
+      <p class="cta">
+        <a href={localePath(locale, "/commission/")} class="btn btn-primary"
+          >{t.commissionLink}</a
+        >
+      </p>
+      <p class="shipping">
+        {t.shipsWorldwide} ·{" "}
+        <a href={localePath(locale, "/shipping/")}>{t.seeShipping}</a>
+      </p>
+    </div>
+    <ol class="steps">
+      {
+        keySteps.map((s, i) => (
+          <li>
+            <span class="num" aria-hidden="true">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .band {
+    display: grid;
+    gap: 40px;
+    padding: clamp(32px, 6vw, 72px) clamp(20px, 5vw, 64px);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  .cta {
+    margin: 32px 0 0;
+  }
+  .shipping {
+    margin: 20px 0 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .shipping a {
+    display: inline-block;
+    padding: 12px 0;
+  }
+  .steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .steps li {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 12px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+  }
+  .steps li:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+  .num {
+    padding-top: 4px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+  }
+  h3 {
+    margin: 0;
+    font-size: 20px;
+  }
+  .steps p {
+    margin: 6px 0 0;
+    color: var(--muted);
+  }
+  @media (min-width: 900px) {
+    .band {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      gap: 64px;
+      align-items: center;
+    }
+  }
+</style>

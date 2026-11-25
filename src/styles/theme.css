@@ -137,6 +137,26 @@ a {
   border-color: var(--muted);
 }
 
+/* Page sections: one centred column; anchor jumps stop below the 64px sticky header. */
+.section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: clamp(72px, 9vw, 120px) var(--gutter) 0;
+  scroll-margin-top: 64px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: clamp(32px, 4.6vw, 52px);
+}
+
+.section-lead {
+  max-width: 60ch;
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 18px;
+}
+
 /* Scroll reveal: only hidden when JS is running (html.js), so content never stays invisible. */
 html.js .reveal {
   opacity: 0;

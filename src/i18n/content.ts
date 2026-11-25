@@ -56,7 +56,13 @@ export interface HeroCta {
 }
 
 export interface Content {
-  hero: { eyebrow: string; title: string; subtitle: string; ctas: HeroCta[] };
+  hero: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    imageAlt: string;
+    ctas: HeroCta[];
+  };
   about: {
     eyebrow: string;
     title: string;
@@ -77,17 +83,6 @@ export interface Content {
   socials: Social[];
   products: Product[];
   journeySteps: string[];
-  buildPublic: {
-    slotId: string;
-    label: string;
-    img: string | null;
-    href?: string;
-  }[];
-  services: {
-    key: "code" | "cuboid" | "paintbrush" | "layers";
-    label: string;
-  }[];
-  values: string[];
   faq: { q: string; a: string; link?: { path: string; label: string } }[];
 }
 
@@ -110,10 +105,10 @@ export const latestVideo: { href: string; img: string | null } = {
   href: LATEST_VIDEO_URL,
 };
 
-/** Set to the studio's Instagram profile URL to show it on the English page. */
 /** Maker portrait path; stays null until a verified photo is supplied. */
 export const MAKER_PHOTO: string | null = null;
 
+/** Set to the studio's Instagram profile URL to show it on the English page. */
 export const INSTAGRAM_URL: string | null = null;
 
 const socials: Social[] = [
@@ -243,21 +238,13 @@ const products = (locale: Locale): Product[] =>
     leadTime: (p.slug && productFacts[p.slug].leadTime?.[locale]) || null,
   }));
 
-const services: Content["services"] = [
-  { key: "code", label: "" },
-  { key: "cuboid", label: "" },
-  { key: "paintbrush", label: "" },
-  { key: "layers", label: "" },
-];
-const withLabels = (labels: string[]): Content["services"] =>
-  services.map((s, i) => ({ ...s, label: labels[i] }));
-
 const vi: Content = {
   hero: {
     eyebrow: "Mô hình thủ công",
     title: "Điêu khắc, in 3D và sơn tay tại Việt Nam.",
     subtitle:
       "Diorama, mô hình kiến trúc và figure resin sơn tay. Nhận đặt làm theo yêu cầu, giao hàng quốc tế.",
+    imageAlt: "Mô hình kiến trúc Tháp Nghinh Phong trên nền tối",
     ctas: [
       {
         label: "Đặt làm theo yêu cầu",
@@ -348,33 +335,28 @@ const vi: Content = {
     ogAlternate: "en_US",
   },
   ui: {
-    searchPlaceholder: "Tìm liên kết, sản phẩm...",
     linksTitle: "Timond Lab · Liên kết",
     linksLead: "Mô hình thủ công từ Việt Nam",
     visitStudio: "Ghé thăm studio",
     langLabel: "EN",
     langAria: "EN – English",
-    themeAria: "Toggle theme",
-    avatarAlt: "Timond Lab avatar",
-    aboutEyebrow: "Về Timond Lab",
-    aboutBody:
-      "Timond Lab là studio sáng tạo kết hợp phát triển phần mềm với nghệ thuật mô hình thủ công — nơi công nghệ và thủ công gặp nhau để tạo ra những sản phẩm độc bản, cùng câu chuyện phía sau từng ý tưởng: từ concept, in 3D, đổ resin, sơn vẽ, đóng gói đến phát triển phần mềm.",
-    socialTitle: "Kết nối với Timond Lab",
-    noResults: "Không tìm thấy kết quả phù hợp.",
-    productsTitle: "Bộ sưu tập nổi bật",
     viewDetails: "Xem chi tiết",
-    journeyTitle: "Hành trình tạo tác phẩm",
-    bipTitle: "Build in Public",
-    bipSub: "Dự án mới nhất, hậu trường & hành trình học hỏi",
-    servicesTitle: "Dịch vụ",
-    valuesTitle: "Giá trị cốt lõi",
+    worksEyebrow: "Bộ sưu tập",
+    worksTitle: "Tác phẩm chọn lọc",
+    workPhotoAlt: "Ảnh tác phẩm {name}",
+    comingSoonAlt: "Một figure phủ dưới lớp vải mỏng, tác phẩm tiếp theo",
+    processEyebrow: "Quy trình",
+    processTitle: "Từ ý tưởng đến tay bạn",
+    videoEyebrow: "Build in Public",
+    videoTitle: "Video mới nhất",
+    videoWatch: "Xem trên YouTube",
+    videoAlt: "Ảnh bìa video mới nhất của Timond Lab",
+    commissionEyebrow: "Đặt làm",
+    shipsWorldwide: "Giao hàng quốc tế",
+    seeShipping: "Xem vận chuyển & thuế",
+    faqEyebrow: "Hỏi đáp",
+    makerPhotoAlt: "Chân dung người làm ra các tác phẩm Timond Lab",
     faqTitle: "Câu hỏi thường gặp",
-    closingTitle: "Sẵn sàng bắt đầu?",
-    closingSub:
-      "Liên hệ Timond Lab để đặt sản phẩm hoặc trao đổi ý tưởng của bạn.",
-    closingCta: "Liên hệ",
-    backToTop: "Back to top",
-    backHome: "Timond Lab",
     priceLabel: "Giá",
     priceOnRequest: "Liên hệ để báo giá",
     leadTimeLabel: "Thời gian thực hiện",
@@ -401,33 +383,6 @@ const vi: Content = {
     "Sơn vẽ",
     "Đóng gói",
     "Vận chuyển",
-  ],
-  buildPublic: [
-    { slotId: "bip-0", label: "Video mới nhất", ...latestVideo },
-    {
-      slotId: "bip-1",
-      label: "Dự án đang làm",
-      img: "/build-in-public/bip-1.webp",
-    },
-    {
-      slotId: "bip-2",
-      label: "Hậu trường",
-      img: "/build-in-public/bip-2.webp",
-    },
-  ],
-  services: withLabels([
-    "Phát triển phần mềm",
-    "Mô hình theo yêu cầu",
-    "Sơn figure",
-    "Thiết kế diorama",
-  ]),
-  values: [
-    "Chất lượng hàng đầu",
-    "Thủ công tỉ mỉ",
-    "Chú trọng chi tiết",
-    "Học hỏi không ngừng",
-    "Khách hàng là trọng tâm",
-    "Sáng tạo",
   ],
   faq: [
     {
@@ -457,6 +412,7 @@ const en: Content = {
     title: "Sculpted, printed and hand-painted in Vietnam.",
     subtitle:
       "Dioramas, architectural miniatures and hand-painted resin figures. Custom commissions welcome, shipped worldwide.",
+    imageAlt: "Tháp Nghinh Phong architectural miniature on a dark background",
     ctas: [
       {
         label: "Request a commission",
@@ -546,33 +502,28 @@ const en: Content = {
     ogAlternate: "vi_VN",
   },
   ui: {
-    searchPlaceholder: "Search links, products...",
     linksTitle: "Timond Lab · Links",
     linksLead: "Handmade miniatures from Vietnam",
     visitStudio: "Visit the studio",
     langLabel: "VI",
     langAria: "VI – Tiếng Việt",
-    themeAria: "Toggle theme",
-    avatarAlt: "Timond Lab avatar",
-    aboutEyebrow: "About Timond Lab",
-    aboutBody:
-      "Timond Lab is a creative studio blending software development with handcrafted miniature art — where technology and craftsmanship meet to build unique products, sharing every step of the journey: concept, 3D printing, resin casting, painting, packaging and software development.",
-    socialTitle: "Connect with Timond Lab",
-    noResults: "No matching results.",
-    productsTitle: "Featured Collections",
-    viewDetails: "View Details",
-    journeyTitle: "The Making Journey",
-    bipTitle: "Build in Public",
-    bipSub: "Latest projects, behind the scenes & the learning journey",
-    servicesTitle: "Services",
-    valuesTitle: "Values",
-    faqTitle: "FAQ",
-    closingTitle: "Ready to start?",
-    closingSub:
-      "Reach out to Timond Lab to order a piece or talk through your idea.",
-    closingCta: "Contact Me",
-    backToTop: "Back to top",
-    backHome: "Timond Lab",
+    viewDetails: "View details",
+    worksEyebrow: "Collection",
+    worksTitle: "Selected works",
+    workPhotoAlt: "Photo of {name}",
+    comingSoonAlt: "A figure veiled under a thin cloth, the next piece",
+    processEyebrow: "Process",
+    processTitle: "From idea to your door",
+    videoEyebrow: "Build in public",
+    videoTitle: "Latest video",
+    videoWatch: "Watch on YouTube",
+    videoAlt: "Thumbnail of the latest Timond Lab video",
+    commissionEyebrow: "Commissions",
+    shipsWorldwide: "Worldwide shipping",
+    seeShipping: "See shipping & duties",
+    faqEyebrow: "Questions",
+    makerPhotoAlt: "Portrait of the maker behind Timond Lab",
+    faqTitle: "Frequently asked questions",
     priceLabel: "Price",
     priceOnRequest: "Price on request",
     leadTimeLabel: "Lead time",
@@ -599,33 +550,6 @@ const en: Content = {
     "Painting",
     "Packaging",
     "Shipping",
-  ],
-  buildPublic: [
-    { slotId: "bip-0", label: "Latest Video", ...latestVideo },
-    {
-      slotId: "bip-1",
-      label: "Current Build",
-      img: "/build-in-public/bip-1.webp",
-    },
-    {
-      slotId: "bip-2",
-      label: "Behind the Scenes",
-      img: "/build-in-public/bip-2.webp",
-    },
-  ],
-  services: withLabels([
-    "Software Development",
-    "Custom Miniatures",
-    "Figure Painting",
-    "Diorama Design",
-  ]),
-  values: [
-    "Quality First",
-    "Handcrafted",
-    "Attention to Detail",
-    "Continuous Learning",
-    "Customer First",
-    "Creativity",
   ],
   faq: [
     {

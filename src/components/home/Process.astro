@@ -1,0 +1,87 @@
+---
+import { getContent, processChapters } from "../../i18n/content";
+import type { Locale } from "../../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getContent(locale).ui;
+const chapters = processChapters(locale);
+---
+
+<section id="process" class="section reveal" aria-labelledby="process-title">
+  <div class="layout">
+    <header class="head">
+      <p class="eyebrow">{t.processEyebrow}</p>
+      <h2 id="process-title" class="section-title">{t.processTitle}</h2>
+    </header>
+    <ol class="chapters">
+      {
+        chapters.map((c, i) => (
+          <li class="process-step">
+            <span class="num" aria-hidden="true">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div>
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .layout {
+    display: grid;
+    gap: 40px;
+  }
+  .chapters {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--border);
+  }
+  .process-step {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 16px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .num {
+    padding-top: 6px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+  }
+  h3 {
+    margin: 0;
+    font-size: clamp(22px, 2.4vw, 28px);
+  }
+  p {
+    max-width: 56ch;
+    margin: 8px 0 0;
+    color: var(--muted);
+  }
+  @media (min-width: 900px) {
+    .layout {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 64px;
+      align-items: start;
+    }
+    .head {
+      position: sticky;
+      top: 112px;
+    }
+    .process-step {
+      grid-template-columns: 80px minmax(0, 1fr);
+      padding: 36px 0;
+    }
+  }
+</style>
