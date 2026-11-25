@@ -2,6 +2,7 @@
 import { getContent } from "../i18n/content";
 import type { Locale } from "../i18n/locales";
 import { socialBrand } from "./social-brand";
+import MailIcon from "./MailIcon.astro";
 
 interface Props {
   locale: Locale;
@@ -35,20 +36,7 @@ const socials = getContent(locale).socials.map((s) => ({
               <path d={s.path} />
             </svg>
           ) : (
-            <svg
-              viewBox="0 0 24 24"
-              width="22"
-              height="22"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              stroke-linejoin="round"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <rect x="3" y="5" width="18" height="14" rx="2" />
-              <path d="M4 7l8 6 8-6" />
-            </svg>
+            <MailIcon size={22} />
           )}
           <span class="social-name">{s.name}</span>
           <span class="social-handle">{s.handle}</span>

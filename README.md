@@ -1,6 +1,6 @@
 # LinkHub — Timond Lab
 
-A bilingual (VI/EN) link-in-bio landing page with a separate indexable URL per language for **Timond Lab**, a studio blending software development with handcrafted miniature art (diorama, resin figures, figure painting). Built with [Astro](https://astro.build).
+The bilingual (VI/EN) website of **Timond Lab**, a studio making handmade miniatures, dioramas and hand-painted resin figures in Vietnam. Each language has its own indexable URL. Built with [Astro](https://astro.build).
 
 A dark "gallery" studio site. The home page sections are a hero, selected works, process, latest video, about, a commission band and an FAQ. The full list of social channels lives on a separate `/links/` page (`/en/links/` in English). Vietnamese lives at `/`, English at `/en/`; the language toggle is a plain link between the two. The theme is dark only, with tokens in `src/styles/theme.css`.
 

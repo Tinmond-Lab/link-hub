@@ -6,6 +6,8 @@ export interface Product {
   name: string;
   desc: string;
   img: string;
+  imgWidth: number;
+  imgHeight: number;
   priceUsd: number | null;
   leadTime: string | null;
 }
@@ -194,24 +196,32 @@ const productBase = [
     slug: "nghinh-phong-tower",
     name: "Tháp Nghinh Phong",
     img: "/products/prod-thap.webp",
+    imgWidth: 1000,
+    imgHeight: 1000,
   },
   {
     slotId: "prod-diorama",
     slug: "miniature-diorama",
     name: "Miniature Diorama",
     img: "/products/prod-diorama.webp",
+    imgWidth: 1000,
+    imgHeight: 750,
   },
   {
     slotId: "prod-figure",
     slug: "resin-figure",
     name: "Resin Figure",
     img: "/products/prod-figure.webp",
+    imgWidth: 1000,
+    imgHeight: 800,
   },
   {
     slotId: "prod-soon",
     slug: null,
     name: "Coming Soon",
     img: "/products/prod-soon.webp",
+    imgWidth: 1000,
+    imgHeight: 750,
   },
 ];
 
@@ -241,7 +251,7 @@ const products = (locale: Locale): Product[] =>
 const vi: Content = {
   hero: {
     eyebrow: "Mô hình thủ công",
-    title: "Điêu khắc, in 3D và sơn tay tại Việt Nam.",
+    title: "In 3D, đổ resin và sơn tay tại Việt Nam.",
     subtitle:
       "Diorama, mô hình kiến trúc và figure resin sơn tay. Nhận đặt làm theo yêu cầu, giao hàng quốc tế.",
     imageAlt: "Mô hình kiến trúc Tháp Nghinh Phong trên nền tối",
@@ -303,7 +313,7 @@ const vi: Content = {
       },
       {
         title: "Duyệt bản 3D",
-        text: "Với tác phẩm điêu khắc, bạn duyệt mô hình 3D trước khi bắt đầu in.",
+        text: "Bạn duyệt mô hình 3D trước khi bắt đầu in.",
       },
       { title: "In 3D & đổ resin", text: "Tác phẩm được in 3D và đổ resin." },
       {
@@ -370,6 +380,7 @@ const vi: Content = {
     navCommission: "Đặt làm",
     navAbout: "Giới thiệu",
     menu: "Menu",
+    navMain: "Điều hướng chính",
     skipToContent: "Bỏ qua đến nội dung",
     footerTagline: "Build Ideas Into Reality",
     linksPage: "Tất cả liên kết",
@@ -409,7 +420,7 @@ const vi: Content = {
 const en: Content = {
   hero: {
     eyebrow: "Handmade miniatures",
-    title: "Sculpted, printed and hand-painted in Vietnam.",
+    title: "3D-printed, resin-cast and hand-painted in Vietnam.",
     subtitle:
       "Dioramas, architectural miniatures and hand-painted resin figures. Custom commissions welcome, shipped worldwide.",
     imageAlt: "Tháp Nghinh Phong architectural miniature on a dark background",
@@ -467,7 +478,7 @@ const en: Content = {
       },
       {
         title: "Approve the 3D design",
-        text: "For sculpted pieces you approve the 3D model before anything is printed.",
+        text: "You approve the 3D model before anything is printed.",
       },
       {
         title: "Print & cast",
@@ -531,12 +542,13 @@ const en: Content = {
     productEnquire: "Ask about this piece",
     enquirySubject: "Enquiry",
     shippingLink: "Shipping & import duties",
-    commissionLink: "Request a custom piece",
+    commissionLink: "Request a commission",
     navWorks: "Works",
     navProcess: "Process",
     navCommission: "Commission",
     navAbout: "About",
     menu: "Menu",
+    navMain: "Main navigation",
     skipToContent: "Skip to content",
     footerTagline: "Build Ideas Into Reality",
     linksPage: "All links",
