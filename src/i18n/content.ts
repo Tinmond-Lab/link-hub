@@ -69,7 +69,12 @@ export interface Content {
   socials: Social[];
   products: Product[];
   journeySteps: string[];
-  buildPublic: { slotId: string; label: string; img: string | null }[];
+  buildPublic: {
+    slotId: string;
+    label: string;
+    img: string | null;
+    href?: string;
+  }[];
   services: {
     key: "code" | "cuboid" | "paintbrush" | "layers";
     label: string;
@@ -77,6 +82,25 @@ export interface Content {
   values: string[];
   faq: { q: string; a: string; link?: { path: string; label: string } }[];
 }
+
+/** Link to the newest video. Paste a new YouTube link here (Shorts, watch or youtu.be) to update the home page card. */
+export const LATEST_VIDEO_URL = "https://www.youtube.com/shorts/XvO6u8sVaPc";
+
+/** Extracts the 11-character video id from a YouTube Shorts, watch or youtu.be link. */
+export function youtubeId(url: string): string | null {
+  const m = url.match(
+    /(?:youtube\.com\/(?:shorts\/|watch\?(?:[^#]*&)?v=)|youtu\.be\/)([\w-]{11})/,
+  );
+  return m ? m[1] : null;
+}
+
+const latestVideoId = youtubeId(LATEST_VIDEO_URL);
+const latestVideo = {
+  img: latestVideoId
+    ? `https://i.ytimg.com/vi/${latestVideoId}/maxresdefault.jpg`
+    : null,
+  href: LATEST_VIDEO_URL,
+};
 
 /** Set to the studio's Instagram profile URL to show it on the English page. */
 export const INSTAGRAM_URL: string | null = null;
@@ -342,7 +366,7 @@ const vi: Content = {
     "Vận chuyển",
   ],
   buildPublic: [
-    { slotId: "bip-0", label: "Video mới nhất", img: null },
+    { slotId: "bip-0", label: "Video mới nhất", ...latestVideo },
     {
       slotId: "bip-1",
       label: "Dự án đang làm",
@@ -518,7 +542,7 @@ const en: Content = {
     "Shipping",
   ],
   buildPublic: [
-    { slotId: "bip-0", label: "Latest Video", img: null },
+    { slotId: "bip-0", label: "Latest Video", ...latestVideo },
     {
       slotId: "bip-1",
       label: "Current Build",

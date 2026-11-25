@@ -54,20 +54,15 @@ All commands run from the root of the project:
 
 When developing with an agent (Claude Code), start the dev server in background mode: `astro dev --background`, then manage it with `astro dev stop` / `astro dev status` / `astro dev logs`.
 
-## Latest video thumbnail
+## Latest video
 
-`public/api/latest-video.php` resolves the TimondLab YouTube channel's latest video via YouTube's RSS feed (no API key needed) and caches the result for an hour. `src/pages/index.astro` fetches it client-side on page load and swaps the "Latest Video" build-in-public card's placeholder for the real thumbnail, linking it to the video.
+The "Latest Video" card on the home page is built at build time from one constant, `LATEST_VIDEO_URL` in `src/i18n/content.ts`. To show a newer video, paste its YouTube link there (Shorts, `watch?v=` and `youtu.be` links all work), then deploy. The thumbnail is derived from the video id (`https://i.ytimg.com/vi/<id>/maxresdefault.jpg`) and the card links to the video.
 
-This lives in PHP because the site currently deploys to shared PHP hosting. A client-side-only fetch straight to YouTube isn't possible — the browser blocks it via CORS, since YouTube's channel page and RSS feed don't send `Access-Control-Allow-Origin` headers permitting cross-origin reads. The fetch has to happen server-side; PHP is just whatever the current host supports.
+There is no server code: the site is fully static, so it deploys anywhere.
 
-**Migrating to a different host?** Port the fetch logic, not the whole design:
+## Deploy (Cloudflare Workers)
 
-- **Vercel / Netlify** (or anything with serverless/edge functions): rewrite `latest-video.php`'s logic as a Node function at the same `/api/latest-video` path.
-- **Static-only host** (no server runtime at request time): move the same fetch into the Astro frontmatter of `index.astro` so it runs at _build time_ via Node instead of per-request. Works on any static host with zero server dependency, but the thumbnail then only refreshes when the site is rebuilt and redeployed, not live per visit.
-
-Either way, keep the JSON response shape (`{ videoId, title, videoUrl, thumbnailUrl }`) so the client script in `index.astro` doesn't need to change.
-
-**Before deploying:** `latest-video.php` has a `?debug=1&token=...` mode for troubleshooting (see the comment at the top of the file). It's gated behind a token so it can't be used by outside visitors to force unlimited live requests or read server details — set your own via the `LATEST_VIDEO_DEBUG_TOKEN` environment variable if your host supports one, otherwise change `DEBUG_TOKEN_FALLBACK` in the file to your own random string. The cache file is also written outside the web root (two directories above the script) when possible, rather than a predictable path in the shared system temp directory.
+`wrangler.json` points Workers Builds at the static `dist/` folder (`npx wrangler deploy` uploads it as assets). Keep this file: without it Wrangler tries to auto-configure an Astro adapter and the deploy fails. The build command stays `npm run build`.
 
 ## CI
 

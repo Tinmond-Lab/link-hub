@@ -328,14 +328,6 @@ describe("channels and hero per locale", () => {
   });
 });
 
-describe("latest video fetch", () => {
-  it("uses an absolute path so it works under /en/", () => {
-    for (const f of ["index.html", "en/index.html"]) {
-      assert.match(read(f), /fetch\([`"']\/api\/latest-video\.php[`"']\)/);
-    }
-  });
-});
-
 describe("final review fixes", () => {
   it("product pages link to shipping and commission in their own locale", () => {
     const en = read("en/products/resin-figure/index.html");
@@ -395,5 +387,46 @@ describe("Cloudflare deploy config", () => {
     assert.equal(cfg.name, "link-hub");
     assert.equal(cfg.assets.directory, "./dist");
     assert.match(cfg.compatibility_date, /^\d{4}-\d{2}-\d{2}$/);
+  });
+});
+
+describe("latest video card", () => {
+  const URL = "https://www.youtube.com/shorts/XvO6u8sVaPc";
+  const THUMB = "https://i.ytimg.com/vi/XvO6u8sVaPc/maxresdefault.jpg";
+
+  it("youtubeId reads the id from shorts, watch and youtu.be links", async () => {
+    const { youtubeId } = await import("../src/i18n/content.ts");
+    assert.equal(
+      youtubeId("https://www.youtube.com/shorts/XvO6u8sVaPc"),
+      "XvO6u8sVaPc",
+    );
+    assert.equal(
+      youtubeId("https://www.youtube.com/watch?v=XvO6u8sVaPc&t=3"),
+      "XvO6u8sVaPc",
+    );
+    assert.equal(
+      youtubeId("https://youtu.be/XvO6u8sVaPc?si=abc"),
+      "XvO6u8sVaPc",
+    );
+    assert.equal(youtubeId("https://example.com/video"), null);
+  });
+
+  for (const f of ["index.html", "en/index.html"]) {
+    it(`${f}: latest video is a real link with its thumbnail, rendered at build time`, () => {
+      const html = read(f);
+      const card = html.match(/<a\b[^>]*class="bip-card"[^>]*>[\s\S]*?<\/a>/);
+      assert.ok(card, "no linked bip-card");
+      assert.ok(card[0].includes(`href="${URL}"`));
+      assert.match(card[0], /target="_blank"/);
+      assert.match(card[0], /rel="noopener/);
+      assert.ok(card[0].includes(`src="${THUMB}"`));
+    });
+  }
+
+  it("nothing calls the PHP endpoint any more", () => {
+    for (const f of ["index.html", "en/index.html"]) {
+      assert.doesNotMatch(read(f), /latest-video/);
+    }
+    assert.equal(existsSync(dist("api")), false);
   });
 });
