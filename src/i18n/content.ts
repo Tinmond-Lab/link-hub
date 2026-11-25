@@ -323,6 +323,8 @@ const vi: Content = {
   },
   ui: {
     searchPlaceholder: "Tìm liên kết, sản phẩm...",
+    linksLead: "Mô hình thủ công từ Việt Nam",
+    visitStudio: "Ghé thăm studio",
     langLabel: "EN",
     langAria: "EN – English",
     themeAria: "Toggle theme",
@@ -507,6 +509,8 @@ const en: Content = {
   },
   ui: {
     searchPlaceholder: "Search links, products...",
+    linksLead: "Handmade miniatures from Vietnam",
+    visitStudio: "Visit the studio",
     langLabel: "VI",
     langAria: "VI – Tiếng Việt",
     themeAria: "Toggle theme",

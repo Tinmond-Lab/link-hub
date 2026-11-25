@@ -572,3 +572,56 @@ describe("site chrome", () => {
     assert.match(css, /--accent:\s*#4c9aff/);
   });
 });
+
+describe("links page", () => {
+  const hrefsOf = (html) =>
+    [...html.matchAll(/<a href="([^"]+)"[^>]*class="social-item"/g)].map(
+      (m) => m[1],
+    );
+
+  it("exists in both locales with canonical and hreflang", () => {
+    for (const [file, self] of [
+      ["links/index.html", "/links/"],
+      ["en/links/index.html", "/en/links/"],
+    ]) {
+      assert.ok(existsSync(dist(file)), file);
+      const html = read(file);
+      assert.ok(html.includes(`<link rel="canonical" href="${SITE}${self}"`));
+      assert.ok(html.includes(`hreflang="vi" href="${SITE}/links/"`));
+      assert.ok(html.includes(`hreflang="en" href="${SITE}/en/links/"`));
+    }
+  });
+
+  it("links to the studio home in each locale", () => {
+    assert.match(
+      read("links/index.html"),
+      /<a [^>]*href="\/"[^>]*>\s*Ghé thăm studio\s*<\/a>/,
+    );
+    assert.match(
+      read("en/links/index.html"),
+      /<a [^>]*href="\/en\/"[^>]*>\s*Visit the studio\s*<\/a>/,
+    );
+  });
+
+  it("en lists Email first without Vietnam-only channels", () => {
+    const html = read("en/links/index.html");
+    const hrefs = hrefsOf(html);
+    assert.equal(hrefs[0], "mailto:timondlab@gmail.com");
+    assert.ok(hrefs.includes("https://youtube.com/@timondlab"));
+    assert.doesNotMatch(html, /zalo\.me/);
+    assert.doesNotMatch(html, /shopee\.vn/);
+  });
+
+  it("vi keeps YouTube first plus Zalo and Shopee", () => {
+    const html = read("links/index.html");
+    assert.equal(hrefsOf(html)[0], "https://youtube.com/@timondlab");
+    assert.ok(html.includes("zalo.me"));
+    assert.ok(html.includes("shopee.vn"));
+  });
+
+  it("is in the sitemap", () => {
+    const xml = read("sitemap-0.xml");
+    assert.ok(xml.includes(`<loc>${SITE}/links/</loc>`));
+    assert.ok(xml.includes(`<loc>${SITE}/en/links/</loc>`));
+  });
+});
