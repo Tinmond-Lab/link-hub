@@ -208,9 +208,14 @@ const serviceIcons = {
                 <div class="product-body">
                   <div class="product-name">{p.name}</div>
                   <div class="product-desc">{p.desc}</div>
-                  <a href="#" class="product-link">
-                    {t.viewDetails}
-                  </a>
+                  {p.slug && (
+                    <a
+                      href={localePath(locale, `/products/${p.slug}/`)}
+                      class="product-link"
+                    >
+                      {t.viewDetails}
+                    </a>
+                  )}
                 </div>
               </div>
             ))

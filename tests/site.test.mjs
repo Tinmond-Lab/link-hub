@@ -139,3 +139,73 @@ describe("organization structured data", () => {
     assert.equal(org.url, "https://timondlab.com/");
   });
 });
+
+describe("product pages", () => {
+  const slugs = ["nghinh-phong-tower", "miniature-diorama", "resin-figure"];
+
+  for (const slug of slugs) {
+    for (const [locale, prefix] of [
+      ["vi", ""],
+      ["en", "en/"],
+    ]) {
+      it(`${prefix}products/${slug}: exists with canonical and hreflang`, () => {
+        const file = `${prefix}products/${slug}/index.html`;
+        assert.ok(existsSync(dist(file)), `${file} missing`);
+        const html = read(file);
+        const self =
+          locale === "vi"
+            ? `${SITE}/products/${slug}/`
+            : `${SITE}/en/products/${slug}/`;
+        assert.ok(html.includes(`<link rel="canonical" href="${self}"`));
+        assert.ok(
+          html.includes(`hreflang="vi" href="${SITE}/products/${slug}/"`),
+        );
+        assert.ok(
+          html.includes(`hreflang="en" href="${SITE}/en/products/${slug}/"`),
+        );
+        assert.match(html, new RegExp(`<html lang="${locale}"`));
+      });
+    }
+  }
+
+  it("null price: Product JSON-LD has no offers and page says Price on request", () => {
+    const html = read("en/products/nghinh-phong-tower/index.html");
+    const product = jsonLdBlocks(html).find((b) => b["@type"] === "Product");
+    assert.ok(product, "no Product block");
+    assert.equal(product.name, "Tháp Nghinh Phong");
+    assert.ok(product.image.startsWith("https://timondlab.com/products/"));
+    assert.equal("offers" in product, false);
+    assert.match(html, /Price on request/);
+  });
+
+  it("Coming Soon has no page and no link to one", () => {
+    assert.equal(existsSync(dist("en/products/prod-soon")), false);
+    for (const f of ["index.html", "en/index.html"]) {
+      const html = read(f);
+      const card = html.match(
+        /<div class="product-card"[^>]*data-filter="coming soon"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/,
+      );
+      assert.ok(card, "coming soon card not found");
+      assert.doesNotMatch(card[0], /href=/);
+    }
+  });
+
+  it("home product links point at locale product pages, not #", () => {
+    assert.ok(
+      read("en/index.html").includes('href="/en/products/resin-figure/"'),
+    );
+    assert.ok(read("index.html").includes('href="/products/resin-figure/"'));
+    assert.doesNotMatch(
+      read("en/index.html"),
+      /class="product-link"[^>]*href="#"|href="#"[^>]*class="product-link"/,
+    );
+  });
+
+  it("enquiry mailto includes the product name in the subject", () => {
+    const html = read("en/products/resin-figure/index.html");
+    assert.match(
+      html,
+      /mailto:timondlab@gmail\.com\?subject=[^"]*Resin%20Figure/,
+    );
+  });
+});
