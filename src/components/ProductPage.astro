@@ -37,7 +37,7 @@ const price =
   <div class="card facts">
     <div><strong>{t.priceLabel}:</strong> {price}</div>
     <div>
-      <strong>{t.leadTimeLabel}:</strong>
+      <strong>{t.leadTimeLabel}:</strong>{" "}
       {product.leadTime ?? t.quotedPerOrder}
     </div>
   </div>
@@ -47,8 +47,8 @@ const price =
     >
   </p>
   <p class="more">
-    <a href={localePath(locale, "/shipping/")}>{t.shippingLink}</a>
-    ·
+    <a href={localePath(locale, "/shipping/")}>{t.shippingLink}</a>{" "}
+    ·{" "}
     <a href={localePath(locale, "/commission/")}>{t.commissionLink}</a>
   </p>
 </InfoPage>

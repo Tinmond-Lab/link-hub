@@ -366,3 +366,23 @@ describe("final review fixes", () => {
     }
   });
 });
+
+describe("product page spacing", () => {
+  for (const [file, label] of [
+    ["en/products/resin-figure/index.html", "Lead time"],
+    ["products/resin-figure/index.html", "Thời gian thực hiện"],
+  ]) {
+    it(`${file}: space after the "${label}:" label`, () => {
+      assert.match(read(file), new RegExp(`${label}:</strong>\\s+\\S`));
+    });
+  }
+
+  it("separator between the shipping and commission links has spaces on both sides", () => {
+    for (const f of [
+      "en/products/resin-figure/index.html",
+      "products/resin-figure/index.html",
+    ]) {
+      assert.match(read(f), /<\/a>\s+·\s+<a/);
+    }
+  });
+});
