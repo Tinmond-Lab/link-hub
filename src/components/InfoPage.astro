@@ -47,7 +47,9 @@ const t = getContent(locale).ui;
       try {
         if (localStorage.getItem("theme") === "dark")
           document.documentElement.setAttribute("data-theme", "dark");
-      } catch (e) {}
+      } catch {
+        // storage unavailable (private mode): keep the default light theme
+      }
     </script>
   </head>
   <body>
