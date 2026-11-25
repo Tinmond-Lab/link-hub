@@ -277,3 +277,53 @@ describe("shipping page", () => {
     );
   });
 });
+
+describe("channels and hero per locale", () => {
+  it("en page hides Vietnam-only channels and Instagram while unset", () => {
+    const html = read("en/index.html");
+    assert.doesNotMatch(html, /zalo\.me/);
+    assert.doesNotMatch(html, /shopee\.vn/);
+    assert.doesNotMatch(html, /instagram\.com/);
+  });
+
+  it("en page lists Email first", () => {
+    const html = read("en/index.html");
+    const hrefs = [
+      ...html.matchAll(/<a href="([^"]+)"[^>]*class="social-item"/g),
+    ].map((m) => m[1]);
+    assert.equal(hrefs[0], "mailto:timondlab@gmail.com");
+    assert.ok(hrefs.includes("https://youtube.com/@timondlab"));
+  });
+
+  it("vi page keeps Zalo and Shopee and original order", () => {
+    const html = read("index.html");
+    assert.ok(html.includes("zalo.me/84856694766"));
+    assert.ok(html.includes("shopee.vn/timondlab"));
+    const hrefs = [
+      ...html.matchAll(/<a href="([^"]+)"[^>]*class="social-item"/g),
+    ].map((m) => m[1]);
+    assert.equal(hrefs[0], "https://youtube.com/@timondlab");
+  });
+
+  it("en hero promotes commissions; vi hero is unchanged", () => {
+    const en = read("en/index.html");
+    assert.match(
+      en,
+      /Handmade miniatures, dioramas &amp; figure painting from Vietnam/,
+    );
+    assert.match(
+      en,
+      /<a href="\/en\/commission\/" class="btn btn-primary"[^>]*>Request a custom piece<\/a>/,
+    );
+    assert.match(
+      en,
+      /<a href="#products" class="btn btn-secondary"[^>]*>Explore Products<\/a>/,
+    );
+    const vi = read("index.html");
+    assert.match(
+      vi,
+      /<a href="#products" class="btn btn-primary"[^>]*>Khám phá sản phẩm<\/a>/,
+    );
+    assert.match(vi, /Lập trình viên phần mềm • Họa sĩ tô mô hình/);
+  });
+});

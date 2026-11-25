@@ -3,6 +3,7 @@ import {
   siYoutube,
   siTiktok,
   siFacebook,
+  siInstagram,
   siShopee,
   siZalo,
 } from "simple-icons";
@@ -23,6 +24,7 @@ const brand = {
   youtube: { color: `#${siYoutube.hex}`, path: siYoutube.path },
   tiktok: { color: "var(--text)", path: siTiktok.path },
   facebook: { color: `#${siFacebook.hex}`, path: siFacebook.path },
+  instagram: { color: `#${siInstagram.hex}`, path: siInstagram.path },
   shopee: { color: `#${siShopee.hex}`, path: siShopee.path },
   zalo: { color: `#${siZalo.hex}`, path: siZalo.path },
   email: { color: "var(--accent)", path: null },
@@ -98,11 +100,15 @@ const serviceIcons = {
         </div>
         <div class="hero-brand">Timond Lab</div>
         <h1 class="hero-title">Build Ideas Into Reality</h1>
-        <div class="hero-subtitle">{t.heroSubtitle}</div>
+        <div class="hero-subtitle">{c.hero.subtitle}</div>
         <div class="hero-ctas">
-          <a href="#products" class="btn btn-primary">{t.ctaProducts}</a>
-          <a href="#journey" class="btn btn-secondary">{t.ctaJourney}</a>
-          <a href="#social" class="btn btn-secondary">{t.ctaContact}</a>
+          {
+            c.hero.ctas.map((cta) => (
+              <a href={cta.href} class={`btn btn-${cta.variant}`}>
+                {cta.label}
+              </a>
+            ))
+          }
         </div>
       </section>
 

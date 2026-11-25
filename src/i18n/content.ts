@@ -11,7 +11,14 @@ export interface Product {
 }
 
 export interface Social {
-  key: "youtube" | "tiktok" | "facebook" | "shopee" | "zalo" | "email";
+  key:
+    | "youtube"
+    | "tiktok"
+    | "facebook"
+    | "instagram"
+    | "shopee"
+    | "zalo"
+    | "email";
   name: string;
   handle: string;
   href: string;
@@ -42,7 +49,14 @@ export interface Shipping {
   returnsNotice: string;
 }
 
+export interface HeroCta {
+  label: string;
+  href: string;
+  variant: "primary" | "secondary";
+}
+
 export interface Content {
+  hero: { subtitle: string; ctas: HeroCta[] };
   commission: Commission;
   shipping: Shipping;
   meta: {
@@ -63,6 +77,9 @@ export interface Content {
   values: string[];
   faq: { q: string; a: string; link?: { path: string; label: string } }[];
 }
+
+/** Set to the studio's Instagram profile URL to show it on the English page. */
+export const INSTAGRAM_URL: string | null = null;
 
 const socials: Social[] = [
   {
@@ -102,6 +119,30 @@ const socials: Social[] = [
     href: "mailto:timondlab@gmail.com",
   },
 ];
+
+const bySocialKey = (key: Social["key"]): Social =>
+  socials.find((s) => s.key === key)!;
+
+/** Vietnamese visitors keep every channel; English visitors get channels that work outside Vietnam, Email first. */
+const socialsFor = (locale: Locale): Social[] =>
+  locale === "vi"
+    ? socials
+    : [
+        bySocialKey("email"),
+        bySocialKey("youtube"),
+        bySocialKey("tiktok"),
+        bySocialKey("facebook"),
+        ...(INSTAGRAM_URL
+          ? [
+              {
+                key: "instagram" as const,
+                name: "Instagram",
+                handle: "@timondlab",
+                href: INSTAGRAM_URL,
+              },
+            ]
+          : []),
+      ];
 
 const productBase = [
   {
@@ -163,6 +204,14 @@ const withLabels = (labels: string[]): Content["services"] =>
   services.map((s, i) => ({ ...s, label: labels[i] }));
 
 const vi: Content = {
+  hero: {
+    subtitle: "Lập trình viên phần mềm • Họa sĩ tô mô hình",
+    ctas: [
+      { label: "Khám phá sản phẩm", href: "#products", variant: "primary" },
+      { label: "Xem hành trình", href: "#journey", variant: "secondary" },
+      { label: "Liên hệ", href: "#social", variant: "secondary" },
+    ],
+  },
   shipping: {
     title: "Vận chuyển & thuế",
     intro:
@@ -240,10 +289,6 @@ const vi: Content = {
     langAria: "Switch to English",
     themeAria: "Toggle theme",
     avatarAlt: "Timond Lab avatar",
-    heroSubtitle: "Lập trình viên phần mềm • Họa sĩ tô mô hình",
-    ctaProducts: "Khám phá sản phẩm",
-    ctaJourney: "Xem hành trình",
-    ctaContact: "Liên hệ",
     aboutEyebrow: "Về Timond Lab",
     aboutBody:
       "Timond Lab là studio sáng tạo kết hợp phát triển phần mềm với nghệ thuật mô hình thủ công — nơi công nghệ và thủ công gặp nhau để tạo ra những sản phẩm độc bản, cùng câu chuyện phía sau từng ý tưởng: từ concept, in 3D, đổ resin, sơn vẽ, đóng gói đến phát triển phần mềm.",
@@ -270,7 +315,7 @@ const vi: Content = {
     productEnquire: "Hỏi về sản phẩm này",
     enquirySubject: "Hỏi về",
   },
-  socials,
+  socials: socialsFor("vi"),
   products: products("vi"),
   journeySteps: [
     "Ý tưởng",
@@ -329,6 +374,18 @@ const vi: Content = {
 };
 
 const en: Content = {
+  hero: {
+    subtitle: "Handmade miniatures, dioramas & figure painting from Vietnam",
+    ctas: [
+      {
+        label: "Request a custom piece",
+        href: "/en/commission/",
+        variant: "primary",
+      },
+      { label: "Explore Products", href: "#products", variant: "secondary" },
+      { label: "Contact Me", href: "#social", variant: "secondary" },
+    ],
+  },
   shipping: {
     title: "Shipping & duties",
     intro:
@@ -405,10 +462,6 @@ const en: Content = {
     langAria: "Chuyển sang tiếng Việt",
     themeAria: "Toggle theme",
     avatarAlt: "Timond Lab avatar",
-    heroSubtitle: "Software Developer • Figure Painter",
-    ctaProducts: "Explore Products",
-    ctaJourney: "Watch My Journey",
-    ctaContact: "Contact Me",
     aboutEyebrow: "About Timond Lab",
     aboutBody:
       "Timond Lab is a creative studio blending software development with handcrafted miniature art — where technology and craftsmanship meet to build unique products, sharing every step of the journey: concept, 3D printing, resin casting, painting, packaging and software development.",
@@ -435,7 +488,7 @@ const en: Content = {
     productEnquire: "Ask about this piece",
     enquirySubject: "Enquiry",
   },
-  socials,
+  socials: socialsFor("en"),
   products: products("en"),
   journeySteps: [
     "Idea",
