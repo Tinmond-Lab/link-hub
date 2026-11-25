@@ -1,6 +1,7 @@
 ---
 import { getContent } from "../../i18n/content";
 import { localePath, type Locale } from "../../i18n/locales";
+import ContactButtons from "../ContactButtons.astro";
 
 interface Props {
   locale: Locale;
@@ -22,11 +23,9 @@ const keySteps = commission.steps.slice(0, 3);
       <p class="eyebrow">{t.commissionEyebrow}</p>
       <h2 id="commission-title" class="section-title">{commission.title}</h2>
       <p class="section-lead">{commission.intro}</p>
-      <p class="cta">
-        <a href={localePath(locale, "/commission/")} class="btn btn-primary"
-          >{t.commissionLink}</a
-        >
-      </p>
+      <div class="cta">
+        <ContactButtons locale={locale} />
+      </div>
       <p class="shipping">
         {t.shipsWorldwide} ·{" "}
         <a href={localePath(locale, "/shipping/")}>{t.seeShipping}</a>

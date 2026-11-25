@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getContent } from "../i18n/content";
+import ContactButtons from "./ContactButtons.astro";
 import { productJsonLd } from "../seo/jsonld";
 import { SITE_URL, localePath, type Locale } from "../i18n/locales";
 
@@ -12,7 +13,6 @@ interface Props {
 const { locale, slug } = Astro.props;
 const t = getContent(locale).ui;
 const product = getContent(locale).products.find((p) => p.slug === slug)!;
-const subject = encodeURIComponent(`${t.enquirySubject}: ${product.name}`);
 const price =
   product.priceUsd === null ? t.priceOnRequest : `$${product.priceUsd} USD`;
 ---
@@ -45,13 +45,8 @@ const price =
           {product.leadTime ?? t.quotedPerOrder}
         </div>
       </div>
-      <p>
-        <a
-          class="btn btn-primary"
-          href={`mailto:timondlab@gmail.com?subject=${subject}`}
-          >{t.productEnquire}</a
-        >
-      </p>
+      <ContactButtons locale={locale} />
+      <p class="hint">{t.contactProductHint}</p>
       <p class="more">
         <a href={localePath(locale, "/shipping/")}>{t.shippingLink}</a>{" "}
         ·{" "}
@@ -62,6 +57,11 @@ const price =
 </BaseLayout>
 
 <style>
+  .hint {
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
   .product {
     display: grid;
     gap: 32px;

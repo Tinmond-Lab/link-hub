@@ -1,0 +1,27 @@
+---
+import { MESSENGER_URL, ZALO_URL, getContent } from "../i18n/content";
+import type { Locale } from "../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { ui: t } = getContent(Astro.props.locale);
+---
+
+<div class="contact-buttons">
+  <a href={MESSENGER_URL} class="btn btn-primary" target="_blank" rel="noopener"
+    >{t.contactFacebook}</a
+  >
+  <a href={ZALO_URL} class="btn btn-secondary" target="_blank" rel="noopener"
+    >{t.contactZalo}</a
+  >
+</div>
+
+<style>
+  .contact-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+</style>

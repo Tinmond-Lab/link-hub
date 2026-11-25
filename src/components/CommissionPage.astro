@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { commissionMailto, getContent } from "../i18n/content";
+import { getContent } from "../i18n/content";
+import ContactButtons from "./ContactButtons.astro";
 import type { Locale } from "../i18n/locales";
 
 interface Props {
@@ -38,14 +39,16 @@ const c = getContent(locale).commission;
       {c.include.map((item) => <li>{item}</li>)}
     </ul>
 
-    <p>
-      <a class="btn btn-primary" href={commissionMailto(locale)}>{c.ctaLabel}</a
-      >
-    </p>
+    <div class="contact">
+      <ContactButtons locale={locale} />
+    </div>
   </article>
 </BaseLayout>
 
 <style>
+  .contact {
+    margin-top: 32px;
+  }
   .page {
     max-width: 760px;
     margin: 0 auto;

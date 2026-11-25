@@ -33,9 +33,6 @@ export interface Commission {
   steps: { title: string; text: string }[];
   includeTitle: string;
   include: string[];
-  ctaLabel: string;
-  mailSubject: string;
-  mailIntro: string;
 }
 
 export interface Shipping {
@@ -54,7 +51,9 @@ export interface Shipping {
 export interface HeroCta {
   label: string;
   href: string;
-  variant: "primary" | "secondary";
+  variant: "primary" | "secondary" | "quiet";
+  /** Open in a new tab (chat apps and other sites). */
+  external?: boolean;
 }
 
 export interface Content {
@@ -110,6 +109,14 @@ export const latestVideo: { href: string; img: string | null } = {
 /** Maker portrait path; stays null until a verified photo is supplied. */
 export const MAKER_PHOTO: string | null = null;
 
+/**
+ * Where visitors start a chat. Messenger opens the Facebook page's inbox (the page must allow
+ * messages); Zalo opens the studio's number. Used by the hero, the commission band and the
+ * commission and product pages.
+ */
+export const MESSENGER_URL = "https://m.me/timondlab";
+export const ZALO_URL = "https://zalo.me/84856694766";
+
 /** Set to the studio's Instagram profile URL to show it on the English page. */
 export const INSTAGRAM_URL: string | null = null;
 
@@ -142,7 +149,7 @@ const socials: Social[] = [
     key: "zalo",
     name: "Zalo",
     handle: "0856694766",
-    href: "https://zalo.me/84856694766",
+    href: ZALO_URL,
   },
   {
     key: "email",
@@ -257,11 +264,18 @@ const vi: Content = {
     imageAlt: "Mô hình kiến trúc Tháp Nghinh Phong trên nền tối",
     ctas: [
       {
-        label: "Đặt làm theo yêu cầu",
-        href: "/commission/",
+        label: "Nhắn tin Facebook",
+        href: MESSENGER_URL,
         variant: "primary",
+        external: true,
       },
-      { label: "Xem tác phẩm", href: "#works", variant: "secondary" },
+      {
+        label: "Nhắn tin Zalo",
+        href: ZALO_URL,
+        variant: "secondary",
+        external: true,
+      },
+      { label: "Xem tác phẩm", href: "#works", variant: "quiet" },
     ],
   },
   about: {
@@ -333,9 +347,6 @@ const vi: Content = {
       "Thời hạn (nếu có)",
       "Quốc gia nhận hàng",
     ],
-    ctaLabel: "Gửi yêu cầu",
-    mailSubject: "Yêu cầu đặt làm theo yêu cầu",
-    mailIntro: "Chào Timond Lab, mình muốn đặt làm một sản phẩm. Thông tin:",
   },
   meta: {
     title: "Timond Lab · Mô hình thủ công & diorama từ Việt Nam",
@@ -371,13 +382,14 @@ const vi: Content = {
     priceOnRequest: "Liên hệ để báo giá",
     leadTimeLabel: "Thời gian thực hiện",
     quotedPerOrder: "Báo theo từng đơn",
-    productEnquire: "Hỏi về sản phẩm này",
-    enquirySubject: "Hỏi về",
+    contactFacebook: "Nhắn tin Facebook",
+    contactZalo: "Nhắn tin Zalo",
+    contactProductHint: "Nhắn tên tác phẩm bạn quan tâm và nước nhận hàng.",
     shippingLink: "Vận chuyển & thuế nhập khẩu",
     commissionLink: "Đặt làm theo yêu cầu",
     navWorks: "Tác phẩm",
     navProcess: "Quy trình",
-    navCommission: "Đặt làm",
+    navCommission: "Liên hệ",
     navAbout: "Giới thiệu",
     menu: "Menu",
     navMain: "Điều hướng chính",
@@ -426,11 +438,18 @@ const en: Content = {
     imageAlt: "Tháp Nghinh Phong architectural miniature on a dark background",
     ctas: [
       {
-        label: "Request a commission",
-        href: "/en/commission/",
+        label: "Message on Facebook",
+        href: MESSENGER_URL,
         variant: "primary",
+        external: true,
       },
-      { label: "View works", href: "#works", variant: "secondary" },
+      {
+        label: "Message on Zalo",
+        href: ZALO_URL,
+        variant: "secondary",
+        external: true,
+      },
+      { label: "View works", href: "#works", variant: "quiet" },
     ],
   },
   about: {
@@ -501,9 +520,6 @@ const en: Content = {
       "Deadline (if any)",
       "Country to ship to",
     ],
-    ctaLabel: "Request a commission",
-    mailSubject: "Commission request",
-    mailIntro: "Hi Timond Lab, I'd like to commission a piece. Details:",
   },
   meta: {
     title: "Timond Lab · Handmade miniatures & dioramas from Vietnam",
@@ -539,13 +555,14 @@ const en: Content = {
     priceOnRequest: "Price on request",
     leadTimeLabel: "Lead time",
     quotedPerOrder: "Quoted per order",
-    productEnquire: "Ask about this piece",
-    enquirySubject: "Enquiry",
+    contactFacebook: "Message on Facebook",
+    contactZalo: "Message on Zalo",
+    contactProductHint: "Tell us which piece you like and where to ship it.",
     shippingLink: "Shipping & import duties",
     commissionLink: "Request a commission",
     navWorks: "Works",
     navProcess: "Process",
-    navCommission: "Commission",
+    navCommission: "Contact",
     navAbout: "About",
     menu: "Menu",
     navMain: "Main navigation",
@@ -605,11 +622,4 @@ export function processChapters(
 
 export function getContent(locale: Locale): Content {
   return content[locale];
-}
-
-/** mailto: link that opens a pre-filled commission request. */
-export function commissionMailto(locale: Locale): string {
-  const { include, mailSubject, mailIntro } = getContent(locale).commission;
-  const body = [mailIntro, ...include.map((item) => `- ${item}:`)].join("\n");
-  return `mailto:timondlab@gmail.com?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(body)}`;
 }

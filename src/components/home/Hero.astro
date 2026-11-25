@@ -41,7 +41,11 @@ const words = hero.title.split(" ");
     <div class="ctas">
       {
         hero.ctas.map((cta) => (
-          <a href={cta.href} class={`btn btn-${cta.variant}`}>
+          <a
+            href={cta.href}
+            class={`btn btn-${cta.variant}`}
+            {...(cta.external ? { target: "_blank", rel: "noopener" } : {})}
+          >
             {cta.label}
           </a>
         ))
