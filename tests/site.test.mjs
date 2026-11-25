@@ -209,3 +209,42 @@ describe("product pages", () => {
     );
   });
 });
+
+describe("commission page", () => {
+  for (const [locale, prefix, self] of [
+    ["vi", "", `${SITE}/commission/`],
+    ["en", "en/", `${SITE}/en/commission/`],
+  ]) {
+    it(`${prefix}commission: six steps, enquiry mailto, canonical and hreflang`, () => {
+      const file = `${prefix}commission/index.html`;
+      assert.ok(existsSync(dist(file)), `${file} missing`);
+      const html = read(file);
+      assert.equal((html.match(/<li class="step"/g) ?? []).length, 6);
+      assert.match(
+        html,
+        /mailto:timondlab@gmail\.com\?subject=[^"]+&amp;body=[^"]+/,
+      );
+      assert.ok(html.includes(`<link rel="canonical" href="${self}"`));
+      assert.ok(html.includes(`hreflang="vi" href="${SITE}/commission/"`));
+      assert.ok(html.includes(`hreflang="en" href="${SITE}/en/commission/"`));
+      assert.match(html, new RegExp(`<html lang="${locale}"`));
+    });
+  }
+
+  it("en mailto asks for reference images, size, budget, deadline and country", () => {
+    const html = decodeURIComponent(
+      read("en/commission/index.html")
+        .match(/mailto:[^"]+/)[0]
+        .replace(/&amp;/g, "&"),
+    );
+    for (const word of [
+      "Reference images",
+      "size",
+      "Budget",
+      "Deadline",
+      "Country",
+    ]) {
+      assert.ok(html.includes(word), `mailto body lacks ${word}`);
+    }
+  });
+});

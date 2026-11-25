@@ -1,0 +1,60 @@
+---
+import InfoPage from "./InfoPage.astro";
+import { commissionMailto, getContent } from "../i18n/content";
+import type { Locale } from "../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const c = getContent(locale).commission;
+---
+
+<InfoPage
+  locale={locale}
+  path="/commission/"
+  title={`${c.title} · Timond Lab`}
+  description={c.intro}
+>
+  <h1>{c.title}</h1>
+  <p class="lead">{c.intro}</p>
+
+  <h2>{c.stepsTitle}</h2>
+  <ol class="steps">
+    {
+      c.steps.map((s) => (
+        <li class="step">
+          <strong>{s.title}</strong>
+          <span>{s.text}</span>
+        </li>
+      ))
+    }
+  </ol>
+
+  <h2>{c.includeTitle}</h2>
+  <ul class="include">
+    {c.include.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <p><a class="btn" href={commissionMailto(locale)}>{c.ctaLabel}</a></p>
+</InfoPage>
+
+<style>
+  .steps {
+    padding-left: 22px;
+    margin: 0;
+  }
+  .step {
+    margin-bottom: 12px;
+  }
+  .step strong {
+    display: block;
+  }
+  .step span {
+    color: var(--muted);
+  }
+  .include {
+    padding-left: 22px;
+  }
+</style>

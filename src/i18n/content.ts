@@ -17,7 +17,20 @@ export interface Social {
   href: string;
 }
 
+export interface Commission {
+  title: string;
+  intro: string;
+  stepsTitle: string;
+  steps: { title: string; text: string }[];
+  includeTitle: string;
+  include: string[];
+  ctaLabel: string;
+  mailSubject: string;
+  mailIntro: string;
+}
+
 export interface Content {
+  commission: Commission;
   meta: {
     title: string;
     description: string;
@@ -136,6 +149,46 @@ const withLabels = (labels: string[]): Content["services"] =>
   services.map((s, i) => ({ ...s, label: labels[i] }));
 
 const vi: Content = {
+  commission: {
+    title: "Đặt làm theo yêu cầu",
+    intro:
+      "Hãy kể ý tưởng của bạn — một figure, một diorama, một khung cảnh — Timond Lab sẽ biến nó thành tác phẩm sơn tay và gửi đi khắp nơi.",
+    stepsTitle: "Quy trình",
+    steps: [
+      {
+        title: "Gửi ý tưởng",
+        text: "Gửi hình tham khảo, kích thước mong muốn và thời hạn của bạn.",
+      },
+      {
+        title: "Nhận báo giá",
+        text: "Chúng tôi phản hồi giá, thời gian làm và phí vận chuyển đến nơi bạn ở.",
+      },
+      {
+        title: "Duyệt bản 3D",
+        text: "Với tác phẩm điêu khắc, bạn duyệt mô hình 3D trước khi bắt đầu in.",
+      },
+      { title: "In 3D & đổ resin", text: "Tác phẩm được in 3D và đổ resin." },
+      {
+        title: "Sơn tay",
+        text: "Sơn thủ công, kèm ảnh tiến độ trong quá trình làm.",
+      },
+      {
+        title: "Đóng gói & gửi",
+        text: "Đóng gói cẩn thận và gửi kèm mã theo dõi.",
+      },
+    ],
+    includeTitle: "Hãy gửi kèm",
+    include: [
+      "Hình hoặc đường dẫn tham khảo",
+      "Kích thước / tỉ lệ mong muốn",
+      "Ngân sách dự kiến",
+      "Thời hạn (nếu có)",
+      "Quốc gia nhận hàng",
+    ],
+    ctaLabel: "Gửi yêu cầu",
+    mailSubject: "Yêu cầu đặt làm theo yêu cầu",
+    mailIntro: "Chào Timond Lab, mình muốn đặt làm một sản phẩm. Thông tin:",
+  },
   meta: {
     title: "Timond Lab · LinkHub",
     description:
@@ -237,6 +290,49 @@ const vi: Content = {
 };
 
 const en: Content = {
+  commission: {
+    title: "Custom commissions",
+    intro:
+      "Tell us your idea — a figure, a diorama, a scene — and we'll turn it into a hand-painted piece, shipped worldwide.",
+    stepsTitle: "How it works",
+    steps: [
+      {
+        title: "Share your idea",
+        text: "Send reference images, the size you have in mind and your deadline.",
+      },
+      {
+        title: "Get a quote",
+        text: "We reply with a price, a timeline and the shipping cost to your country.",
+      },
+      {
+        title: "Approve the 3D design",
+        text: "For sculpted pieces you approve the 3D model before anything is printed.",
+      },
+      {
+        title: "Print & cast",
+        text: "The piece is 3D-printed and cast in resin.",
+      },
+      {
+        title: "Hand-paint",
+        text: "Painted by hand, with progress photos along the way.",
+      },
+      {
+        title: "Pack & ship",
+        text: "Carefully packed and shipped with tracking.",
+      },
+    ],
+    includeTitle: "Please include",
+    include: [
+      "Reference images or links",
+      "Approximate size / scale",
+      "Budget range",
+      "Deadline (if any)",
+      "Country to ship to",
+    ],
+    ctaLabel: "Request a commission",
+    mailSubject: "Commission request",
+    mailIntro: "Hi Timond Lab, I'd like to commission a piece. Details:",
+  },
   meta: {
     title: "Timond Lab · Handmade miniatures & dioramas from Vietnam",
     description:
@@ -341,4 +437,11 @@ const content: Record<Locale, Content> = { vi, en };
 
 export function getContent(locale: Locale): Content {
   return content[locale];
+}
+
+/** mailto: link that opens a pre-filled commission request. */
+export function commissionMailto(locale: Locale): string {
+  const { include, mailSubject, mailIntro } = getContent(locale).commission;
+  const body = [mailIntro, ...include.map((item) => `- ${item}:`)].join("\n");
+  return `mailto:timondlab@gmail.com?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(body)}`;
 }
