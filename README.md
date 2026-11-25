@@ -29,7 +29,7 @@ All text, products, FAQ and social links live in `src/i18n/content.ts`. Add or c
 
 These ship as safe placeholders ("Price on request", "Quoted per order") until filled in `content.ts`:
 
-- `priceUsd` and `leadTime` for each product (a product with `priceUsd: null` emits no `offers` in its JSON-LD)
+- `priceUsd` and `leadTime` for each product, in the `productFacts` table in `content.ts` (a product with `priceUsd: null` emits no `offers` in its JSON-LD)
 - the shipping table (`shipping.regions`) and the wording of `dutiesNotice` / `returnsNotice`
 - `INSTAGRAM_URL` (the Instagram link stays hidden on the English page while it is `null`)
 

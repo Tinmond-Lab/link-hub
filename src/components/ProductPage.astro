@@ -2,7 +2,7 @@
 import InfoPage from "./InfoPage.astro";
 import { getContent } from "../i18n/content";
 import { productJsonLd } from "../seo/jsonld";
-import { SITE_URL, type Locale } from "../i18n/locales";
+import { SITE_URL, localePath, type Locale } from "../i18n/locales";
 
 interface Props {
   locale: Locale;
@@ -45,6 +45,11 @@ const price =
     <a class="btn" href={`mailto:timondlab@gmail.com?subject=${subject}`}
       >{t.productEnquire}</a
     >
+  </p>
+  <p class="more">
+    <a href={localePath(locale, "/shipping/")}>{t.shippingLink}</a>
+    ·
+    <a href={localePath(locale, "/commission/")}>{t.commissionLink}</a>
   </p>
 </InfoPage>
 

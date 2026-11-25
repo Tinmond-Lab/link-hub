@@ -335,3 +335,34 @@ describe("latest video fetch", () => {
     }
   });
 });
+
+describe("final review fixes", () => {
+  it("product pages link to shipping and commission in their own locale", () => {
+    const en = read("en/products/resin-figure/index.html");
+    assert.ok(en.includes('href="/en/shipping/"'));
+    assert.ok(en.includes('href="/en/commission/"'));
+    const vi = read("products/resin-figure/index.html");
+    assert.ok(vi.includes('href="/shipping/"'));
+    assert.ok(vi.includes('href="/commission/"'));
+  });
+
+  it("the custom-work FAQ links to the locale commission page", () => {
+    assert.match(
+      read("en/index.html"),
+      /<div class="faq-answer"[^>]*>[^<]*custom projects[^<]*<a href="\/en\/commission\/"/,
+    );
+    assert.match(
+      read("index.html"),
+      /<div class="faq-answer"[^>]*>[^<]*custom[^<]*<a href="\/commission\/"/,
+    );
+  });
+
+  it("owner-editable price and lead time exist per product in content.ts", async () => {
+    const { productFacts, getContent } = await import("../src/i18n/content.ts");
+    for (const p of getContent("en").products.filter((p) => p.slug)) {
+      const facts = productFacts[p.slug];
+      assert.ok(facts, `no productFacts entry for ${p.slug}`);
+      assert.ok("priceUsd" in facts && "leadTime" in facts);
+    }
+  });
+});

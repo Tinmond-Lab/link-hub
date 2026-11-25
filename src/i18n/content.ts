@@ -144,6 +144,20 @@ const socialsFor = (locale: Locale): Social[] =>
           : []),
       ];
 
+/**
+ * Owner-editable facts per product slug. Set `priceUsd` (e.g. 120) and/or a
+ * per-language `leadTime` (e.g. { vi: "3–4 tuần", en: "3–4 weeks" }) to show
+ * them on the product page; `null` renders "Price on request" / "Quoted per order".
+ */
+export const productFacts: Record<
+  string,
+  { priceUsd: number | null; leadTime: Record<Locale, string> | null }
+> = {
+  "nghinh-phong-tower": { priceUsd: null, leadTime: null },
+  "miniature-diorama": { priceUsd: null, leadTime: null },
+  "resin-figure": { priceUsd: null, leadTime: null },
+};
+
 const productBase = [
   {
     slotId: "prod-thap",
@@ -190,8 +204,8 @@ const products = (locale: Locale): Product[] =>
   productBase.map((p, i) => ({
     ...p,
     desc: productDesc[locale][i],
-    priceUsd: null,
-    leadTime: null,
+    priceUsd: p.slug ? productFacts[p.slug].priceUsd : null,
+    leadTime: (p.slug && productFacts[p.slug].leadTime?.[locale]) || null,
   }));
 
 const services: Content["services"] = [
@@ -314,6 +328,8 @@ const vi: Content = {
     quotedPerOrder: "Báo theo từng đơn",
     productEnquire: "Hỏi về sản phẩm này",
     enquirySubject: "Hỏi về",
+    shippingLink: "Vận chuyển & thuế nhập khẩu",
+    commissionLink: "Đặt làm theo yêu cầu",
   },
   socials: socialsFor("vi"),
   products: products("vi"),
@@ -364,6 +380,7 @@ const vi: Content = {
     {
       q: "Tôi có thể đặt làm theo yêu cầu không?",
       a: "Có. Timond Lab nhận thực hiện các dự án custom theo ý tưởng riêng của bạn, từ figure đến diorama.",
+      link: { path: "/commission/", label: "Gửi yêu cầu đặt làm" },
     },
     {
       q: "Có giao hàng quốc tế không?",
@@ -487,6 +504,8 @@ const en: Content = {
     quotedPerOrder: "Quoted per order",
     productEnquire: "Ask about this piece",
     enquirySubject: "Enquiry",
+    shippingLink: "Shipping & import duties",
+    commissionLink: "Request a custom piece",
   },
   socials: socialsFor("en"),
   products: products("en"),
@@ -537,6 +556,7 @@ const en: Content = {
     {
       q: "Can I order custom work?",
       a: "Yes — Timond Lab takes on custom projects, from figures to full dioramas, built around your idea.",
+      link: { path: "/commission/", label: "Request a commission" },
     },
     {
       q: "Do you ship internationally?",
