@@ -1,0 +1,223 @@
+---
+import SocialIcons from "./SocialIcons.astro";
+import { getContent } from "../i18n/content";
+import { localePath, otherLocale, type Locale } from "../i18n/locales";
+
+interface Props {
+  locale: Locale;
+  /** Locale-independent path of this page, e.g. "/commission/"; the language link points at its twin. */
+  path: string;
+}
+
+const { locale, path } = Astro.props;
+const t = getContent(locale).ui;
+const home = localePath(locale);
+const other = otherLocale(locale);
+const nav = [
+  { href: `${home}#works`, label: t.navWorks },
+  { href: `${home}#process`, label: t.navProcess },
+  { href: `${home}#commission`, label: t.navCommission },
+  { href: `${home}#about`, label: t.navAbout },
+];
+---
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href={home}>
+      <img src="/favicon-32.png" alt="" width="32" height="32" />
+      <span class="wordmark">TIMOND LAB</span>
+    </a>
+
+    <nav class="nav-desktop" aria-label={t.menu}>
+      <ul>
+        {
+          nav.map((n) => (
+            <li>
+              <a href={n.href}>{n.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <div class="icons-desktop"><SocialIcons locale={locale} /></div>
+      <a
+        id="lang-toggle"
+        class="lang"
+        href={localePath(other, path)}
+        hreflang={other}
+        lang={other}
+        aria-label={t.langAria}>{t.langLabel}</a
+      >
+      <details class="site-menu">
+        <summary>
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M4 7h16M4 12h16M4 17h16"></path>
+          </svg>
+          <span>{t.menu}</span>
+        </summary>
+        <div class="menu-panel">
+          <nav aria-label={t.menu}>
+            <ul>
+              {
+                nav.map((n) => (
+                  <li>
+                    <a href={n.href}>{n.label}</a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+          <SocialIcons locale={locale} />
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(0 0 0 / 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: var(--max-width);
+    min-height: 64px;
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    margin-right: auto;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .brand img {
+    border-radius: 4px;
+  }
+  .wordmark {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.14em;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .nav-desktop ul {
+    display: flex;
+    gap: 4px;
+  }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 4px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  nav a:hover {
+    color: var(--text);
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+  }
+  .lang:hover {
+    border-color: var(--muted);
+  }
+  summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .menu-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 8px var(--gutter) 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .menu-panel nav a {
+    display: flex;
+    min-height: 48px;
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 17px;
+  }
+  .menu-panel :global(.social-icons) {
+    margin-top: 12px;
+  }
+  .nav-desktop,
+  .icons-desktop {
+    display: none;
+  }
+  @media (min-width: 900px) {
+    .nav-desktop,
+    .icons-desktop {
+      display: block;
+    }
+    .site-menu {
+      display: none;
+    }
+  }
+</style>

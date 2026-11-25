@@ -1,0 +1,104 @@
+---
+import SocialIcons from "./SocialIcons.astro";
+import { getContent } from "../i18n/content";
+import { localePath, type Locale } from "../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { ui: t, socials } = getContent(locale);
+const email = socials.find((s) => s.key === "email");
+const links = [
+  { href: localePath(locale, "/commission/"), label: t.commissionLink },
+  { href: localePath(locale, "/shipping/"), label: t.shippingLink },
+  { href: localePath(locale, "/links/"), label: t.linksPage },
+];
+---
+
+<footer class="site-footer">
+  <div class="inner">
+    <div class="lead">
+      <p class="tagline">{t.footerTagline}</p>
+      {
+        email && (
+          <a class="email" href={email.href}>
+            {email.handle}
+          </a>
+        )
+      }
+      <SocialIcons locale={locale} />
+    </div>
+    <ul class="links">
+      {
+        links.map((l) => (
+          <li>
+            <a href={l.href}>{l.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  <p class="copy">© 2026 Timond Lab</p>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 96px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 32px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 48px var(--gutter) 24px;
+  }
+  .lead {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .lead :global(.social-icons) {
+    margin-left: -12px;
+  }
+  .tagline {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .email {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .links a:hover {
+    color: var(--text);
+  }
+  .copy {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 16px var(--gutter) 32px;
+    font-size: 13px;
+  }
+</style>

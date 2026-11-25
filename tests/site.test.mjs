@@ -1,7 +1,7 @@
 import { describe, it, before } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
@@ -234,7 +234,8 @@ describe("commission page", () => {
   it("en mailto asks for reference images, size, budget, deadline and country", () => {
     const html = decodeURIComponent(
       read("en/commission/index.html")
-        .match(/mailto:[^"]+/)[0]
+        // The header and footer also link plain mailto:; pick the commission one, which has a body.
+        .match(/mailto:[^"]+&amp;body=[^"]+/)[0]
         .replace(/&amp;/g, "&"),
     );
     for (const word of [
@@ -490,5 +491,84 @@ describe("favicon", () => {
   it("PNG icons have the declared sizes", () => {
     assert.deepEqual(png("favicon-32.png"), { w: 32, h: 32 });
     assert.deepEqual(png("apple-touch-icon.png"), { w: 180, h: 180 });
+  });
+});
+
+const cssAll = () => {
+  const dir = dist("_astro");
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".css"))
+    .map((f) => readFileSync(resolve(dir, f), "utf8"))
+    .join("\n");
+};
+
+const INFO_PAGES = [
+  "commission/index.html",
+  "en/commission/index.html",
+  "shipping/index.html",
+  "en/shipping/index.html",
+  ...["nghinh-phong-tower", "miniature-diorama", "resin-figure"].flatMap(
+    (s) => [`products/${s}/index.html`, `en/products/${s}/index.html`],
+  ),
+];
+const CHROME_PAGES = [...INFO_PAGES];
+
+describe("site chrome", () => {
+  for (const f of CHROME_PAGES) {
+    it(`${f}: header, footer, skip link, main landmark, studio fonts`, () => {
+      const html = read(f);
+      assert.match(html, /<header class="site-header"/);
+      assert.match(html, /<footer class="site-footer"/);
+      assert.match(html, /<a class="skip-link" href="#main"/);
+      assert.match(html, /<main id="main"/);
+      assert.match(html, /family=Archivo/);
+      assert.match(html, /family=Space\+Grotesk/);
+      assert.doesNotMatch(html, /Be\+Vietnam\+Pro/);
+    });
+  }
+
+  it("header anchors point at the home page", () => {
+    const en = read("en/products/resin-figure/index.html");
+    for (const a of ["works", "process", "commission", "about"]) {
+      assert.ok(en.includes(`href="/en/#${a}"`), `missing /en/#${a}`);
+    }
+    assert.ok(
+      read("products/resin-figure/index.html").includes('href="/#works"'),
+    );
+  });
+
+  it("mobile menu is a native details element holding the nav", () => {
+    assert.match(
+      read("en/commission/index.html"),
+      /<details class="site-menu"[\s\S]*href="\/en\/#works"[\s\S]*<\/details>/,
+    );
+  });
+
+  it("language link text is part of its accessible name", () => {
+    for (const [f, label] of [
+      ["commission/index.html", "EN"],
+      ["en/commission/index.html", "VI"],
+    ]) {
+      const m = read(f).match(/<a[^>]*id="lang-toggle"[^>]*>([^<]*)</);
+      assert.ok(m, `no lang-toggle in ${f}`);
+      assert.equal(m[1].trim(), label);
+      const aria = m[0].match(/aria-label="([^"]*)"/);
+      assert.ok(
+        aria && aria[1].startsWith(label),
+        `aria-label must start with ${label}`,
+      );
+    }
+  });
+
+  it("reveal is gated behind html.js and motion respects reduced-motion", () => {
+    const css = cssAll();
+    assert.match(css, /\.js \.reveal/);
+    assert.match(css, /prefers-reduced-motion/);
+  });
+
+  it("dark tokens are defined", () => {
+    const css = cssAll().toLowerCase();
+    assert.match(css, /--bg:\s*#000(000)?\b/);
+    assert.match(css, /--accent:\s*#4c9aff/);
   });
 });
