@@ -8,6 +8,19 @@ const root = resolve(import.meta.dirname, "..");
 const dist = (rel) => resolve(root, "dist", rel);
 const read = (rel) => readFileSync(dist(rel), "utf8");
 
+const workCards = (html) =>
+  [
+    ...html.matchAll(/<article class="work-card"[^>]*>[\s\S]*?<\/article>/g),
+  ].map((m) => m[0]);
+
+const allCss = () => {
+  const dir = dist("_astro");
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".css"))
+    .map((f) => readFileSync(resolve(dir, f), "utf8"))
+    .join("\n");
+};
+
 before(() => {
   execFileSync("npx", ["astro", "build"], { cwd: root, stdio: "pipe" });
 });
@@ -203,9 +216,22 @@ describe("product pages", () => {
       read("en/index.html").includes('href="/en/products/resin-figure/"'),
     );
     assert.ok(read("index.html").includes('href="/products/resin-figure/"'));
-    assert.doesNotMatch(
-      read("en/index.html"),
-      /class="work-card"[^>]*href="#"|href="#"[^>]*class="work-card"/,
+    for (const f of ["index.html", "en/index.html"]) {
+      const cards = workCards(read(f));
+      assert.ok(cards.length > 0, "no work cards found");
+      for (const c of cards) assert.doesNotMatch(c, /href="#"/);
+    }
+  });
+
+  it("work card matcher can detect href=# (guard against vacuous test)", () => {
+    const probe = '<article class="work-card"><a href="#">x</a></article>';
+    assert.match(workCards(probe)[0], /href="#"/);
+  });
+
+  it("vi home marks the English video eyebrow with lang=en", () => {
+    assert.match(
+      read("index.html"),
+      /<[a-z0-9]+[^>]*lang="en"[^>]*>\s*Build in Public\s*</,
     );
   });
 
@@ -706,4 +732,19 @@ describe("home page", () => {
       assert.equal(m, null, `${file} contains ${m?.[0]}`);
     }
   });
+});
+
+describe("touch targets", () => {
+  for (const sel of [".shipping", ".more"]) {
+    it(`standalone links in ${sel} are at least 44px tall`, () => {
+      const re = new RegExp(
+        `\\${sel}(?:\\[[^\\]]+\\])?\\s+a(?:\\[[^\\]]+\\])?\\{[^}]*min-height:44px`,
+      );
+      const inline = [
+        read("en/index.html"),
+        read("en/products/resin-figure/index.html"),
+      ].join("\n");
+      assert.match(allCss() + inline, re);
+    });
+  }
 });

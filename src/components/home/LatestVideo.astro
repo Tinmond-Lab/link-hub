@@ -6,11 +6,14 @@ interface Props {
   locale: Locale;
 }
 
-const t = getContent(Astro.props.locale).ui;
+const locale = Astro.props.locale;
+const t = getContent(locale).ui;
+// The eyebrow is the channel's English series name; mark it in the vi page.
+const eyebrowLang = locale === "en" ? undefined : "en";
 ---
 
 <section class="section reveal" aria-labelledby="video-title">
-  <p class="eyebrow">{t.videoEyebrow}</p>
+  <p class="eyebrow" lang={eyebrowLang}>{t.videoEyebrow}</p>
   <h2 id="video-title" class="section-title">{t.videoTitle}</h2>
   <a class="video-card" href={latestVideo.href} target="_blank" rel="noopener">
     {
