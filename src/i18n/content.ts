@@ -56,7 +56,15 @@ export interface HeroCta {
 }
 
 export interface Content {
-  hero: { subtitle: string; ctas: HeroCta[] };
+  hero: { eyebrow: string; title: string; subtitle: string; ctas: HeroCta[] };
+  about: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    makes: string[];
+    software: string;
+    values: string;
+  };
   commission: Commission;
   shipping: Shipping;
   meta: {
@@ -95,7 +103,7 @@ export function youtubeId(url: string): string | null {
 }
 
 const latestVideoId = youtubeId(LATEST_VIDEO_URL);
-const latestVideo = {
+export const latestVideo: { href: string; img: string | null } = {
   img: latestVideoId
     ? `https://i.ytimg.com/vi/${latestVideoId}/maxresdefault.jpg`
     : null,
@@ -103,6 +111,9 @@ const latestVideo = {
 };
 
 /** Set to the studio's Instagram profile URL to show it on the English page. */
+/** Maker portrait path; stays null until a verified photo is supplied. */
+export const MAKER_PHOTO: string | null = null;
+
 export const INSTAGRAM_URL: string | null = null;
 
 const socials: Social[] = [
@@ -243,12 +254,27 @@ const withLabels = (labels: string[]): Content["services"] =>
 
 const vi: Content = {
   hero: {
-    subtitle: "Lập trình viên phần mềm • Họa sĩ tô mô hình",
+    eyebrow: "Mô hình thủ công",
+    title: "Điêu khắc, in 3D và sơn tay tại Việt Nam.",
+    subtitle:
+      "Diorama, mô hình kiến trúc và figure resin sơn tay. Nhận đặt làm theo yêu cầu, giao hàng quốc tế.",
     ctas: [
-      { label: "Khám phá sản phẩm", href: "#products", variant: "primary" },
-      { label: "Xem hành trình", href: "#journey", variant: "secondary" },
-      { label: "Liên hệ", href: "#social", variant: "secondary" },
+      {
+        label: "Đặt làm theo yêu cầu",
+        href: "/commission/",
+        variant: "primary",
+      },
+      { label: "Xem tác phẩm", href: "#works", variant: "secondary" },
     ],
+  },
+  about: {
+    eyebrow: "Giới thiệu",
+    title: "Studio nhỏ cho nghệ thuật mô hình",
+    body: "Timond Lab kết hợp công nghệ và thủ công: mỗi tác phẩm đi từ ý tưởng đến mô hình 3D, in, đổ resin, sơn tay và đóng gói cẩn thận.",
+    makes: ["Mô hình theo yêu cầu", "Sơn figure", "Thiết kế diorama"],
+    software: "Studio cũng phát triển phần mềm.",
+    values:
+      "Chất lượng hàng đầu · Thủ công tỉ mỉ · Chú trọng chi tiết · Học hỏi không ngừng",
   },
   shipping: {
     title: "Vận chuyển & thuế",
@@ -315,9 +341,9 @@ const vi: Content = {
     mailIntro: "Chào Timond Lab, mình muốn đặt làm một sản phẩm. Thông tin:",
   },
   meta: {
-    title: "Timond Lab · LinkHub",
+    title: "Timond Lab · Mô hình thủ công & diorama từ Việt Nam",
     description:
-      "Timond Lab — studio sáng tạo kết hợp phát triển phần mềm với nghệ thuật mô hình thủ công.",
+      "Mô hình thu nhỏ, diorama và figure resin sơn tay, làm thủ công tại Việt Nam. Nhận đặt làm theo yêu cầu, giao hàng quốc tế.",
     ogLocale: "vi_VN",
     ogAlternate: "en_US",
   },
@@ -427,16 +453,27 @@ const vi: Content = {
 
 const en: Content = {
   hero: {
-    subtitle: "Handmade miniatures, dioramas & figure painting from Vietnam",
+    eyebrow: "Handmade miniatures",
+    title: "Sculpted, printed and hand-painted in Vietnam.",
+    subtitle:
+      "Dioramas, architectural miniatures and hand-painted resin figures. Custom commissions welcome, shipped worldwide.",
     ctas: [
       {
-        label: "Request a custom piece",
+        label: "Request a commission",
         href: "/en/commission/",
         variant: "primary",
       },
-      { label: "Explore Products", href: "#products", variant: "secondary" },
-      { label: "Contact Me", href: "#social", variant: "secondary" },
+      { label: "View works", href: "#works", variant: "secondary" },
     ],
+  },
+  about: {
+    eyebrow: "About",
+    title: "A small studio for miniature art",
+    body: "Timond Lab blends technology and craftsmanship: every piece goes from idea to 3D model, print, resin, hand painting and careful packaging.",
+    makes: ["Custom miniatures", "Figure painting", "Diorama design"],
+    software: "The studio also builds software.",
+    values:
+      "Quality first · Handcrafted · Attention to detail · Always learning",
   },
   shipping: {
     title: "Shipping & duties",
@@ -613,6 +650,22 @@ const en: Content = {
 };
 
 const content: Record<Locale, Content> = { vi, en };
+
+export function processChapters(
+  locale: Locale,
+): { title: string; text: string }[] {
+  const c = content[locale];
+  const st = c.commission.steps;
+  const texts = [
+    st[0].text,
+    st[2].text,
+    st[3].text,
+    st[4].text,
+    st[5].text,
+    c.shipping.intro,
+  ];
+  return c.journeySteps.map((title, i) => ({ title, text: texts[i] }));
+}
 
 export function getContent(locale: Locale): Content {
   return content[locale];

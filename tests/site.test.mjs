@@ -25,15 +25,15 @@ describe("one language per URL", () => {
   it("vi page is Vietnamese only", () => {
     const html = read("index.html");
     assert.doesNotMatch(html, /data-i18n/);
-    assert.match(html, /Khám phá sản phẩm/);
-    assert.doesNotMatch(html, /Explore Products/);
+    assert.match(html, /Xem tác phẩm/);
+    assert.doesNotMatch(html, /View works/);
   });
 
   it("en page is English only", () => {
     const html = read("en/index.html");
     assert.doesNotMatch(html, /data-i18n/);
-    assert.match(html, /Explore Products/);
-    assert.doesNotMatch(html, /Khám phá sản phẩm/);
+    assert.match(html, /View works/);
+    assert.doesNotMatch(html, /Xem tác phẩm/);
   });
 
   it("language toggle links to the other locale", () => {
@@ -97,8 +97,11 @@ describe("head metadata", () => {
 
   it("vi page keeps Vietnamese title and description", () => {
     const html = read("index.html");
-    assert.match(html, /<title>Timond Lab · LinkHub<\/title>/);
-    assert.match(html, /studio sáng tạo kết hợp phát triển phần mềm/);
+    assert.match(
+      html,
+      /<title>Timond Lab · Mô hình thủ công &amp; diorama từ Việt Nam<\/title>/,
+    );
+    assert.match(html, /Mô hình thu nhỏ, diorama và figure resin sơn tay/);
   });
 });
 
@@ -310,22 +313,22 @@ describe("channels and hero per locale", () => {
     const en = read("en/index.html");
     assert.match(
       en,
-      /Handmade miniatures, dioramas &amp; figure painting from Vietnam/,
+      /Dioramas, architectural miniatures and hand-painted resin figures/,
     );
     assert.match(
       en,
-      /<a href="\/en\/commission\/" class="btn btn-primary"[^>]*>Request a custom piece<\/a>/,
+      /<a href="\/en\/commission\/" class="btn btn-primary"[^>]*>Request a commission<\/a>/,
     );
     assert.match(
       en,
-      /<a href="#products" class="btn btn-secondary"[^>]*>Explore Products<\/a>/,
+      /<a href="#works" class="btn btn-secondary"[^>]*>View works<\/a>/,
     );
     const vi = read("index.html");
     assert.match(
       vi,
-      /<a href="#products" class="btn btn-primary"[^>]*>Khám phá sản phẩm<\/a>/,
+      /<a href="\/commission\/" class="btn btn-primary"[^>]*>Đặt làm theo yêu cầu<\/a>/,
     );
-    assert.match(vi, /Lập trình viên phần mềm • Họa sĩ tô mô hình/);
+    assert.match(vi, /Diorama, mô hình kiến trúc và figure resin sơn tay/);
   });
 });
 
@@ -634,5 +637,22 @@ describe("links page", () => {
     const xml = read("sitemap-0.xml");
     assert.ok(xml.includes(`<loc>${SITE}/links/</loc>`));
     assert.ok(xml.includes(`<loc>${SITE}/en/links/</loc>`));
+  });
+});
+
+describe("studio copy and data", () => {
+  it("exposes process chapters, hero, about, maker photo and latest video", async () => {
+    const mod = await import("../src/i18n/content.ts");
+    const chapters = mod.processChapters("en");
+    assert.equal(chapters.length, 6);
+    assert.equal(chapters[0].title, "Idea");
+    assert.equal(chapters[5].text, mod.getContent("en").shipping.intro);
+    assert.equal(
+      mod.getContent("vi").hero.title,
+      "Điêu khắc, in 3D và sơn tay tại Việt Nam.",
+    );
+    assert.equal(mod.MAKER_PHOTO, null);
+    assert.equal(mod.latestVideo.href, mod.LATEST_VIDEO_URL);
+    assert.equal(mod.getContent("en").about.makes.length, 3);
   });
 });
