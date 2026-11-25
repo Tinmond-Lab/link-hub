@@ -432,3 +432,63 @@ describe("latest video card", () => {
     assert.equal(existsSync(dist("api")), false);
   });
 });
+
+describe("favicon", () => {
+  const pages = [
+    "index.html",
+    "en/index.html",
+    "commission/index.html",
+    "en/commission/index.html",
+    "shipping/index.html",
+    "en/shipping/index.html",
+    ...["nghinh-phong-tower", "miniature-diorama", "resin-figure"].flatMap(
+      (s) => [`products/${s}/index.html`, `en/products/${s}/index.html`],
+    ),
+  ];
+  const png = (rel) => {
+    const b = readFileSync(dist(rel));
+    assert.equal(
+      b.subarray(0, 8).toString("hex"),
+      "89504e470d0a1a0a",
+      `${rel} is not a PNG`,
+    );
+    return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
+  };
+
+  for (const f of pages) {
+    it(`${f}: links the Timond Lab icons and not the Astro one`, () => {
+      const html = read(f);
+      assert.match(html, /<link rel="icon" href="\/favicon\.ico"[^>]*>/);
+      assert.match(
+        html,
+        /<link rel="icon" type="image\/png" sizes="32x32" href="\/favicon-32\.png"[^>]*>/,
+      );
+      assert.match(
+        html,
+        /<link rel="apple-touch-icon" href="\/apple-touch-icon\.png"[^>]*>/,
+      );
+      assert.doesNotMatch(html, /favicon\.svg/);
+    });
+  }
+
+  it("the default Astro favicon.svg is no longer shipped", () => {
+    assert.equal(existsSync(dist("favicon.svg")), false);
+  });
+
+  it("favicon.ico is a real ICO with 16, 32 and 48 px images", () => {
+    const b = readFileSync(dist("favicon.ico"));
+    assert.equal(b.readUInt16LE(0), 0);
+    assert.equal(b.readUInt16LE(2), 1, "not an ICO file");
+    const count = b.readUInt16LE(4);
+    const sizes = Array.from(
+      { length: count },
+      (_, i) => b[6 + i * 16] || 256,
+    ).sort((a, c) => a - c);
+    assert.deepEqual(sizes, [16, 32, 48]);
+  });
+
+  it("PNG icons have the declared sizes", () => {
+    assert.deepEqual(png("favicon-32.png"), { w: 32, h: 32 });
+    assert.deepEqual(png("apple-touch-icon.png"), { w: 180, h: 180 });
+  });
+});
