@@ -5,5 +5,14 @@ import sitemap from "@astrojs/sitemap";
 // https://astro.build/config
 export default defineConfig({
   site: "https://timondlab.com",
-  integrations: [sitemap()],
+  i18n: {
+    defaultLocale: "vi",
+    locales: ["vi", "en"],
+    routing: { prefixDefaultLocale: false },
+  },
+  integrations: [
+    sitemap({
+      i18n: { defaultLocale: "vi", locales: { vi: "vi-VN", en: "en-US" } },
+    }),
+  ],
 });
