@@ -160,10 +160,10 @@ a {
 /* Scroll reveal: only hidden when JS is running (html.js), so content never stays invisible. */
 html.js .reveal {
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(24px);
   transition:
-    opacity 0.4s ease,
-    transform 0.4s ease;
+    opacity 0.8s var(--ease),
+    transform 0.8s var(--ease);
 }
 
 html.js .reveal.is-visible {

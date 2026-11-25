@@ -7,6 +7,7 @@ interface Props {
 }
 
 const { hero } = getContent(Astro.props.locale);
+const words = hero.title.split(" ");
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -22,7 +23,20 @@ const { hero } = getContent(Astro.props.locale);
   </div>
   <div class="copy">
     <p class="eyebrow">{hero.eyebrow}</p>
-    <h1 id="hero-title">{hero.title}</h1>
+    <h1 id="hero-title">
+      {
+        words.map((w, i) => (
+          <>
+            <span class="word-mask">
+              <span class="word" style={`--w:${i}`}>
+                {w}
+              </span>
+            </span>
+            {i < words.length - 1 && " "}
+          </>
+        ))
+      }
+    </h1>
     <p class="subtitle">{hero.subtitle}</p>
     <div class="ctas">
       {
@@ -45,9 +59,11 @@ const { hero } = getContent(Astro.props.locale);
     padding: 0 0 8px;
   }
   .media {
+    overflow: hidden;
     background: var(--surface);
   }
   .media img {
+    animation: media-in 1.6s var(--ease) both;
     display: block;
     width: 100%;
     height: auto;
@@ -56,6 +72,22 @@ const { hero } = getContent(Astro.props.locale);
   .copy {
     padding: 40px var(--gutter) 0;
   }
+  .eyebrow {
+    animation: rise 0.9s var(--ease) 0.05s both;
+  }
+  /* Each word slides up out of its own mask; the mask has room above and below for accents. */
+  .word-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding: 0.2em 0.04em 0.12em;
+    margin: -0.2em -0.04em -0.12em;
+  }
+  .word {
+    display: inline-block;
+    animation: word-in 1.1s var(--ease) both;
+    animation-delay: calc(0.12s + var(--w) * 0.07s);
+  }
   h1 {
     margin: 0;
     font-size: clamp(38px, 6vw, 72px);
@@ -63,12 +95,14 @@ const { hero } = getContent(Astro.props.locale);
     text-wrap: balance;
   }
   .subtitle {
+    animation: rise 1s var(--ease) 0.5s both;
     max-width: 46ch;
     margin: 24px 0 0;
     color: var(--muted);
     font-size: 18px;
   }
   .ctas {
+    animation: rise 1s var(--ease) 0.65s both;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;

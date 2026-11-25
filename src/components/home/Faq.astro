@@ -16,7 +16,7 @@ const { faq, ui: t } = getContent(locale);
       <p class="eyebrow">{t.faqEyebrow}</p>
       <h2 id="faq-title" class="section-title">{t.faqTitle}</h2>
     </div>
-    <div class="list">
+    <div class="list" data-stagger>
       {
         faq.map((f) => (
           <details>
@@ -79,7 +79,28 @@ const { faq, ui: t } = getContent(locale);
   summary svg {
     flex: none;
     color: var(--muted);
-    transition: transform 0.3s ease;
+    transition:
+      transform 0.5s var(--ease),
+      color 0.3s var(--ease-soft);
+  }
+  summary:hover svg {
+    color: var(--text);
+  }
+  /* Smooth height for the answer, in browsers that can animate to auto; others just open. */
+  @supports (interpolate-size: allow-keywords) {
+    details {
+      interpolate-size: allow-keywords;
+    }
+    details::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 0.5s var(--ease),
+        content-visibility 0.5s allow-discrete;
+    }
+    details[open]::details-content {
+      block-size: auto;
+    }
   }
   details[open] summary svg {
     transform: rotate(45deg);
