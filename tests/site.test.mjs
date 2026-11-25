@@ -327,3 +327,11 @@ describe("channels and hero per locale", () => {
     assert.match(vi, /Lập trình viên phần mềm • Họa sĩ tô mô hình/);
   });
 });
+
+describe("latest video fetch", () => {
+  it("uses an absolute path so it works under /en/", () => {
+    for (const f of ["index.html", "en/index.html"]) {
+      assert.match(read(f), /fetch\([`"']\/api\/latest-video\.php[`"']\)/);
+    }
+  });
+});

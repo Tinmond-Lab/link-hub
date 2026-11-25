@@ -8,7 +8,7 @@
 
 **Tech Stack:** Astro ^7.1.1, `@astrojs/sitemap`, TypeScript, `node --test`.
 
-**Spec:** `docs/superpowers/specs/2026-11-25-international-visitors-design.md` (draft; assumptions marked *(giả định)* need owner confirmation).
+**Spec:** `docs/superpowers/specs/2026-11-25-international-visitors-design.md` (draft; assumptions marked _(giả định)_ need owner confirmation).
 
 ## Global Constraints
 
@@ -48,10 +48,12 @@ Why whole-document components: the existing `<style>` uses selectors (`body`, `:
 ### Task 1: Locale routing and test harness
 
 **Files:**
+
 - Create: `src/i18n/locales.ts`, `src/components/Home.astro`, `src/pages/en/index.astro`, `tests/site.test.mjs`
 - Modify: `src/pages/index.astro`, `astro.config.mjs`, `package.json`
 
 **Interfaces:**
+
 - Produces: `locales: readonly ["vi","en"]`, `type Locale`, `defaultLocale: Locale`, `SITE_URL: string`, `localePath(locale: Locale, path?: string): string` (vi → `path`, en → `/en` + path, always trailing slash), `otherLocale(locale: Locale): Locale`.
 - Produces: `<Home locale>` component (`Astro.props.locale: Locale`).
 
@@ -65,10 +67,12 @@ Why whole-document components: the existing `<style>` uses selectors (`body`, `:
 ### Task 2: Extract copy and render one language per URL
 
 **Files:**
+
 - Create: `src/i18n/content.ts`
 - Modify: `src/components/Home.astro`, `tests/site.test.mjs`
 
 **Interfaces:**
+
 - Consumes: `Locale`, `localePath`, `otherLocale` (Task 1).
 - Produces: `getContent(locale: Locale): Content` where `Content` has `ui` (string map for every UI string used in `Home.astro`), `socials`, `products: Product[]`, `journeySteps: string[]`, `buildPublic`, `services`, `values`, `faq: {q:string;a:string}[]`; `interface Product { slug: string|null; name: string; desc: string; img: string; priceUsd: number|null; leadTime: string|null }`. Product slugs: `nghinh-phong-tower`, `miniature-diorama`, `resin-figure`; `prod-soon` has `slug: null`.
 
@@ -82,9 +86,11 @@ Why whole-document components: the existing `<style>` uses selectors (`body`, `:
 ### Task 3: Per-locale head metadata and hreflang
 
 **Files:**
+
 - Modify: `src/components/Home.astro`, `src/i18n/content.ts`, `tests/site.test.mjs`
 
 **Interfaces:**
+
 - Produces: `Content.meta: { title: string; description: string; ogLocale: string; ogAlternate: string }`. EN title `Timond Lab · Handmade miniatures & dioramas from Vietnam`; EN description `Handmade miniatures, dioramas and hand-painted resin figures from Vietnam. Custom commissions welcome, worldwide shipping available.`; `ogLocale` `en_US`/`vi_VN`.
 - Produces: a head helper (component `src/components/HeadMeta.astro`, props `locale: Locale`, `path: string`) used by every page component in later tasks: emits title, description, canonical, `og:*`, `twitter:*`, and `<link rel="alternate" hreflang>` for `vi`, `en`, `x-default` (→ `/en/`).
 
@@ -98,10 +104,12 @@ Why whole-document components: the existing `<style>` uses selectors (`body`, `:
 ### Task 4: Organization structured data
 
 **Files:**
+
 - Create: `src/seo/jsonld.ts`
 - Modify: `src/components/HeadMeta.astro`, `tests/site.test.mjs`
 
 **Interfaces:**
+
 - Produces: `organizationJsonLd(locale: Locale): object` (`@type: "Organization"`, `name`, `url`, `logo` = `${SITE_URL}/avatar.webp`, `email`, `sameAs` = social URLs from content, `inLanguage` = locale); `jsonLdScript(obj: object): string` (serialises and escapes `<` as `<`).
 
 - [ ] **Step 1: Write failing test:** parse every `application/ld+json` block in `dist/en/index.html`; one has `@type` `Organization`, `sameAs` includes `https://youtube.com/@timondlab`, and `name` is `Timond Lab`.
@@ -113,10 +121,12 @@ Why whole-document components: the existing `<style>` uses selectors (`body`, `:
 ### Task 5: Product detail pages
 
 **Files:**
+
 - Create: `src/components/ProductPage.astro`, `src/pages/products/[slug].astro`, `src/pages/en/products/[slug].astro`
 - Modify: `src/seo/jsonld.ts`, `src/components/Home.astro`, `src/i18n/content.ts`, `tests/site.test.mjs`
 
 **Interfaces:**
+
 - Consumes: `getContent`, `HeadMeta`, `jsonLdScript` (Tasks 2–4).
 - Produces: `productJsonLd(locale: Locale, p: Product): object` — `@type: "Product"`, `name`, `description`, `image` (absolute), `brand` Timond Lab; `offers` (`price`, `priceCurrency: "USD"`, `availability`) **only** when `p.priceUsd !== null`.
 - Both route files export `getStaticPaths()` returning one entry per product with a non-null slug.
@@ -130,10 +140,12 @@ Why whole-document components: the existing `<style>` uses selectors (`body`, `:
 ### Task 6: Commission page
 
 **Files:**
+
 - Create: `src/components/CommissionPage.astro`, `src/pages/commission.astro`, `src/pages/en/commission.astro`
 - Modify: `src/i18n/content.ts`, `tests/site.test.mjs`
 
 **Interfaces:**
+
 - Produces: `Content.commission: { title; intro; steps: {title;text}[]; include: string[]; ctaLabel }` and `commissionMailto(locale: Locale): string` exported from `content.ts` (prefilled subject `Commission request`, body listing the `include` items: reference images, scale/size, budget, deadline, shipping country).
 
 - [ ] **Step 1: Write failing tests:** `dist/en/commission/index.html` exists, shows six steps matching `journeySteps` length, has the `commissionMailto("en")` link, and canonical/hreflang are correct; the Vietnamese twin exists.
@@ -145,11 +157,13 @@ Why whole-document components: the existing `<style>` uses selectors (`body`, `:
 ### Task 7: Shipping and duties page
 
 **Files:**
+
 - Create: `src/components/ShippingPage.astro`, `src/pages/shipping.astro`, `src/pages/en/shipping.astro`
 - Modify: `src/i18n/content.ts`, `src/components/Home.astro` (FAQ link), `tests/site.test.mjs`
 
 **Interfaces:**
-- Produces: `Content.shipping: { intro; regions: {name:string; days:string|null; cost:string}[]; dutiesNotice; returnsNotice }`. Initial values: `days: null` (rendered "Quoted per order"), `cost: "Quoted per order"`; `dutiesNotice` states that import duties and taxes are the buyer's responsibility *(giả định, owner to confirm)*.
+
+- Produces: `Content.shipping: { intro; regions: {name:string; days:string|null; cost:string}[]; dutiesNotice; returnsNotice }`. Initial values: `days: null` (rendered "Quoted per order"), `cost: "Quoted per order"`; `dutiesNotice` states that import duties and taxes are the buyer's responsibility _(giả định, owner to confirm)_.
 
 - [ ] **Step 1: Write failing tests:** `dist/en/shipping/index.html` exists and contains the duties notice; the "Do you ship internationally?" FAQ answer on `/en/` links to `/en/shipping/`, and the Vietnamese FAQ answer links to `/shipping/`.
 - [ ] **Step 2:** Run `npm test`; expected FAIL.
@@ -160,9 +174,11 @@ Why whole-document components: the existing `<style>` uses selectors (`body`, `:
 ### Task 8: Channels and hero copy per locale
 
 **Files:**
+
 - Modify: `src/i18n/content.ts`, `src/components/Home.astro`, `tests/site.test.mjs`
 
 **Interfaces:**
+
 - Produces: `Content.socials` filtered per locale — `vi`: current six; `en`: Email first, then YouTube, TikTok, Facebook, plus Instagram only when `INSTAGRAM_URL` (a `string | null` constant in `content.ts`, initially `null`) is set. `Content.hero: { subtitle; primaryCta: {label; href}; secondaryCta }`; EN subtitle `Handmade miniatures, dioramas & figure painting from Vietnam`, EN primary CTA `Request a custom piece` → `/en/commission/`, secondary `Explore Products` → `#products`.
 
 - [ ] **Step 1: Write failing tests:** `dist/en/index.html` contains neither `zalo.me` nor `shopee.vn` and no `instagram.com` while `INSTAGRAM_URL` is null; `dist/index.html` contains both `zalo.me` and `shopee.vn`; EN hero primary CTA `href="/en/commission/"`; Vietnamese hero CTAs unchanged (`href="#products"`).
@@ -174,6 +190,7 @@ Why whole-document components: the existing `<style>` uses selectors (`body`, `:
 ### Task 9: Verification, CI and docs
 
 **Files:**
+
 - Modify: `.github/workflows/ci.yml`, `README.md`, `tests/site.test.mjs`
 
 - [ ] **Step 1: Write failing test:** the built script of both home pages calls `fetch("/api/latest-video.php")` with a leading slash (Review Focus 5).
