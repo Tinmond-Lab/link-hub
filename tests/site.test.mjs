@@ -748,3 +748,15 @@ describe("touch targets", () => {
     });
   }
 });
+
+describe("site header", () => {
+  const css = () => allCss() + read("index.html");
+  for (const sel of [".wordmark", "nav a"]) {
+    it(`${sel} never wraps mid-label (white-space:nowrap)`, () => {
+      const re = new RegExp(
+        `${sel.replace(".", "\\.").replace(" ", "(?:\\[[^\\]]+\\])?\\s+")}(?:\\[[^\\]]+\\])?\\{[^}]*white-space:nowrap`,
+      );
+      assert.match(css(), re);
+    });
+  }
+});
