@@ -48,6 +48,15 @@ export interface Shipping {
   returnsNotice: string;
 }
 
+export interface Service {
+  key: "design3d" | "print3d" | "software";
+  name: string;
+  desc: string;
+  /** Price in VND. `max` is null for "from <min>" pricing. */
+  minVnd: number;
+  maxVnd: number | null;
+}
+
 export interface HeroCta {
   label: string;
   href: string;
@@ -73,6 +82,7 @@ export interface Content {
     values: string;
   };
   commission: Commission;
+  services: Service[];
   shipping: Shipping;
   meta: {
     title: string;
@@ -287,6 +297,29 @@ const vi: Content = {
     values:
       "Chất lượng hàng đầu · Thủ công tỉ mỉ · Chú trọng chi tiết · Học hỏi không ngừng",
   },
+  services: [
+    {
+      key: "design3d",
+      name: "Thiết kế file in 3D",
+      desc: "Dựng mô hình 3D từ ý tưởng hoặc hình tham khảo của bạn, xuất file sẵn sàng để in.",
+      minVnd: 100000,
+      maxVnd: 500000,
+    },
+    {
+      key: "print3d",
+      name: "In 3D",
+      desc: "In 3D mô hình theo file của bạn.",
+      minVnd: 50000,
+      maxVnd: 300000,
+    },
+    {
+      key: "software",
+      name: "Thiết kế phần mềm",
+      desc: "Phát triển phần mềm theo yêu cầu, tính giá theo từng chức năng.",
+      minVnd: 500000,
+      maxVnd: null,
+    },
+  ],
   shipping: {
     title: "Vận chuyển & thuế",
     intro:
@@ -378,6 +411,11 @@ const vi: Content = {
     faqEyebrow: "Hỏi đáp",
     makerPhotoAlt: "Chân dung người làm ra các tác phẩm Timond Lab",
     faqTitle: "Câu hỏi thường gặp",
+    servicesTitle: "Dịch vụ & bảng giá",
+    servicesLead:
+      "Giá tham khảo bằng VND. Giá cuối cùng phụ thuộc kích thước và độ phức tạp, sẽ được báo trước khi bắt đầu.",
+    priceFrom: "Từ",
+    perFeature: "mỗi chức năng",
     priceLabel: "Giá",
     priceOnRequest: "Liên hệ để báo giá",
     leadTimeLabel: "Thời gian thực hiện",
@@ -461,6 +499,29 @@ const en: Content = {
     values:
       "Quality first · Handcrafted · Attention to detail · Always learning",
   },
+  services: [
+    {
+      key: "design3d",
+      name: "3D print file design",
+      desc: "We model your idea or reference images in 3D and export a file that is ready to print.",
+      minVnd: 100000,
+      maxVnd: 500000,
+    },
+    {
+      key: "print3d",
+      name: "3D printing",
+      desc: "3D printing from your file.",
+      minVnd: 50000,
+      maxVnd: 300000,
+    },
+    {
+      key: "software",
+      name: "Software development",
+      desc: "Custom software, priced by feature.",
+      minVnd: 500000,
+      maxVnd: null,
+    },
+  ],
   shipping: {
     title: "Shipping & duties",
     intro:
@@ -551,6 +612,11 @@ const en: Content = {
     faqEyebrow: "Questions",
     makerPhotoAlt: "Portrait of the maker behind Timond Lab",
     faqTitle: "Frequently asked questions",
+    servicesTitle: "Services & pricing",
+    servicesLead:
+      "Indicative prices in VND. The final price depends on size and complexity and is quoted before work starts.",
+    priceFrom: "From",
+    perFeature: "per feature",
     priceLabel: "Price",
     priceOnRequest: "Price on request",
     leadTimeLabel: "Lead time",
@@ -618,6 +684,16 @@ export function processChapters(
     c.shipping.intro,
   ];
   return c.journeySteps.map((title, i) => ({ title, text: texts[i] }));
+}
+
+/** "100,000–500,000 VND" or "From 500,000 VND per feature", built from the numbers so HTML, markdown and JSON-LD agree. */
+export function servicePrice(locale: Locale, s: Service): string {
+  const n = new Intl.NumberFormat(locale === "vi" ? "vi-VN" : "en-US");
+  const ui = content[locale].ui;
+  if (s.maxVnd === null) {
+    return `${ui.priceFrom} ${n.format(s.minVnd)} VND ${ui.perFeature}`;
+  }
+  return `${n.format(s.minVnd)}–${n.format(s.maxVnd)} VND`;
 }
 
 export function getContent(locale: Locale): Content {

@@ -1,4 +1,4 @@
-import { getContent, type Product } from "../i18n/content";
+import { getContent, servicePrice, type Product } from "../i18n/content";
 import { SITE_URL, localePath, type Locale } from "../i18n/locales";
 
 const PROFILE_KEYS = ["youtube", "tiktok", "facebook", "shopee"];
@@ -45,4 +45,37 @@ export function productJsonLd(locale: Locale, p: Product): object {
       },
     }),
   };
+}
+
+export function faqJsonLd(locale: Locale): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: getContent(locale).faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+}
+
+/** One Service per priced offering; prices are VND ranges (or "from"). */
+export function servicesJsonLd(locale: Locale): object[] {
+  return getContent(locale).services.map((s) => ({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: s.name,
+    description: `${s.desc} ${servicePrice(locale, s)}`,
+    provider: { "@type": "Organization", name: "Timond Lab", url: SITE_URL },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "VND",
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        priceCurrency: "VND",
+        minPrice: s.minVnd,
+        ...(s.maxVnd !== null && { maxPrice: s.maxVnd }),
+      },
+    },
+  }));
 }
