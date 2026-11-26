@@ -1,4 +1,33 @@
+# Everyone may crawl the site. AI crawlers are listed explicitly so the policy is visible.
+# To opt out of AI training, change "Allow: /" to "Disallow: /" for GPTBot, ClaudeBot and Google-Extended.
 User-agent: *
+Allow: /
+
+# AI search and answer engines
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# AI assistants fetching a page for a user
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+# AI model training
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
 Allow: /
 
 Sitemap: https://timondlab.com/sitemap-index.xml

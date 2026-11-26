@@ -1,0 +1,61 @@
+---
+import { getContent, servicePrice } from "../i18n/content";
+import type { Locale } from "../i18n/locales";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const { services } = getContent(locale);
+---
+
+<ul class="services">
+  {
+    services.map((s) => (
+      <li data-service={s.key}>
+        <div class="head">
+          <strong>{s.name}</strong>
+          <span class="price">{servicePrice(locale, s)}</span>
+        </div>
+        <p>{s.desc}</p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .services {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .services li {
+    padding: 18px 0;
+    border-top: 1px solid var(--border);
+  }
+  .services li:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 16px;
+  }
+  .head strong {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .price {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .services p {
+    margin: 6px 0 0;
+    color: var(--muted);
+  }
+</style>

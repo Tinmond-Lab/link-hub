@@ -1,5 +1,6 @@
 ---
 import { getContent } from "../i18n/content";
+import { mdPages, mdUrl } from "../seo/markdown";
 import { SITE_URL, localePath, type Locale } from "../i18n/locales";
 
 interface Props {
@@ -24,6 +25,9 @@ const meta = getContent(locale).meta;
 const pageTitle = title ?? meta.title;
 const pageDescription = description ?? meta.description;
 const pageUrl = `${SITE_URL}${localePath(locale, path)}`;
+const hasMarkdown = mdPages().some(
+  (p) => p.locale === locale && p.path === path,
+);
 const ogImage = image ?? `${SITE_URL}/og-image.jpg`;
 ---
 
@@ -48,6 +52,12 @@ const ogImage = image ?? `${SITE_URL}/og-image.jpg`;
   hreflang="x-default"
   href={`${SITE_URL}${localePath("en", path)}`}
 />
+
+{
+  hasMarkdown && (
+    <link rel="alternate" type="text/markdown" href={mdUrl(locale, path)} />
+  )
+}
 
 <meta property="og:type" content={ogType} />
 <meta property="og:site_name" content="Timond Lab" />

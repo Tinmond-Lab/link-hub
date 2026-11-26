@@ -82,3 +82,10 @@ Every pull request runs: PR title lint, commitlint, gitleaks, `astro check`, ESL
 ## Learn more
 
 [Astro documentation](https://docs.astro.build)
+
+## For AI agents
+
+Every page has a plain-markdown twin generated at build time from `src/i18n/content.ts` by `src/seo/markdown.ts` (`/index.md`, `/commission.md`, `/products/<slug>.md`, and the same under `/en/`), plus `/llms.txt` (index) and `/llms-full.txt` (everything). Pages advertise their twin with `<link rel="alternate" type="text/markdown">`.
+
+- **Edit copy, prices and services only in `src/i18n/content.ts`** (`services`, `productFacts`, `faq`, ...). The HTML, markdown, `llms*.txt` and JSON-LD all rebuild from it. Text written directly into a `.astro` page will not reach the markdown; `tests/ai-layer.test.mjs` checks the two stay in sync.
+- AI crawler policy lives in `public/robots.txt`. To refuse AI training, set `Disallow: /` for `GPTBot`, `ClaudeBot` and `Google-Extended`.

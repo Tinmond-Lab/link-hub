@@ -7,7 +7,7 @@ import LatestVideo from "./home/LatestVideo.astro";
 import About from "./home/About.astro";
 import CommissionBand from "./home/CommissionBand.astro";
 import Faq from "./home/Faq.astro";
-import { organizationJsonLd } from "../seo/jsonld";
+import { faqJsonLd, organizationJsonLd } from "../seo/jsonld";
 import type { Locale } from "../i18n/locales";
 
 interface Props {
@@ -17,7 +17,11 @@ interface Props {
 const { locale } = Astro.props;
 ---
 
-<BaseLayout locale={locale} path="/" jsonLd={[organizationJsonLd(locale)]}>
+<BaseLayout
+  locale={locale}
+  path="/"
+  jsonLd={[organizationJsonLd(locale), faqJsonLd(locale)]}
+>
   <Hero locale={locale} />
   <Works locale={locale} />
   <Process locale={locale} />

@@ -2,6 +2,8 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getContent } from "../i18n/content";
 import ContactButtons from "./ContactButtons.astro";
+import ServiceList from "./ServiceList.astro";
+import { servicesJsonLd } from "../seo/jsonld";
 import type { Locale } from "../i18n/locales";
 
 interface Props {
@@ -9,7 +11,8 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const c = getContent(locale).commission;
+const content = getContent(locale);
+const c = content.commission;
 ---
 
 <BaseLayout
@@ -17,10 +20,15 @@ const c = getContent(locale).commission;
   path="/commission/"
   title={`${c.title} · Timond Lab`}
   description={c.intro}
+  jsonLd={servicesJsonLd(locale)}
 >
   <article class="page">
     <h1>{c.title}</h1>
     <p class="lead">{c.intro}</p>
+
+    <h2>{content.ui.servicesTitle}</h2>
+    <p class="lead">{content.ui.servicesLead}</p>
+    <div class="svc"><ServiceList locale={locale} /></div>
 
     <h2>{c.stepsTitle}</h2>
     <ol class="steps">
@@ -61,6 +69,9 @@ const c = getContent(locale).commission;
   h2 {
     margin: 56px 0 20px;
     font-size: clamp(22px, 3vw, 28px);
+  }
+  .svc {
+    margin-top: 20px;
   }
   .lead {
     margin: 0;
